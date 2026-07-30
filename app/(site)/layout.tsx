@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Inter } from "next/font/google";
-import IntroFlow from "./components/IntroFlow";
-import AudioPlayer from "./components/audio/AudioPlayer";
-import FloatingBookButton from "./components/FloatingBookButton";
-import LanguageFadeWrapper from "./components/LanguageFadeWrapper";
-import SkipLink from "./components/SkipLink";
-import { LanguageProvider } from "./lib/language/LanguageContext";
-import { TRANSLATIONS } from "./lib/language/translations";
-import "./globals.css";
+import IntroFlow from "@/app/components/IntroFlow";
+import AudioPlayer from "@/app/components/audio/AudioPlayer";
+import FloatingBookButton from "@/app/components/FloatingBookButton";
+import LanguageFadeWrapper from "@/app/components/LanguageFadeWrapper";
+import SkipLink from "@/app/components/SkipLink";
+import { LanguageProvider } from "@/app/lib/language/LanguageContext";
+import { TRANSLATIONS } from "@/app/lib/language/translations";
+import "../globals.css";
 
 const cormorantGaramond = Cormorant_Garamond({
   variable: "--font-cormorant",
