@@ -79,8 +79,9 @@ function fadeInVolume(audio: HTMLAudioElement) {
   const startVolume = audio.volume;
 
   const step = (now: number) => {
-    const progress = Math.min((now - startTime) / FADE_DURATION_MS, 1);
-    audio.volume = startVolume + (TARGET_VOLUME - startVolume) * progress;
+    const progress = Math.min(Math.max((now - startTime) / FADE_DURATION_MS, 0), 1);
+    const newVolume = startVolume + (TARGET_VOLUME - startVolume) * progress;
+    audio.volume = Math.min(1, Math.max(0, newVolume));
     fadeFrame = progress < 1 ? requestAnimationFrame(step) : null;
   };
   fadeFrame = requestAnimationFrame(step);

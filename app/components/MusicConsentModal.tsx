@@ -6,6 +6,8 @@ import { motion, useReducedMotion } from "framer-motion";
 import { setMusicConsentChoice } from "@/app/lib/musicConsent";
 import { markAudioSystemUnlocked, startAmbientAudio } from "./audio/useAudio";
 import { useLanguage } from "@/app/lib/language/LanguageContext";
+import { useBodyScrollLock } from "@/app/lib/useBodyScrollLock";
+import { useModalFocusTrap } from "@/app/lib/useModalFocusTrap";
 
 const FADE_MS = 900;
 
@@ -19,14 +21,11 @@ export default function MusicConsentModal({ onDismiss }: MusicConsentModalProps)
   const [status, setStatus] = useState<ModalStatus>("open");
   const prefersReducedMotion = useReducedMotion();
   const closeTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
   const { t } = useLanguage();
 
-  useEffect(() => {
-    document.body.style.overflow = status === "open" || status === "closing" ? "hidden" : "";
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [status]);
+  useBodyScrollLock(status !== "closed");
+  useModalFocusTrap(dialogRef, status !== "closed");
 
   useEffect(() => {
     return () => {
@@ -56,23 +55,34 @@ export default function MusicConsentModal({ onDismiss }: MusicConsentModalProps)
     close();
   };
 
+  useEffect(() => {
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") handleDecline();
+    }
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- handleDecline only reads refs/state setters and the stable prefersReducedMotion/onDismiss values.
+  }, []);
+
   if (status === "closed") return null;
 
   return (
     <div
+      ref={dialogRef}
       role="dialog"
       aria-modal="true"
       aria-labelledby="music-consent-title"
-      className="fixed inset-0 z-[90] flex items-center justify-center overflow-hidden transition-opacity ease-[cubic-bezier(0.19,1,0.22,1)]"
+      tabIndex={-1}
+      className="fixed inset-0 z-[90] flex overflow-y-auto transition-opacity ease-[cubic-bezier(0.19,1,0.22,1)]"
       style={{
         transitionDuration: `${prefersReducedMotion ? 0 : FADE_MS}ms`,
         opacity: status === "closing" ? 0 : 1,
       }}
     >
       {/* Hero actuel, réutilisé en arrière-plan légèrement flouté */}
-      <div className="absolute inset-0 scale-110">
+      <div className="fixed inset-0 scale-110">
         <Image
-          src="/hero/Hero.webp"
+          src="/hero/Hero-01.webp"
           alt=""
           fill
           loading="eager"
@@ -83,9 +93,9 @@ export default function MusicConsentModal({ onDismiss }: MusicConsentModalProps)
       </div>
 
       {/* Overlay noir/prune */}
-      <div className="absolute inset-0" style={{ backgroundColor: "rgba(5,4,5,0.82)" }} />
+      <div className="fixed inset-0" style={{ backgroundColor: "rgba(5,4,5,0.82)" }} />
       <div
-        className="absolute inset-0"
+        className="fixed inset-0"
         style={{
           backgroundImage: [
             "radial-gradient(ellipse 70% 55% at 50% 8%, rgba(74,22,38,0.36), transparent 62%)",
@@ -95,7 +105,7 @@ export default function MusicConsentModal({ onDismiss }: MusicConsentModalProps)
       />
 
       <motion.div
-        className="container relative z-10 mx-6 flex max-w-md flex-col items-center rounded-[28px] px-8 py-10 text-center sm:px-12 sm:py-12"
+        className="container relative z-10 mx-6 my-auto flex max-w-md shrink-0 flex-col items-center rounded-[28px] px-8 py-10 text-center sm:px-12 sm:py-12"
         style={{
           backgroundColor: "rgba(16,13,15,0.45)",
           border: "1px solid rgba(232,201,171,0.16)",

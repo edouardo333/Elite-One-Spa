@@ -7,12 +7,15 @@ export interface Translations {
     description: string;
   };
   nav: {
+    skipToContent: string;
     logoAria: string;
     links: { href: string; label: string }[];
     reserve: string;
     languageLabel: string;
     switchToFr: string;
     switchToEn: string;
+    menuOpenAria: string;
+    menuCloseAria: string;
   };
   hero: {
     eyebrow: string;
@@ -29,9 +32,197 @@ export interface Translations {
     eyebrow: string;
     title: string;
     paragraph: string;
+    paragraph2: string;
+    paragraph3: string;
     quote: string;
     cta: string;
     items: { title: string; content: string }[];
+  };
+  hostesses: {
+    eyebrow: string;
+    title: string;
+    subtitle: string;
+    statusBar: {
+      live: string;
+      available: string;
+      comingSoon: string;
+      offToday: string;
+      updatedJustNow: string;
+      updatedMinutesAgo: string;
+    };
+    filters: {
+      all: string;
+      available: string;
+      comingSoon: string;
+      offToday: string;
+      premium: string;
+      newArrival: string;
+    };
+    status: {
+      available: string;
+      comingSoon: string;
+      off: string;
+    };
+    badges: {
+      popular: string;
+      newArrival: string;
+      staffFavorite: string;
+      premium: string;
+    };
+    featuredBadge: string;
+    ratingLabel: string;
+    bookNow: string;
+    bookAria: string;
+    viewProfile: string;
+    viewProfileAria: string;
+    placeholder: {
+      title: string;
+      subtitle: string;
+    };
+    stats: {
+      age: string;
+      height: string;
+      weight: string;
+      measurements: string;
+      ageUnit: string;
+    };
+    modal: {
+      closeAria: string;
+      galleryLabel: string;
+      galleryComingSoon: string;
+      descriptionLabel: string;
+      languagesLabel: string;
+      servicesLabel: string;
+      availabilityLabel: string;
+      locationLabel: string;
+      bookAppointment: string;
+      bookAppointmentAria: string;
+    };
+    list: {
+      id: string;
+      name: string;
+      bio: string;
+      schedule: string;
+      location: string;
+      languages: string[];
+      services: string[];
+    }[];
+  };
+  services: {
+    eyebrow: string;
+    title: string;
+    subtitle: string;
+    minutesLabel: string;
+    twoHandsLabel: string;
+    fourHandsLabel: string;
+    ctaBook: string;
+    bookAria: string;
+    popularBadge: string;
+    cards: {
+      duration: string;
+      description: string;
+      priceTwo: string;
+      priceFour: string;
+    }[];
+  };
+  hiring: {
+    eyebrow: string;
+    title: string;
+    paragraph: string;
+    paragraph2: string;
+    highlights: { title: string; description: string }[];
+    note: string;
+    form: {
+      title: string;
+      subtitle: string;
+      fields: {
+        fullName: { label: string; placeholder: string };
+        ageConfirm: { label: string };
+        phone: { label: string; placeholder: string };
+        email: { label: string; placeholder: string };
+        availability: { label: string; placeholder: string };
+        experience: { label: string; placeholder: string; optionalTag: string };
+        message: { label: string; placeholder: string };
+        consent: { label: string };
+      };
+      errors: {
+        required: string;
+        ageRequired: string;
+        consentRequired: string;
+        invalidEmail: string;
+        invalidPhone: string;
+      };
+      submit: string;
+      submitting: string;
+      successTitle: string;
+      successMessage: string;
+      resetCta: string;
+    };
+  };
+  contact: {
+    badge: string;
+    number: string;
+    numberHref: string;
+    subtitle: string;
+    callAria: string;
+    bookNow: string;
+    bookAria: string;
+  };
+  contactSection: {
+    eyebrow: string;
+    title: string;
+    paragraph: string;
+    form: {
+      fields: {
+        fullName: { label: string; placeholder: string };
+        phone: { label: string; placeholder: string };
+        email: { label: string; placeholder: string };
+        subject: { label: string; placeholder: string };
+        message: { label: string; placeholder: string };
+      };
+      errors: {
+        required: string;
+        invalidEmail: string;
+        invalidPhone: string;
+      };
+      submit: string;
+    };
+    mapTitle: string;
+    openInMaps: string;
+    openInMapsAria: string;
+    addressAria: string;
+    hoursLabel: string;
+    ageLabel: string;
+  };
+  footer: {
+    logoAria: string;
+    tagline: string;
+    contactTitle: string;
+    address: string;
+    addressAria: string;
+    email: string;
+    emailAria: string;
+    hoursLabel: string;
+    hoursValue: string;
+    linksTitle: string;
+    links: {
+      treatments: string;
+      availability: string;
+      hiring: string;
+      contact: string;
+      privacy: string;
+      terms: string;
+    };
+    trustTitle: string;
+    trust: {
+      rating: string;
+      discreet: string;
+      downtown: string;
+      adultsOnly: string;
+      openDaily: string;
+    };
+    bookAppointment: string;
+    bookAppointmentAria: string;
   };
   ageGate: {
     eyebrow: string;
@@ -66,16 +257,22 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
         "Elite One Spa offre une expérience de massage haut de gamme à Montréal dans un environnement élégant, discret et réservé aux adultes.",
     },
     nav: {
+      skipToContent: "Aller au contenu principal",
       logoAria: "Elite One Spa — Accueil",
       links: [
         { href: "#accueil", label: "Accueil" },
-        { href: "#soins", label: "Nos soins" },
-        { href: "#reservation", label: "Réservation" },
+        { href: "#apropos", label: "Expérience" },
+        { href: "#hotesses", label: "Disponibilités" },
+        { href: "#soins", label: "Services & Tarifs" },
+        { href: "#carrieres", label: "Recrutement" },
+        { href: "#contact", label: "Contact" },
       ],
       reserve: "Réserver",
       languageLabel: "Choisir la langue",
       switchToFr: "Passer en français",
       switchToEn: "Switch to English",
+      menuOpenAria: "Ouvrir le menu",
+      menuCloseAria: "Fermer le menu",
     },
     hero: {
       eyebrow: "L’art du bien-être absolu",
@@ -99,35 +296,364 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
       title: "Bien plus qu’un massage",
       paragraph:
         "Elite One Spa offre une expérience privée alliant bien-être, sensualité, élégance et discrétion. Chaque visite est pensée pour offrir un moment d’évasion dans un cadre raffiné.",
+      paragraph2:
+        "Dans un cadre intime et soigneusement pensé, chaque détail contribue à votre confort : une ambiance feutrée, une discrétion absolue et une attention entièrement personnalisée. Vous n’êtes jamais un client parmi d’autres, mais l’unique invité d’un moment conçu pour vous.",
+      paragraph3:
+        "Chaque rituel est exécuté avec la précision d’un savoir-faire rare, où l’exigence du geste rencontre une chaleur sincère — une signature qui distingue véritablement Elite One Spa.",
       quote: "Un instant à part. Entièrement consacré à vous.",
       cta: "Découvrir nos soins",
       items: [
         {
           title: "Hôtesses élégantes et sensuelles",
           content:
-            "Un accueil incarné par des hôtesses raffinées, choisies pour leur élégance naturelle et leur sens du détail, afin de sublimer chaque instant de votre visite.",
+            "Dès votre arrivée, vous êtes accueilli par des hôtesses élégantes et sensuelles, choisies pour leur grâce naturelle et leur attention sincère. Leur présence donne le ton à toute la visite — raffinée, posée et entièrement tournée vers vous. Chaque geste et chaque parole sont guidés par la discrétion et une élégance tranquille, façonnant une expérience personnalisée où vous vous sentez véritablement considéré, choyé et libre de vous abandonner à l’instant.",
         },
         {
           title: "Corps à corps",
           content:
-            "Un rituel enveloppant où la proximité devient le langage du bien-être, dans une atmosphère intime et parfaitement maîtrisée.",
+            "Une expérience de bien-être complet, profondément relaxante, entièrement construite autour de la proximité et de la chaleur. Des mouvements fluides et continus parcourent le corps de la tête aux pieds, dissolvant les tensions et invitant au lâcher-prise. Peau contre peau, le rituel se déploie lentement et intuitivement, mêlant confort et sensualité dans une atmosphère de confiance totale. Plus qu’une technique, c’est un rythme partagé, pensé pour vous laisser léger, présent et parfaitement apaisé.",
         },
         {
           title: "Douceur au toucher",
           content:
-            "Des gestes délicats et enveloppants, pensés pour apaiser le corps et libérer l’esprit dans une lenteur assumée.",
+            "Une expérience plus douce et contemplative, pensée pour celles et ceux qui recherchent avant tout le calme. Des gestes délicats et des mouvements lents et posés s’unissent pour apaiser l’esprit et détendre le corps. Ici, rien ne presse — seulement une atmosphère paisible, une chaleur enveloppante et l’espace nécessaire pour respirer profondément et laisser chaque muscle se relâcher. Une invitation à l’immobilité, un moment de pure sérénité, à l’écart du rythme du quotidien.",
         },
         {
           title: "Triangle amoureux",
           content:
-            "Une expérience à trois temps, orchestrée avec subtilité pour explorer de nouvelles harmonies sensorielles.",
+            "Une expérience immersive partagée avec deux hôtesses, dont l’attention coordonnée crée une dynamique rarement égalée. Leur complicité naturelle et leur rythme parfaitement accordé transforment la rencontre en un moment riche et captivant, chaque geste répondant à l’autre avec subtilité et intention. Entouré d’une attention totale venue de deux directions à la fois, vous êtes porté dans un moment pleinement partagé — intense, élégant et sans équivalent.",
         },
         {
           title: "Rain on Me",
           content:
-            "Une pluie fine et chaude accompagne le soin, pour une sensation d’abandon total, entre eau et sensualité.",
+            "Un rituel chaleureux inspiré de la pluie, où de fins filets d’eau ruissellent délicatement sur la peau, préparant le corps à une relaxation totale. Associée à un toucher tout en douceur, la sensation de l’eau éveille chaque terminaison nerveuse, dissipant les tensions tout en réveillant les sens. Dans une atmosphère privée et tamisée, ce rituel joue sur les contrastes — la chaleur de l’eau, la douceur du toucher et l’intimité discrète d’être entièrement pris en charge.",
         },
       ],
+    },
+    hostesses: {
+      eyebrow: "Disponibilités en direct",
+      title: "Qui est disponible maintenant",
+      subtitle: "Disponibilités mises à jour en temps réel.",
+      statusBar: {
+        live: "En direct",
+        available: "hôtesses disponibles",
+        comingSoon: "bientôt disponibles",
+        offToday: "absentes aujourd’hui",
+        updatedJustNow: "Mise à jour à l’instant",
+        updatedMinutesAgo: "Mise à jour il y a {n} min",
+      },
+      filters: {
+        all: "Toutes",
+        available: "Disponible maintenant",
+        comingSoon: "Bientôt disponible",
+        offToday: "Absente aujourd’hui",
+        premium: "Premium",
+        newArrival: "Nouveau",
+      },
+      status: {
+        available: "Disponible maintenant",
+        comingSoon: "Bientôt disponible",
+        off: "Absente aujourd’hui",
+      },
+      badges: {
+        popular: "Populaire aujourd’hui",
+        newArrival: "Nouvelle arrivée",
+        staffFavorite: "Coup de cœur",
+        premium: "Premium",
+      },
+      featuredBadge: "En direct",
+      ratingLabel: "sur 5",
+      bookNow: "Réserver maintenant",
+      bookAria: "Réserver une séance avec {name}",
+      viewProfile: "Voir le profil",
+      viewProfileAria: "Voir le profil de {name}",
+      placeholder: {
+        title: "Portrait premium à venir",
+        subtitle: "Portrait officiel disponible après approbation de la direction.",
+      },
+      stats: {
+        age: "Âge",
+        height: "Grandeur",
+        weight: "Poids",
+        measurements: "Mensurations",
+        ageUnit: "ans",
+      },
+      modal: {
+        closeAria: "Fermer le profil",
+        galleryLabel: "Galerie",
+        galleryComingSoon: "Photos à venir",
+        descriptionLabel: "À propos",
+        languagesLabel: "Langues parlées",
+        servicesLabel: "Services proposés",
+        availabilityLabel: "Disponibilité",
+        locationLabel: "Quartier",
+        bookAppointment: "Réserver un rendez-vous",
+        bookAppointmentAria: "Réserver un rendez-vous avec {name}",
+      },
+      list: [
+        {
+          id: "sofia",
+          name: "Sofia",
+          bio: "Un accueil tout en grâce, empreint de chaleur sincère et d’une élégance naturelle qui donne le ton à votre visite.",
+          schedule: "Disponible jusqu’à 23h00",
+          location: "Centre-ville de Montréal",
+          languages: ["Français", "Anglais"],
+          services: ["Massage suédois", "Massage aux pierres chaudes", "Massage en duo"],
+        },
+        {
+          id: "amara",
+          name: "Amara",
+          bio: "Une présence lumineuse et attentive, portée par une douceur qui met immédiatement à l’aise.",
+          schedule: "Disponible jusqu’à 22h00",
+          location: "Centre-ville de Montréal",
+          languages: ["Français", "Anglais", "Espagnol"],
+          services: ["Massage suédois", "Aromathérapie", "Soin du corps à l’huile chaude"],
+        },
+        {
+          id: "valentina",
+          name: "Valentina",
+          bio: "Reconnue pour son écoute et son raffinement, elle incarne l’excellence du service Elite One.",
+          schedule: "Disponible jusqu’à minuit",
+          location: "Centre-ville de Montréal",
+          languages: ["Français", "Anglais", "Espagnol"],
+          services: ["Massage tantrique", "Massage en duo", "Massage aux pierres chaudes"],
+        },
+        {
+          id: "camille",
+          name: "Camille",
+          bio: "Discrète et posée, elle offre une présence apaisante qui invite au lâcher-prise.",
+          schedule: "Disponible jusqu’à 21h30",
+          location: "Centre-ville de Montréal",
+          languages: ["Français", "Anglais"],
+          services: ["Massage suédois", "Aromathérapie", "Soin du corps à l’huile chaude"],
+        },
+        {
+          id: "ines",
+          name: "Inès",
+          bio: "Une élégance tranquille et une attention sincère, pensées pour un moment entièrement dédié à vous.",
+          schedule: "Disponible jusqu’à 23h30",
+          location: "Centre-ville de Montréal",
+          languages: ["Français", "Anglais"],
+          services: ["Massage aux pierres chaudes", "Massage tantrique", "Aromathérapie"],
+        },
+        {
+          id: "jade",
+          name: "Jade",
+          bio: "Fraîcheur et sensibilité se rencontrent dans une présence chaleureuse et résolument attentionnée.",
+          schedule: "Disponible jusqu’à 22h30",
+          location: "Centre-ville de Montréal",
+          languages: ["Français", "Anglais"],
+          services: ["Massage suédois", "Massage en duo", "Aromathérapie"],
+        },
+        {
+          id: "nora",
+          name: "Nora",
+          bio: "Grâce naturelle et sourire sincère — elle rejoint le service en fin de journée.",
+          schedule: "Disponible dès 18h00",
+          location: "Centre-ville de Montréal",
+          languages: ["Français", "Anglais"],
+          services: ["Massage suédois", "Soin du corps à l’huile chaude", "Massage aux pierres chaudes"],
+        },
+        {
+          id: "lea",
+          name: "Léa",
+          bio: "Une nouvelle venue à la présence délicate, impatiente de vous accueillir bientôt.",
+          schedule: "Disponible dès 19h00",
+          location: "Centre-ville de Montréal",
+          languages: ["Français", "Anglais"],
+          services: ["Massage suédois", "Aromathérapie", "Massage en duo"],
+        },
+        {
+          id: "maya",
+          name: "Maya",
+          bio: "Coup de cœur de l’équipe, elle sera de retour dès demain pour vous accueillir.",
+          schedule: "Absente aujourd’hui — retour demain",
+          location: "Centre-ville de Montréal",
+          languages: ["Français", "Anglais", "Espagnol"],
+          services: ["Massage tantrique", "Massage aux pierres chaudes", "Massage en duo"],
+        },
+        {
+          id: "chloe",
+          name: "Chloé",
+          bio: "Une présence tout en douceur, actuellement en repos pour la journée.",
+          schedule: "Absente aujourd’hui",
+          location: "Centre-ville de Montréal",
+          languages: ["Français", "Anglais"],
+          services: ["Massage suédois", "Aromathérapie", "Soin du corps à l’huile chaude"],
+        },
+      ],
+    },
+    services: {
+      eyebrow: "Notre carte de soins",
+      title: "Services & Tarifs",
+      subtitle: "Ouvert 7 jours sur 7",
+      minutesLabel: "minutes",
+      twoHandsLabel: "Deux mains",
+      fourHandsLabel: "Quatre mains",
+      ctaBook: "Réserver cette expérience",
+      bookAria: "Réserver l’expérience de {duration} minutes",
+      popularBadge: "Le plus demandé",
+      cards: [
+        {
+          duration: "30",
+          description:
+            "Une immersion rapide et intense, pensée pour se recentrer sans compromis sur l’excellence du geste.",
+          priceTwo: "40 $",
+          priceFour: "80 $",
+        },
+        {
+          duration: "45",
+          description:
+            "L’équilibre parfait entre profondeur et disponibilité, pour un moment pleinement savouré.",
+          priceTwo: "50 $",
+          priceFour: "100 $",
+        },
+        {
+          duration: "60",
+          description:
+            "L’expérience signature Elite One, dans toute sa plénitude et sa générosité.",
+          priceTwo: "60 $",
+          priceFour: "120 $",
+        },
+      ],
+    },
+    hiring: {
+      eyebrow: "Rejoignez notre équipe",
+      title: "Un lieu de travail raffiné",
+      paragraph:
+        "Elite One Spa est à la recherche d’hôtesses professionnelles, fiables et respectueuses pour se joindre à une équipe soudée, dans un cadre élégant et bienveillant.",
+      paragraph2:
+        "Ce poste est réservé exclusivement aux candidates de 18 ans et plus, sans exception.",
+      highlights: [
+        {
+          title: "Environnement sécuritaire et respectueux",
+          description:
+            "Une équipe attentive et un cadre pensé pour votre sécurité et votre bien-être, en tout temps.",
+        },
+        {
+          title: "Confidentialité et discrétion",
+          description: "Votre vie privée est protégée avec la plus grande rigueur, à chaque étape.",
+        },
+        {
+          title: "Horaires flexibles",
+          description: "Des disponibilités adaptées à votre réalité, sans contrainte rigide.",
+        },
+        {
+          title: "Formation et accompagnement",
+          description: "Un encadrement complet dès votre arrivée, et un soutien continu par la suite.",
+        },
+        {
+          title: "Limites personnelles respectées",
+          description: "Vos limites et votre consentement sont toujours prioritaires, sans exception.",
+        },
+        {
+          title: "Aucune pression, aucun jugement",
+          description:
+            "Vous avancez à votre rythme, dans un climat de confiance et de respect mutuel.",
+        },
+      ],
+      note: "Les candidatures sont confidentielles et étudiées avec discrétion.",
+      form: {
+        title: "Postuler maintenant",
+        subtitle: "Quelques minutes suffisent.",
+        fields: {
+          fullName: { label: "Nom complet", placeholder: "Votre nom et prénom" },
+          ageConfirm: { label: "Je confirme avoir 18 ans ou plus" },
+          phone: { label: "Téléphone", placeholder: "(514) 000-0000" },
+          email: { label: "Courriel", placeholder: "vous@exemple.com" },
+          availability: { label: "Disponibilités", placeholder: "Ex. soirs, fins de semaine" },
+          experience: {
+            label: "Expérience précédente",
+            placeholder: "Parlez-nous brièvement de votre parcours",
+            optionalTag: "Facultatif",
+          },
+          message: {
+            label: "Message / présentation",
+            placeholder: "Présentez-vous en quelques mots",
+          },
+          consent: { label: "J’accepte d’être contactée au sujet de ma candidature" },
+        },
+        errors: {
+          required: "Ce champ est requis.",
+          ageRequired: "Vous devez confirmer avoir 18 ans ou plus pour postuler.",
+          consentRequired: "Veuillez accepter d’être contactée pour continuer.",
+          invalidEmail: "Veuillez entrer une adresse courriel valide.",
+          invalidPhone: "Veuillez entrer un numéro de téléphone valide.",
+        },
+        submit: "Envoyer ma candidature",
+        submitting: "Ouverture de votre messagerie…",
+        successTitle: "Client de messagerie ouvert",
+        successMessage:
+          "Votre client de messagerie s’est ouvert avec votre candidature déjà rédigée. Il ne vous reste qu’à cliquer sur Envoyer pour nous la faire parvenir.",
+        resetCta: "Envoyer une autre candidature",
+      },
+    },
+    contact: {
+      badge: "Contact 24/7",
+      number: "514 543 8344",
+      numberHref: "+15145438344",
+      subtitle: "Rendez-vous privés • Service discret • Centre-ville de Montréal",
+      callAria: "Appeler Elite One Spa au 514 543 8344",
+      bookNow: "Réserver maintenant",
+      bookAria: "Réserver une séance chez Elite One Spa",
+    },
+    contactSection: {
+      eyebrow: "Prenez contact",
+      title: "Contactez Elite One Spa",
+      paragraph:
+        "Chaque demande est traitée avec la plus grande discrétion. Que ce soit pour réserver une séance privée ou simplement poser une question, notre équipe vous répond rapidement et en toute confidentialité.",
+      form: {
+        fields: {
+          fullName: { label: "Nom complet", placeholder: "Votre nom et prénom" },
+          phone: { label: "Téléphone", placeholder: "(514) 000-0000" },
+          email: { label: "Courriel", placeholder: "vous@exemple.com" },
+          subject: { label: "Sujet", placeholder: "Ex. Réservation, question générale" },
+          message: { label: "Message", placeholder: "Écrivez votre message ici…" },
+        },
+        errors: {
+          required: "Ce champ est requis.",
+          invalidEmail: "Veuillez entrer une adresse courriel valide.",
+          invalidPhone: "Veuillez entrer un numéro de téléphone valide.",
+        },
+        submit: "Envoyer le message",
+      },
+      mapTitle: "Localisation d’Elite One Spa sur Google Maps",
+      openInMaps: "Ouvrir dans Google Maps",
+      openInMapsAria: "Ouvrir Elite One Spa dans Google Maps",
+      addressAria: "Ouvrir l’adresse d’Elite One Spa dans Google Maps",
+      hoursLabel: "Ouvert 7 jours sur 7",
+      ageLabel: "Réservé aux 18 ans et plus",
+    },
+    footer: {
+      logoAria: "Elite One Spa — Accueil",
+      tagline:
+        "Elite One Spa propose une expérience privée et raffinée au cœur de Montréal. Chaque visite est pensée autour de la discrétion, du confort et d’une attention personnalisée, dans un cadre élégant réservé aux adultes. Notre équipe s’engage à créer une atmosphère accueillante où chaque invité peut se détendre, décrocher et savourer un moment entièrement consacré à son bien-être.",
+      contactTitle: "Nous joindre",
+      address: "1621 boul. Saint-Laurent, Montréal, QC",
+      addressAria: "Ouvrir l’adresse d’Elite One Spa dans Google Maps",
+      email: "info@eliteonespa.ca",
+      emailAria: "Envoyer un courriel à Elite One Spa",
+      hoursLabel: "Horaires",
+      hoursValue: "Ouvert 7 jours sur 7",
+      linksTitle: "Liens rapides",
+      links: {
+        treatments: "Soins",
+        availability: "Disponibilités",
+        hiring: "Carrières",
+        contact: "Contact",
+        privacy: "Politique de confidentialité",
+        terms: "Conditions d’utilisation",
+      },
+      trustTitle: "L’expérience Elite One",
+      trust: {
+        rating: "4.9/5 — Expérience client",
+        discreet: "Service discret",
+        downtown: "Centre-ville de Montréal",
+        adultsOnly: "Réservé aux 18 ans et plus",
+        openDaily: "Ouvert 7 jours sur 7",
+      },
+      bookAppointment: "Réserver un rendez-vous",
+      bookAppointmentAria: "Réserver un rendez-vous chez Elite One Spa",
     },
     ageGate: {
       eyebrow: "Accès réservé",
@@ -166,16 +692,22 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
         "Elite One Spa offers a premium massage experience in Montreal within an elegant, discreet, adults-only environment.",
     },
     nav: {
+      skipToContent: "Skip to main content",
       logoAria: "Elite One Spa — Home",
       links: [
         { href: "#accueil", label: "Home" },
-        { href: "#soins", label: "Treatments" },
-        { href: "#reservation", label: "Booking" },
+        { href: "#apropos", label: "Experience" },
+        { href: "#hotesses", label: "Availability" },
+        { href: "#soins", label: "Services & Rates" },
+        { href: "#carrieres", label: "Hiring" },
+        { href: "#contact", label: "Contact" },
       ],
       reserve: "Book",
       languageLabel: "Select language",
       switchToFr: "Passer en français",
       switchToEn: "Switch to English",
+      menuOpenAria: "Open menu",
+      menuCloseAria: "Close menu",
     },
     hero: {
       eyebrow: "The art of absolute well-being",
@@ -199,35 +731,362 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
       title: "More than a massage",
       paragraph:
         "Elite One Spa offers a private experience blending well-being, sensuality, elegance and discretion. Every visit is designed as a moment of escape within a refined setting.",
+      paragraph2:
+        "Within an intimate, carefully considered setting, every detail is designed for your comfort — a private ambiance, absolute discretion and attention that is entirely personalized. You are never simply a guest among others, but the sole focus of a moment created just for you.",
+      paragraph3:
+        "Every ritual is delivered with the precision of a rare craft, where exacting technique meets genuine warmth — a signature that truly sets Elite One Spa apart.",
       quote: "A moment apart. Entirely devoted to you.",
       cta: "Discover Our Treatments",
       items: [
         {
           title: "Elegant, Sensual Hostesses",
           content:
-            "A welcome embodied by refined hostesses, chosen for their natural elegance and attention to detail, to elevate every moment of your visit.",
+            "From the moment you arrive, you are welcomed by elegant, sensual hostesses chosen for their natural grace and genuine attentiveness. Their presence sets a refined, unhurried tone, entirely focused on you. Every gesture and every word are guided by discretion and quiet elegance, shaping a personalized experience where you feel truly seen, cared for and free to relax into the moment.",
         },
         {
           title: "Body to Body",
           content:
-            "An enveloping ritual where closeness becomes the language of well-being, within a perfectly composed, intimate atmosphere.",
+            "A deeply relaxing full-body experience built entirely around closeness and warmth. Fluid, continuous movements flow from head to toe, dissolving tension and inviting you to simply let go. Skin against skin, the ritual unfolds slowly and intuitively, blending comfort with sensuality in an atmosphere of complete trust. It is less a technique than a shared rhythm — one designed to leave you feeling weightless, present and entirely at ease.",
         },
         {
-          title: "Gentle Touch",
+          title: "Soft Touch",
           content:
-            "Delicate, enveloping gestures designed to soothe the body and free the mind, in an unhurried, deliberate rhythm.",
+            "A softer, more contemplative experience for those seeking calm above all else. Delicate gestures and slow, deliberate movements work together to quiet the mind and soothe the body. There is no rush here — only a peaceful atmosphere, gentle warmth and the space to breathe deeply and let every muscle unwind. It is an invitation to stillness, a moment of pure serenity set apart from the pace of everyday life.",
         },
         {
           title: "Love Triangle",
           content:
-            "A three-part experience, subtly orchestrated to explore new sensory harmonies.",
+            "An immersive experience shared with two hostesses, whose coordinated attention creates a dynamic rarely found elsewhere. Their natural chemistry and effortless rhythm turn the encounter into something layered and captivating, each movement responding to the other with subtlety and intent. Surrounded by undivided focus from two directions at once, you are drawn into a fully shared moment — intense, elegant and unlike any solo experience.",
         },
         {
           title: "Rain on Me",
           content:
-            "A warm, fine rain accompanies the treatment, for a feeling of total surrender, between water and sensuality.",
+            "A warm, shower-inspired ritual where fine streams of water cascade gently over the skin, setting the stage for total relaxation. Combined with gentle touch, the sensation of water heightens every nerve ending, washing away tension while awakening the senses. Set within a private, softly lit atmosphere, this ritual is a study in contrast — the warmth of water, the softness of touch, and the quiet intimacy of being entirely looked after.",
         },
       ],
+    },
+    hostesses: {
+      eyebrow: "Live Availability",
+      title: "Who’s Available Now",
+      subtitle: "Live availability updated in real time.",
+      statusBar: {
+        live: "Live Now",
+        available: "Hostesses Available",
+        comingSoon: "Coming Soon",
+        offToday: "Off Today",
+        updatedJustNow: "Updated just now",
+        updatedMinutesAgo: "Updated {n} min ago",
+      },
+      filters: {
+        all: "All",
+        available: "Available Now",
+        comingSoon: "Coming Soon",
+        offToday: "Off Today",
+        premium: "Premium",
+        newArrival: "New",
+      },
+      status: {
+        available: "Available Now",
+        comingSoon: "Coming Soon",
+        off: "Off Today",
+      },
+      badges: {
+        popular: "Popular Today",
+        newArrival: "New Arrival",
+        staffFavorite: "Staff Favorite",
+        premium: "Premium",
+      },
+      featuredBadge: "Live",
+      ratingLabel: "out of 5",
+      bookNow: "Book Now",
+      bookAria: "Book a session with {name}",
+      viewProfile: "View Profile",
+      viewProfileAria: "View {name}'s profile",
+      placeholder: {
+        title: "Premium Portrait Coming Soon",
+        subtitle: "Official portrait available after management approval.",
+      },
+      stats: {
+        age: "Age",
+        height: "Height",
+        weight: "Weight",
+        measurements: "Measurements",
+        ageUnit: "yrs",
+      },
+      modal: {
+        closeAria: "Close profile",
+        galleryLabel: "Gallery",
+        galleryComingSoon: "Photos coming soon",
+        descriptionLabel: "About",
+        languagesLabel: "Languages Spoken",
+        servicesLabel: "Services Offered",
+        availabilityLabel: "Availability",
+        locationLabel: "Neighborhood",
+        bookAppointment: "Book Appointment",
+        bookAppointmentAria: "Book an appointment with {name}",
+      },
+      list: [
+        {
+          id: "sofia",
+          name: "Sofia",
+          bio: "A graceful welcome, warm and genuine — her natural elegance sets the tone for your visit.",
+          schedule: "Available until 11:00 PM",
+          location: "Downtown Montréal",
+          languages: ["French", "English"],
+          services: ["Swedish Massage", "Hot Stone Massage", "Duo Massage"],
+        },
+        {
+          id: "amara",
+          name: "Amara",
+          bio: "A bright, attentive presence, carried by a gentle warmth that puts you at ease from the first moment.",
+          schedule: "Available until 10:00 PM",
+          location: "Downtown Montréal",
+          languages: ["French", "English", "Spanish"],
+          services: ["Swedish Massage", "Aromatherapy", "Hot Oil Body Treatment"],
+        },
+        {
+          id: "valentina",
+          name: "Valentina",
+          bio: "Known for her attentiveness and refinement, she embodies the Elite One standard of service.",
+          schedule: "Available until midnight",
+          location: "Downtown Montréal",
+          languages: ["French", "English", "Spanish"],
+          services: ["Tantric Massage", "Duo Massage", "Hot Stone Massage"],
+        },
+        {
+          id: "camille",
+          name: "Camille",
+          bio: "Composed and discreet, her calming presence invites you to simply let go.",
+          schedule: "Available until 9:30 PM",
+          location: "Downtown Montréal",
+          languages: ["French", "English"],
+          services: ["Swedish Massage", "Aromatherapy", "Hot Oil Body Treatment"],
+        },
+        {
+          id: "ines",
+          name: "Inès",
+          bio: "Quiet elegance and genuine care, devoted entirely to your moment of escape.",
+          schedule: "Available until 11:30 PM",
+          location: "Downtown Montréal",
+          languages: ["French", "English"],
+          services: ["Hot Stone Massage", "Tantric Massage", "Aromatherapy"],
+        },
+        {
+          id: "jade",
+          name: "Jade",
+          bio: "Freshness and sensitivity meet in a warm, deeply attentive presence.",
+          schedule: "Available until 10:30 PM",
+          location: "Downtown Montréal",
+          languages: ["French", "English"],
+          services: ["Swedish Massage", "Duo Massage", "Aromatherapy"],
+        },
+        {
+          id: "nora",
+          name: "Nora",
+          bio: "Natural grace and a genuine smile — she joins the floor later today.",
+          schedule: "Available from 6:00 PM",
+          location: "Downtown Montréal",
+          languages: ["French", "English"],
+          services: ["Swedish Massage", "Hot Oil Body Treatment", "Hot Stone Massage"],
+        },
+        {
+          id: "lea",
+          name: "Léa",
+          bio: "A delicate new presence, looking forward to welcoming you soon.",
+          schedule: "Available from 7:00 PM",
+          location: "Downtown Montréal",
+          languages: ["French", "English"],
+          services: ["Swedish Massage", "Aromatherapy", "Duo Massage"],
+        },
+        {
+          id: "maya",
+          name: "Maya",
+          bio: "A team favorite, she’ll be back tomorrow to welcome you.",
+          schedule: "Off today — back tomorrow",
+          location: "Downtown Montréal",
+          languages: ["French", "English", "Spanish"],
+          services: ["Tantric Massage", "Hot Stone Massage", "Duo Massage"],
+        },
+        {
+          id: "chloe",
+          name: "Chloé",
+          bio: "A gentle, soothing presence, currently resting for the day.",
+          schedule: "Off today",
+          location: "Downtown Montréal",
+          languages: ["French", "English"],
+          services: ["Swedish Massage", "Aromatherapy", "Hot Oil Body Treatment"],
+        },
+      ],
+    },
+    services: {
+      eyebrow: "Our Menu of Experiences",
+      title: "Services & Rates",
+      subtitle: "Open 7 days a week",
+      minutesLabel: "minutes",
+      twoHandsLabel: "Two Hands",
+      fourHandsLabel: "Four Hands",
+      ctaBook: "Book This Experience",
+      bookAria: "Book the {duration}-minute experience",
+      popularBadge: "Most Popular",
+      cards: [
+        {
+          duration: "30",
+          description:
+            "A swift, focused immersion — full intensity, with no compromise on the artistry of touch.",
+          priceTwo: "$40",
+          priceFour: "$80",
+        },
+        {
+          duration: "45",
+          description:
+            "The perfect balance of depth and ease, for a moment fully savored and unhurried.",
+          priceTwo: "$50",
+          priceFour: "$100",
+        },
+        {
+          duration: "60",
+          description:
+            "The signature Elite One experience, in its fullest and most generous form.",
+          priceTwo: "$60",
+          priceFour: "$120",
+        },
+      ],
+    },
+    hiring: {
+      eyebrow: "Join Our Team",
+      title: "A refined place to work",
+      paragraph:
+        "Elite One Spa is looking for professional, reliable and respectful hostesses to join a close-knit team, in an elegant and caring environment.",
+      paragraph2: "This position is reserved exclusively for candidates 18 years of age and older, no exceptions.",
+      highlights: [
+        {
+          title: "Safe & Respectful Environment",
+          description:
+            "An attentive team and a setting designed with your safety and well-being in mind, at all times.",
+        },
+        {
+          title: "Confidentiality & Discretion",
+          description: "Your privacy is protected with the utmost care, at every step.",
+        },
+        {
+          title: "Flexible Hours",
+          description: "Availability that fits your life, with no rigid constraints.",
+        },
+        {
+          title: "Training & Support",
+          description: "Thorough onboarding from day one, and ongoing support after that.",
+        },
+        {
+          title: "Personal Limits Respected",
+          description: "Your boundaries and consent always come first, without exception.",
+        },
+        {
+          title: "No Pressure, No Judgment",
+          description: "You move at your own pace, in a climate of trust and mutual respect.",
+        },
+      ],
+      note: "Applications are confidential and reviewed with discretion.",
+      form: {
+        title: "Apply Now",
+        subtitle: "It only takes a few minutes.",
+        fields: {
+          fullName: { label: "Full Name", placeholder: "Your first and last name" },
+          ageConfirm: { label: "I am 18 years old or older" },
+          phone: { label: "Phone", placeholder: "(514) 000-0000" },
+          email: { label: "Email", placeholder: "you@example.com" },
+          availability: { label: "Availability", placeholder: "e.g. evenings, weekends" },
+          experience: {
+            label: "Previous Experience",
+            placeholder: "Briefly tell us about your background",
+            optionalTag: "Optional",
+          },
+          message: {
+            label: "Message / Introduction",
+            placeholder: "Introduce yourself in a few words",
+          },
+          consent: { label: "I agree to be contacted about my application" },
+        },
+        errors: {
+          required: "This field is required.",
+          ageRequired: "You must confirm you are 18 or older to apply.",
+          consentRequired: "Please agree to be contacted to continue.",
+          invalidEmail: "Please enter a valid email address.",
+          invalidPhone: "Please enter a valid phone number.",
+        },
+        submit: "Submit Application",
+        submitting: "Opening your email app…",
+        successTitle: "Email App Opened",
+        successMessage:
+          "Your email app opened with your application already drafted. Just hit Send to submit it to us.",
+        resetCta: "Submit another application",
+      },
+    },
+    contact: {
+      badge: "Contact 24/7",
+      number: "514 543 8344",
+      numberHref: "+15145438344",
+      subtitle: "Private appointments • Discreet service • Downtown Montréal",
+      callAria: "Call Elite One Spa at 514 543 8344",
+      bookNow: "Book Now",
+      bookAria: "Book a session at Elite One Spa",
+    },
+    contactSection: {
+      eyebrow: "Get in touch",
+      title: "Contact Elite One Spa",
+      paragraph:
+        "Every inquiry is handled with the utmost discretion. Whether you're booking a private session or simply have a question, our team responds promptly and in complete confidentiality.",
+      form: {
+        fields: {
+          fullName: { label: "Full Name", placeholder: "Your first and last name" },
+          phone: { label: "Phone", placeholder: "(514) 000-0000" },
+          email: { label: "Email", placeholder: "you@example.com" },
+          subject: { label: "Subject", placeholder: "e.g. Booking, general question" },
+          message: { label: "Message", placeholder: "Write your message here…" },
+        },
+        errors: {
+          required: "This field is required.",
+          invalidEmail: "Please enter a valid email address.",
+          invalidPhone: "Please enter a valid phone number.",
+        },
+        submit: "Send Message",
+      },
+      mapTitle: "Elite One Spa location on Google Maps",
+      openInMaps: "Open in Google Maps",
+      openInMapsAria: "Open Elite One Spa in Google Maps",
+      addressAria: "Open Elite One Spa's address in Google Maps",
+      hoursLabel: "Open 7 Days a Week",
+      ageLabel: "18+ Only",
+    },
+    footer: {
+      logoAria: "Elite One Spa — Home",
+      tagline:
+        "Elite One Spa offers a private and refined experience in the heart of Montréal. Every visit is designed around discretion, comfort and personalized attention, within an elegant setting reserved for adults. Our team is committed to creating a welcoming atmosphere where each guest can relax, disconnect and enjoy a moment entirely devoted to them.",
+      contactTitle: "Get in Touch",
+      address: "1621 St-Laurent Blvd, Montréal, QC",
+      addressAria: "Open Elite One Spa's address in Google Maps",
+      email: "info@eliteonespa.ca",
+      emailAria: "Email Elite One Spa",
+      hoursLabel: "Hours",
+      hoursValue: "Open 7 Days a Week",
+      linksTitle: "Quick Links",
+      links: {
+        treatments: "Treatments",
+        availability: "Availability",
+        hiring: "Hiring",
+        contact: "Contact",
+        privacy: "Privacy Policy",
+        terms: "Terms",
+      },
+      trustTitle: "The Elite One Experience",
+      trust: {
+        rating: "4.9/5 Guest Experience",
+        discreet: "Discreet Service",
+        downtown: "Downtown Montréal",
+        adultsOnly: "18+ Only",
+        openDaily: "Open 7 Days",
+      },
+      bookAppointment: "Book Appointment",
+      bookAppointmentAria: "Book an appointment at Elite One Spa",
     },
     ageGate: {
       eyebrow: "Restricted Access",

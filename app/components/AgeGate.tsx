@@ -4,6 +4,8 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { useLanguage } from "@/app/lib/language/LanguageContext";
+import { useBodyScrollLock } from "@/app/lib/useBodyScrollLock";
+import { useModalFocusTrap } from "@/app/lib/useModalFocusTrap";
 import LanguageSwitcher from "./LanguageSwitcher";
 
 const EXIT_URL = "https://www.google.com";
@@ -20,14 +22,11 @@ export default function AgeGate({ onValidated }: AgeGateProps) {
   const [status, setStatus] = useState<GateStatus>("open");
   const prefersReducedMotion = useReducedMotion();
   const closeTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
   const { t } = useLanguage();
 
-  useEffect(() => {
-    document.body.style.overflow = status === "open" || status === "closing" ? "hidden" : "";
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [status]);
+  useBodyScrollLock(status !== "closed");
+  useModalFocusTrap(dialogRef, status !== "closed");
 
   useEffect(() => {
     return () => {
@@ -54,23 +53,24 @@ export default function AgeGate({ onValidated }: AgeGateProps) {
 
   return (
     <div
+      ref={dialogRef}
       role="dialog"
       aria-modal="true"
       aria-labelledby="age-gate-title"
-      className="fixed inset-0 z-[100] flex items-center justify-center overflow-hidden bg-[var(--color-black)] transition-opacity ease-[cubic-bezier(0.19,1,0.22,1)]"
+      tabIndex={-1}
+      className="fixed inset-0 z-[100] flex overflow-y-auto bg-[var(--color-black)] transition-opacity ease-[cubic-bezier(0.19,1,0.22,1)]"
       style={{
         transitionDuration: `${prefersReducedMotion ? 0 : FADE_MS}ms`,
         opacity: status === "closing" ? 0 : 1,
       }}
     >
       {/* Hero actuel, réutilisé en arrière-plan fortement flouté */}
-      <div className="absolute inset-0 scale-110">
+      <div className="fixed inset-0 scale-110">
         <Image
-          src="/hero/Hero.webp"
+          src="/hero/Hero-01.webp"
           alt=""
           fill
-          preload
-          loading="eager"
+          priority
           quality={75}
           sizes="100vw"
           className="object-cover object-center blur-3xl"
@@ -79,11 +79,11 @@ export default function AgeGate({ onValidated }: AgeGateProps) {
 
       {/* Overlay noir profond 90-95% avec teinte rose/prune */}
       <div
-        className="absolute inset-0"
+        className="fixed inset-0"
         style={{ backgroundColor: "rgba(5,4,5,0.93)" }}
       />
       <div
-        className="absolute inset-0"
+        className="fixed inset-0"
         style={{
           backgroundImage: [
             "radial-gradient(ellipse 75% 60% at 50% 8%, rgba(74,22,38,0.4), transparent 62%)",
@@ -94,13 +94,13 @@ export default function AgeGate({ onValidated }: AgeGateProps) {
       />
 
       {/* Sélecteur de langue, discret, coin supérieur droit */}
-      <div className="absolute right-5 top-5 z-20 sm:right-8 sm:top-8">
+      <div className="fixed right-5 top-5 z-20 sm:right-8 sm:top-8">
         <LanguageSwitcher className="text-[0.62rem] opacity-70 transition-opacity duration-300 hover:opacity-100" />
       </div>
 
       {/* Contenu */}
       <motion.div
-        className="container relative z-10 flex flex-col items-center px-6 text-center"
+        className="container relative z-10 m-auto flex shrink-0 flex-col items-center px-6 py-10 text-center xl:py-0"
         initial={{ opacity: 0, y: 18 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{
@@ -118,8 +118,7 @@ export default function AgeGate({ onValidated }: AgeGateProps) {
             src="/logo/Logo-Elite-One-Spa.webp"
             alt="Elite One Spa"
             fill
-            preload
-            loading="eager"
+            priority
             sizes="200px"
             className="object-contain"
             style={{ filter: "drop-shadow(0 10px 32px rgba(5,4,5,0.5))" }}
@@ -128,13 +127,13 @@ export default function AgeGate({ onValidated }: AgeGateProps) {
 
         <p className="eyebrow mb-6">{t.ageGate.eyebrow}</p>
 
-        <h1
+        <p
           id="age-gate-title"
-          className="max-w-2xl text-balance leading-[1.25]"
+          className="heading-xl max-w-2xl text-balance leading-[1.25]"
           style={{ letterSpacing: "0.015em" }}
         >
           {t.ageGate.title}
-        </h1>
+        </p>
 
         <p className="mt-4 text-[0.7rem] font-medium uppercase tracking-[0.22em] text-[var(--color-champagne-dark)]">
           {t.ageGate.subtitle}

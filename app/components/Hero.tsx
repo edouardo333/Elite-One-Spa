@@ -6,13 +6,19 @@ import { motion, useReducedMotion } from "framer-motion";
 import { useLanguage } from "@/app/lib/language/LanguageContext";
 
 const SLIDE_SOURCES = [
-  "/hero/Hero-01.webp",
-  "/hero/Hero-02.webp",
-  "/hero/Hero-03.webp",
-  "/hero/Hero-04.webp",
+  "/hero/desktop-01.webp",
+  "/hero/desktop-02.webp",
+  "/hero/desktop-03.webp",
+  "/hero/desktop-04.webp",
+];
+const MOBILE_SLIDE_SOURCES = [
+  "/hero/mobile-01.webp",
+  "/hero/mobile-02.webp",
+  "/hero/mobile-03.webp",
+  "/hero/mobile-04.webp",
 ];
 
-const DISPLAY_SECONDS = 7;
+const DISPLAY_SECONDS = 8;
 const FADE_SECONDS = 1.8;
 const CYCLE_SECONDS = DISPLAY_SECONDS + FADE_SECONDS;
 
@@ -49,14 +55,38 @@ const PARTICLES = generateParticles();
 
 export default function Hero() {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
   const prefersReducedMotion = useReducedMotion();
   const { t } = useLanguage();
 
-  const slides = SLIDE_SOURCES.map((src, i) => ({
-    src,
-    alt: t.hero.slideAlts[i],
-  }));
+ const currentSources = isMobile
+  ? MOBILE_SLIDE_SOURCES
+  : SLIDE_SOURCES;
+const mobilePositions = [
+  "50% 50%",
+  "50% 45%",
+  "50% 50%",
+  "50% 45%",
+];
+const slides = currentSources.map((src, i) => ({
+  src,
+  alt: t.hero.slideAlts[i],
+}));
+useEffect(() => {
+  const mediaQuery = window.matchMedia("(max-width: 768px)");
 
+  const updateMobileState = () => {
+    setIsMobile(mediaQuery.matches);
+  };
+
+  updateMobileState();
+
+  mediaQuery.addEventListener("change", updateMobileState);
+
+  return () => {
+    mediaQuery.removeEventListener("change", updateMobileState);
+  };
+}, []);
   useEffect(() => {
     if (prefersReducedMotion) return;
     const interval = setInterval(() => {
@@ -68,7 +98,7 @@ export default function Hero() {
   return (
     <section
       id="accueil"
-      className="relative isolate flex h-[100dvh] min-h-[560px] w-full items-center justify-center overflow-hidden bg-[var(--color-black)]"
+      className="relative isolate flex min-h-[max(560px,100dvh)] w-full items-center justify-center overflow-hidden bg-[var(--color-black)] xl:h-[100dvh] xl:min-h-[560px]"
     >
       {/* Crossfading Ken Burns background */}
       <div className="absolute inset-0 z-0">
@@ -98,9 +128,16 @@ export default function Hero() {
                   fill
                   sizes="100vw"
                   quality={90}
-                  preload={i === 0}
-                  loading="eager"
-                  className="object-cover object-center"
+                  priority={i === 0}
+                  loading={i === 0 ? undefined : "lazy"}
+                  style={{
+  objectPosition: isMobile
+    ? mobilePositions[i]
+    : "50% 50%",
+}}
+                  className={`object-cover ${
+isMobile ? "object-center" : "object-center"
+}`}
                 />
               </motion.div>
             </motion.div>
@@ -220,7 +257,7 @@ export default function Hero() {
       )}
 
       {/* Content */}
-      <div className="container relative z-20 flex flex-col items-center px-6 py-36 text-center sm:py-40">
+      <div className="container relative z-20 flex flex-col items-center px-6 pt-20 pb-32 text-center sm:pt-28 sm:pb-36 xl:py-40">
         {/* Central legibility overlay — deepens only behind the content block */}
         <div
           className="pointer-events-none absolute inset-0 -z-10"
@@ -283,7 +320,7 @@ export default function Hero() {
                 alt="Elite One Spa"
                 fill
                 sizes="283px"
-                preload
+                priority
                 className="object-contain"
                 style={{
                   filter: "drop-shadow(0 10px 32px rgba(5,4,5,0.5))",
@@ -328,7 +365,7 @@ export default function Hero() {
 
         <div className="mt-14 flex flex-col items-center gap-5 sm:flex-row sm:gap-6">
           <motion.a
-            href="#reservation"
+            href="tel:+15145438344"
             className="btn btn-primary min-w-[230px]"
             initial={{ opacity: 0, y: 14, filter: "blur(6px)" }}
             animate={{

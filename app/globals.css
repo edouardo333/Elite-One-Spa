@@ -69,6 +69,16 @@
 html {
   color-scheme: dark;
   scroll-behavior: smooth;
+  /* Keeps section titles clear of the fixed navbar for every anchor jump —
+     native (Footer links, Hero scroll cue) and JS-driven alike. Mirrors the
+     navbar's own height + SCROLL_OFFSET_GAP (see Navbar.tsx). */
+  scroll-padding-top: 6.1rem;
+}
+
+@media (min-width: 640px) {
+  html {
+    scroll-padding-top: 6.6rem;
+  }
 }
 
 body {
@@ -123,6 +133,19 @@ h1 {
   font-weight: 500;
 }
 
+/* Visually matches h1 without being a second <h1> on the page — used by
+   overlays (Age Gate) that sit above the main content, which already has
+   its own h1 in the Hero section. */
+.heading-xl {
+  font-family: var(--font-heading);
+  font-weight: 500;
+  color: var(--color-offwhite);
+  letter-spacing: 0.01em;
+  line-height: 1.15;
+  margin: 0;
+  font-size: clamp(2.5rem, 1.6rem + 4vw, 4.75rem);
+}
+
 h2 {
   font-size: clamp(2rem, 1.4rem + 2.4vw, 3.25rem);
 }
@@ -142,6 +165,30 @@ p {
   font-weight: 300;
   line-height: 1.75;
   margin: 0;
+}
+
+/* Hiring section — hover micro-interaction on benefit rows.
+   Uses a dedicated class + specificity because the unlayered `p{}` rule
+   above always wins over Tailwind's layered utility classes. */
+.hiring-highlight-title {
+  color: var(--color-offwhite);
+  transition: color 350ms var(--ease-default);
+}
+.hiring-highlight-desc {
+  color: var(--color-text-muted);
+  transition: color 350ms var(--ease-default);
+}
+.group:hover .hiring-highlight-title {
+  color: #e8bfae;
+}
+.group:hover .hiring-highlight-desc {
+  color: rgba(244, 239, 232, 0.85);
+}
+@media (prefers-reduced-motion: reduce) {
+  .hiring-highlight-title,
+  .hiring-highlight-desc {
+    transition: none;
+  }
 }
 
 small,
@@ -264,6 +311,233 @@ a:focus-visible {
   color: var(--color-champagne-soft);
   background-color: rgba(244, 239, 232, 0.07);
   box-shadow: 0 0 24px rgba(232, 201, 171, 0.12);
+}
+
+/* Mobile nav click-through guard — the dropdown panel is a position:fixed
+   sibling of <main>, stacked above it purely via z-index (header is z-50,
+   the page content behind it is not). That comparison only holds once the
+   panel's own open/close transition has fully settled; anywhere it hasn't
+   (e.g. slower rendering under Chrome's device-toolbar/responsive-mode
+   emulation), the still-collapsed panel doesn't yet cover the screen area
+   its items are drawn at, so hit-testing falls through to whatever page
+   content — typically the Hero — sits underneath at that point, and clicks
+   land there instead of on the nav links. Body scroll is already locked
+   while the menu is open (see useBodyScrollLock in Navbar.tsx), so nothing
+   under the header needs to be interactive during that window anyway —
+   disabling pointer-events on <main> for as long as aria-expanded is true
+   removes the race entirely, independent of animation timing or z-index. */
+body:has(button[aria-controls="mobile-nav-panel"][aria-expanded="true"]) #main-content {
+  pointer-events: none;
+}
+
+/* Navbar — premium link hover interactions */
+.nav-link {
+  color: rgba(244, 239, 232, 0.88);
+  transition:
+    color 360ms var(--ease-luxury),
+    transform 360ms var(--ease-luxury),
+    filter 360ms var(--ease-luxury);
+}
+
+.nav-link[data-active="true"] {
+  color: var(--color-champagne);
+}
+
+.nav-link:hover,
+.nav-link:focus-visible {
+  color: #e8c2ba;
+  transform: translateY(-2px);
+  filter: drop-shadow(0 0 8px rgba(232, 168, 168, 0.35));
+}
+
+.nav-link__line {
+  background-color: var(--color-champagne);
+  transform: scaleX(0);
+  transition:
+    transform 360ms var(--ease-luxury),
+    background-color 360ms var(--ease-luxury);
+}
+
+.nav-link[data-active="true"] .nav-link__line {
+  transform: scaleX(1);
+}
+
+.nav-link:hover .nav-link__line,
+.nav-link:focus-visible .nav-link__line {
+  transform: scaleX(1);
+  background-color: #e8c2ba;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-link,
+  .nav-link__line {
+    transition: none;
+  }
+  .nav-link:hover,
+  .nav-link:focus-visible {
+    transform: none;
+  }
+}
+
+/* About accordion — premium card hover interactions */
+.about-card-halo {
+  inset: -14px;
+  background: radial-gradient(
+    ellipse 80% 80% at 50% 50%,
+    rgba(232, 120, 150, 0.28),
+    transparent 72%
+  );
+  opacity: 0;
+  filter: blur(22px);
+  transition: opacity 500ms var(--ease-luxury);
+}
+
+.group:hover .about-card-halo,
+.group:focus-within .about-card-halo {
+  opacity: 1;
+}
+
+.about-card {
+  background-color: rgba(244, 239, 232, 0.03);
+  border-color: var(--color-border);
+  box-shadow: none;
+  transition:
+    background-color 700ms var(--ease-luxury),
+    border-color 700ms var(--ease-luxury),
+    box-shadow 700ms var(--ease-luxury);
+}
+
+.about-card[data-open="true"] {
+  background-color: rgba(232, 120, 150, 0.08);
+  border-color: rgba(232, 120, 150, 0.32);
+  box-shadow:
+    0 0 34px rgba(232, 120, 150, 0.16),
+    inset 0 0 22px rgba(232, 120, 150, 0.05);
+}
+
+.group:hover .about-card,
+.group:focus-within .about-card {
+  border-color: rgba(232, 168, 168, 0.55);
+  background-color: rgba(232, 120, 150, 0.12);
+  box-shadow:
+    0 0 30px rgba(232, 120, 150, 0.22),
+    inset 0 0 20px rgba(232, 120, 150, 0.07);
+}
+
+.group:hover .about-card[data-open="true"],
+.group:focus-within .about-card[data-open="true"] {
+  background-color: rgba(232, 120, 150, 0.16);
+  border-color: rgba(232, 168, 168, 0.62);
+  box-shadow:
+    0 0 42px rgba(232, 120, 150, 0.3),
+    inset 0 0 24px rgba(232, 120, 150, 0.1);
+}
+
+.about-card-title {
+  color: var(--color-offwhite);
+  transition: color 400ms var(--ease-luxury);
+}
+
+.group:hover .about-card-title,
+.group:focus-within .about-card-title {
+  color: var(--color-champagne-soft);
+}
+
+.about-card-icon {
+  transition:
+    transform 400ms var(--ease-luxury),
+    filter 400ms var(--ease-luxury);
+}
+
+.group:hover .about-card-icon,
+.group:focus-within .about-card-icon {
+  transform: rotate(14deg);
+  filter: drop-shadow(0 0 7px rgba(232, 201, 171, 0.6));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .about-card-halo,
+  .about-card,
+  .about-card-title,
+  .about-card-icon {
+    transition: none;
+  }
+  .group:hover .about-card-icon,
+  .group:focus-within .about-card-icon {
+    transform: none;
+  }
+}
+
+/* Form fields — elegant focus ring (text inputs, textareas, checkboxes).
+   Written as plain CSS rather than Tailwind arbitrary-value utilities: this
+   Next.js/Turbopack build silently drops multi-value bracket utilities like
+   `shadow-[0_0_0_3px_rgba(...)]` from the compiled stylesheet, so the glow
+   must live here to actually render. */
+.input-field {
+  outline: none;
+  transition:
+    border-color var(--transition-base),
+    box-shadow var(--transition-base);
+}
+
+.input-field:focus-visible {
+  border-color: rgba(232, 201, 171, 0.6);
+  box-shadow: 0 0 0 3px rgba(232, 201, 171, 0.28);
+}
+
+.checkbox-box {
+  transition:
+    border-color var(--transition-base),
+    background-color var(--transition-base),
+    box-shadow var(--transition-base);
+}
+
+.checkbox-box:has(:focus-visible) {
+  box-shadow: 0 0 0 3px rgba(232, 201, 171, 0.35);
+}
+
+.checkbox-input {
+  outline: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .input-field,
+  .checkbox-box {
+    transition: none;
+  }
+}
+
+/* Skip link — hidden until keyboard-focused, lets keyboard/screen-reader
+   users bypass the repeated navbar + floating widgets and jump straight to
+   the main content. */
+.skip-link {
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 200;
+  transform: translateY(-150%);
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius-full);
+  background-color: var(--color-black);
+  color: var(--color-champagne-soft);
+  border: 1px solid rgba(232, 201, 171, 0.5);
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  background-image: none;
+  transition: transform 200ms var(--ease-default);
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skip-link {
+    transition: none;
+  }
 }
 
 /* Layout helpers */
