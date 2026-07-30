@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import BusinessCardPlaceholder from "./BusinessCardPlaceholder";
+import BusinessCard from "./BusinessCard";
 
 export const metadata: Metadata = {
   alternates: {
@@ -8,5 +8,5 @@ export const metadata: Metadata = {
 };
 
 export default function BusinessCardPage() {
-  return <BusinessCardPlaceholder />;
+  return <BusinessCard />;
 }
