@@ -212,6 +212,7 @@ export interface Translations {
       contact: string;
       privacy: string;
       terms: string;
+      saveContact: string;
     };
     trustTitle: string;
     trust: {
@@ -667,6 +668,7 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
         contact: "Contact",
         privacy: "Politique de confidentialité",
         terms: "Conditions d’utilisation",
+        saveContact: "Enregistrer le contact",
       },
       trustTitle: "L’expérience Elite One",
       trust: {
@@ -1124,6 +1126,7 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
         contact: "Contact",
         privacy: "Privacy Policy",
         terms: "Terms",
+        saveContact: "Save Contact",
       },
       trustTitle: "The Elite One Experience",
       trust: {

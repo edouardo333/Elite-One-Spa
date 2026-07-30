@@ -219,6 +219,18 @@ a:focus-visible {
   background-size: 100% 1px;
 }
 
+.footer-legal-link {
+  color: rgba(180, 180, 180, 0.55);
+  background-image: none;
+  transition: color 350ms ease-out;
+}
+
+.footer-legal-link:hover,
+.footer-legal-link:focus-visible {
+  color: rgba(205, 205, 205, 0.8);
+  background-size: 0% 1px;
+}
+
 /* Buttons */
 .btn {
   position: relative;

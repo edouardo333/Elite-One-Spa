@@ -102,6 +102,28 @@ function FooterLink({
   );
 }
 
+function LegalLink({
+  href,
+  children,
+  disabled,
+}: {
+  href: string;
+  children: React.ReactNode;
+  disabled?: boolean;
+}) {
+  return (
+    <a
+      href={href}
+      aria-disabled={disabled || undefined}
+      onClick={disabled ? (e) => e.preventDefault() : undefined}
+      className="footer-legal-link text-[0.72rem] tracking-[0.02em]"
+      style={footerLinkStyle}
+    >
+      {children}
+    </a>
+  );
+}
+
 export default function Footer() {
   const { t } = useLanguage();
   const prefersReducedMotion = useReducedMotion();
@@ -318,8 +340,9 @@ export default function Footer() {
             Created by Brochu Digital
           </p>
           <div className="mt-2 flex items-center gap-6">
-            <FooterLink href="#" disabled>{t.footer.links.privacy}</FooterLink>
-            <FooterLink href="#" disabled>{t.footer.links.terms}</FooterLink>
+            <LegalLink href="#" disabled>{t.footer.links.privacy}</LegalLink>
+            <LegalLink href="#" disabled>{t.footer.links.terms}</LegalLink>
+            <LegalLink href="/business-card">{t.footer.links.saveContact}</LegalLink>
           </div>
         </div>
       </div>
