@@ -4,6 +4,7 @@ import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
 import LanguageSwitcher from "@/app/components/LanguageSwitcher";
 import { useLanguage } from "@/app/lib/language/LanguageContext";
+import { useIsMobile } from "@/app/lib/useIsMobile";
 
 // Replace these with the real values when available.
 const CONTACT_LINKS = {
@@ -107,6 +108,7 @@ function ShareIcon({ className }: { className?: string }) {
 export default function BusinessCard() {
   const { t } = useLanguage();
   const prefersReducedMotion = useReducedMotion();
+  const isMobile = useIsMobile();
   const telHref = `tel:${t.contact.numberHref}`;
 
   return (
@@ -128,7 +130,7 @@ export default function BusinessCard() {
             filter: "blur(60px)",
           }}
           animate={
-            prefersReducedMotion ? undefined : { opacity: [0.6, 0.95, 0.6] }
+            prefersReducedMotion || isMobile ? undefined : { opacity: [0.6, 0.95, 0.6] }
           }
           transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
         />

@@ -1,7 +1,9 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { useRef } from "react";
+import { motion, useInView, useReducedMotion } from "framer-motion";
 import { useLanguage } from "@/app/lib/language/LanguageContext";
+import { useIsMobile } from "@/app/lib/useIsMobile";
 
 function PhoneIcon({ className }: { className?: string }) {
   return (
@@ -23,10 +25,14 @@ function PhoneIcon({ className }: { className?: string }) {
 export default function ContactBand() {
   const { t } = useLanguage();
   const prefersReducedMotion = useReducedMotion();
+  const isMobile = useIsMobile();
   const telHref = `tel:${t.contact.numberHref}`;
+  const sectionRef = useRef<HTMLElement>(null);
+  const isInView = useInView(sectionRef, { margin: "200px 0px 200px 0px" });
+  const animateHalos = !prefersReducedMotion && !isMobile && isInView;
 
   return (
-    <section className="relative overflow-hidden bg-[var(--color-plum)] py-20 sm:py-28">
+    <section ref={sectionRef} className="relative overflow-hidden bg-[var(--color-plum)] py-20 sm:py-28">
       {/* Voile de continuité — reprend la tombée sombre de la section précédente pour une jonction naturelle */}
       <div
         className="pointer-events-none absolute inset-x-0 top-0 z-0 h-28 sm:h-40"
@@ -52,9 +58,9 @@ export default function ContactBand() {
           filter: "blur(70px)",
         }}
         animate={
-          prefersReducedMotion
-            ? undefined
-            : { x: ["0%", "4%", "-2%", "0%"], y: ["0%", "-3%", "2%", "0%"] }
+          animateHalos
+            ? { x: ["0%", "4%", "-2%", "0%"], y: ["0%", "-3%", "2%", "0%"] }
+            : undefined
         }
         transition={{ duration: 26, repeat: Infinity, ease: "easeInOut" }}
       />
@@ -66,9 +72,9 @@ export default function ContactBand() {
           filter: "blur(70px)",
         }}
         animate={
-          prefersReducedMotion
-            ? undefined
-            : { x: ["0%", "-3%", "3%", "0%"], y: ["0%", "3%", "-2%", "0%"] }
+          animateHalos
+            ? { x: ["0%", "-3%", "3%", "0%"], y: ["0%", "3%", "-2%", "0%"] }
+            : undefined
         }
         transition={{ duration: 30, repeat: Infinity, ease: "easeInOut", delay: 4 }}
       />

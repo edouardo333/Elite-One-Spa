@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { useLanguage } from "@/app/lib/language/LanguageContext";
+import { useIsMobile } from "@/app/lib/useIsMobile";
 
 const SLIDE_SOURCES = [
   "/hero/desktop-01.webp",
@@ -55,7 +56,7 @@ const PARTICLES = generateParticles();
 
 export default function Hero() {
   const [activeIndex, setActiveIndex] = useState(0);
-  const [isMobile, setIsMobile] = useState(false);
+  const isMobile = useIsMobile();
   const prefersReducedMotion = useReducedMotion();
   const { t } = useLanguage();
 
@@ -73,21 +74,6 @@ const slides = currentSources.map((src, i) => ({
   alt: t.hero.slideAlts[i],
 }));
 useEffect(() => {
-  const mediaQuery = window.matchMedia("(max-width: 768px)");
-
-  const updateMobileState = () => {
-    setIsMobile(mediaQuery.matches);
-  };
-
-  updateMobileState();
-
-  mediaQuery.addEventListener("change", updateMobileState);
-
-  return () => {
-    mediaQuery.removeEventListener("change", updateMobileState);
-  };
-}, []);
-  useEffect(() => {
     if (prefersReducedMotion) return;
     const interval = setInterval(() => {
       setActiveIndex((current) => (current + 1) % slides.length);
@@ -189,8 +175,11 @@ isMobile ? "object-center" : "object-center"
         />
       </div>
 
-      {/* Ambiance — fog, lens flare, dust */}
-      {!prefersReducedMotion && (
+      {/* Ambiance — fog, lens flare, dust. Skipped on mobile: a dozen+
+          concurrently-animating blurred/screen-blended layers is one of the
+          heaviest compositing patterns for mobile Safari's GPU process and a
+          common trigger for tab crashes during scroll. */}
+      {!prefersReducedMotion && !isMobile && (
         <div className="pointer-events-none absolute inset-0 z-10 overflow-hidden">
           {/* Drifting fog banks */}
           <motion.div

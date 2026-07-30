@@ -1,8 +1,9 @@
 "use client";
 
-import { useId, useState, type FormEvent } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { useId, useRef, useState, type FormEvent } from "react";
+import { motion, useInView, useReducedMotion } from "framer-motion";
 import { useLanguage } from "@/app/lib/language/LanguageContext";
+import { useIsMobile } from "@/app/lib/useIsMobile";
 
 type Errors = Partial<
   Record<"fullName" | "phone" | "email" | "availability" | "age" | "consent", string>
@@ -120,7 +121,11 @@ const inputErrorStyle: React.CSSProperties = {
 export default function Hiring() {
   const { t } = useLanguage();
   const prefersReducedMotion = useReducedMotion();
+  const isMobile = useIsMobile();
   const uid = useId();
+  const sectionRef = useRef<HTMLElement>(null);
+  const isInView = useInView(sectionRef, { margin: "200px 0px 200px 0px" });
+  const animateHalos = !prefersReducedMotion && !isMobile && isInView;
 
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
@@ -196,7 +201,11 @@ export default function Hiring() {
   }
 
   return (
-    <section id="carrieres" className="relative overflow-hidden bg-[var(--color-black)] py-14 sm:py-18">
+    <section
+      ref={sectionRef}
+      id="carrieres"
+      className="relative overflow-hidden bg-[var(--color-black)] py-14 sm:py-18"
+    >
       {/* Continuity veil — picks up the dark tail of the previous scene */}
       <div
         className="pointer-events-none absolute inset-x-0 top-0 z-0 h-32 sm:h-44"
@@ -227,9 +236,9 @@ export default function Hiring() {
             filter: "blur(72px)",
           }}
           animate={
-            prefersReducedMotion
-              ? undefined
-              : { x: ["0%", "3%", "-2%", "0%"], y: ["0%", "-3%", "2%", "0%"] }
+            animateHalos
+              ? { x: ["0%", "3%", "-2%", "0%"], y: ["0%", "-3%", "2%", "0%"] }
+              : undefined
           }
           transition={{ duration: 28, repeat: Infinity, ease: "easeInOut" }}
         />
@@ -241,9 +250,9 @@ export default function Hiring() {
             filter: "blur(74px)",
           }}
           animate={
-            prefersReducedMotion
-              ? undefined
-              : { x: ["0%", "-3%", "2%", "0%"], y: ["0%", "3%", "-2%", "0%"] }
+            animateHalos
+              ? { x: ["0%", "-3%", "2%", "0%"], y: ["0%", "3%", "-2%", "0%"] }
+              : undefined
           }
           transition={{ duration: 32, repeat: Infinity, ease: "easeInOut", delay: 5 }}
         />

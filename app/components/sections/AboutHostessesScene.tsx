@@ -5,6 +5,7 @@ import { motion, useInView, useReducedMotion } from "framer-motion";
 import About from "./About";
 import Hostesses from "./Hostesses";
 import Services from "./Services";
+import { useIsMobile } from "@/app/lib/useIsMobile";
 
 /**
  * Shared cinematic backdrop for the About + Hostesses + Services sections. A
@@ -13,14 +14,17 @@ import Services from "./Services";
  */
 export default function AboutHostessesScene() {
   const prefersReducedMotion = useReducedMotion();
+  const isMobile = useIsMobile();
   const sceneRef = useRef<HTMLDivElement>(null);
   // This backdrop spans three full sections and runs 7 concurrent Infinity
   // animations — by far the densest cluster of continuous motion on the page.
   // Gate it on viewport presence (generous margin, so nothing pops mid-scroll)
   // so it stops driving frames while the user is up at the Hero or down at
-  // the Footer.
+  // the Footer. Also disabled outright on mobile: this many concurrently
+  // animated blurred/screen-blended layers is a common trigger for mobile
+  // Safari GPU-process crashes during scroll.
   const isInView = useInView(sceneRef, { margin: "400px 0px 400px 0px" });
-  const animateBackdrop = !prefersReducedMotion && isInView;
+  const animateBackdrop = !prefersReducedMotion && !isMobile && isInView;
 
   return (
     <div ref={sceneRef} className="relative overflow-hidden bg-[var(--color-black)]">

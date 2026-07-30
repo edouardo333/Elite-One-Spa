@@ -1,8 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import { motion, useReducedMotion } from "framer-motion";
+import { useRef } from "react";
+import { motion, useInView, useReducedMotion } from "framer-motion";
 import { useLanguage } from "@/app/lib/language/LanguageContext";
+import { useIsMobile } from "@/app/lib/useIsMobile";
 
 function PhoneIcon({ className }: { className?: string }) {
   return (
@@ -127,8 +129,12 @@ function LegalLink({
 export default function Footer() {
   const { t } = useLanguage();
   const prefersReducedMotion = useReducedMotion();
+  const isMobile = useIsMobile();
   const telHref = `tel:${t.contact.numberHref}`;
   const mailHref = `mailto:${t.footer.email}`;
+  const footerRef = useRef<HTMLElement>(null);
+  const isInView = useInView(footerRef, { margin: "200px 0px 200px 0px" });
+  const animateHalos = !prefersReducedMotion && !isMobile && isInView;
 
   const trustItems = [
     { icon: StarIcon, label: t.footer.trust.rating },
@@ -146,7 +152,10 @@ export default function Footer() {
   };
 
   return (
-    <footer className="relative overflow-hidden bg-[var(--color-black)] pt-14 pb-32 sm:pt-18 sm:pb-32 xl:pb-10">
+    <footer
+      ref={footerRef}
+      className="relative overflow-hidden bg-[var(--color-black)] pt-14 pb-32 sm:pt-18 sm:pb-32 xl:pb-10"
+    >
       {/* Continuity veil — picks up the dark tail of the previous section */}
       <div
         className="pointer-events-none absolute inset-x-0 top-0 z-0 h-32 sm:h-44"
@@ -176,9 +185,9 @@ export default function Footer() {
             filter: "blur(80px)",
           }}
           animate={
-            prefersReducedMotion
-              ? undefined
-              : { x: ["0%", "3%", "-2%", "0%"], y: ["0%", "-2%", "2%", "0%"] }
+            animateHalos
+              ? { x: ["0%", "3%", "-2%", "0%"], y: ["0%", "-2%", "2%", "0%"] }
+              : undefined
           }
           transition={{ duration: 30, repeat: Infinity, ease: "easeInOut" }}
         />
@@ -189,9 +198,9 @@ export default function Footer() {
             filter: "blur(80px)",
           }}
           animate={
-            prefersReducedMotion
-              ? undefined
-              : { x: ["0%", "-3%", "2%", "0%"], y: ["0%", "2%", "-2%", "0%"] }
+            animateHalos
+              ? { x: ["0%", "-3%", "2%", "0%"], y: ["0%", "2%", "-2%", "0%"] }
+              : undefined
           }
           transition={{ duration: 34, repeat: Infinity, ease: "easeInOut", delay: 5 }}
         />

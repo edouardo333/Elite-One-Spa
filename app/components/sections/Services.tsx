@@ -2,6 +2,7 @@
 
 import { motion, useReducedMotion } from "framer-motion";
 import { useLanguage } from "@/app/lib/language/LanguageContext";
+import { useIsMobile } from "@/app/lib/useIsMobile";
 
 function HandDots({ count }: { count: number }) {
   return (
@@ -37,6 +38,8 @@ function PriceRow({ label, price, dots }: { label: string; price: string; dots: 
 export default function Services() {
   const { t } = useLanguage();
   const prefersReducedMotion = useReducedMotion();
+  const isMobile = useIsMobile();
+  const animateHalos = !prefersReducedMotion && !isMobile;
 
   return (
     <section id="soins" className="relative py-14 sm:py-18">
@@ -95,9 +98,9 @@ export default function Services() {
                     filter: "blur(46px)",
                   }}
                   animate={
-                    prefersReducedMotion
-                      ? undefined
-                      : { x: ["0%", "3%", "-3%", "0%"], y: ["0%", "-3%", "2%", "0%"] }
+                    animateHalos
+                      ? { x: ["0%", "3%", "-3%", "0%"], y: ["0%", "-3%", "2%", "0%"] }
+                      : undefined
                   }
                   transition={{
                     duration: 24 + index * 3,

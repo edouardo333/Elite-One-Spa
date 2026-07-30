@@ -337,9 +337,17 @@ a:focus-visible {
    while the menu is open (see useBodyScrollLock in Navbar.tsx), so nothing
    under the header needs to be interactive during that window anyway —
    disabling pointer-events on <main> for as long as aria-expanded is true
-   removes the race entirely, independent of animation timing or z-index. */
+   removes the race entirely, independent of animation timing or z-index.
+   Navbar itself (the header, including the burger button and the dropdown
+   links) is a child of #main-content, so it must be explicitly re-enabled
+   below — otherwise this guard also blocks the menu it's meant to protect,
+   including the very button that closes it. */
 body:has(button[aria-controls="mobile-nav-panel"][aria-expanded="true"]) #main-content {
   pointer-events: none;
+}
+
+body:has(button[aria-controls="mobile-nav-panel"][aria-expanded="true"]) #main-content > header {
+  pointer-events: auto;
 }
 
 /* Navbar — premium link hover interactions */
@@ -558,6 +566,21 @@ body:has(button[aria-controls="mobile-nav-panel"][aria-expanded="true"]) #main-c
   max-width: 1280px;
   margin-inline: auto;
   padding-inline: clamp(1.25rem, 4vw, 4rem);
+}
+
+/* Mobile Safari performance guard — `backdrop-filter` is recomputed on every
+   compositor frame for whatever scrolls underneath it, and this site layers
+   many backdrop-blurred glass cards/panels (About accordion, Services cards,
+   Contact/Hiring panels, Hostesses cards, nav dropdown, buttons). That combo
+   is one of the most common causes of dropped frames and outright tab
+   crashes on iOS Safari while scrolling. Blur is kept (not removed, to
+   preserve the glass look) but its radius is cut down on small screens. */
+@media (max-width: 768px) {
+  .backdrop-blur-xl,
+  .backdrop-blur-2xl {
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+  }
 }
 
 /* Motion */
