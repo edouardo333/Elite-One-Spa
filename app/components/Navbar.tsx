@@ -175,7 +175,6 @@ export default function Navbar() {
 
   return (
     <motion.header
-      ref={headerRef}
       initial={{ opacity: 0, y: -12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.9, delay: 0.2, ease: [0.19, 1, 0.22, 1] }}
@@ -195,7 +194,10 @@ export default function Navbar() {
         boxShadow: scrolled ? "0 8px 32px rgba(5,4,5,0.28)" : "none",
       }}
     >
-      <nav className="container flex items-center justify-between gap-4 px-6 py-4 sm:py-5">
+      <nav
+        ref={headerRef}
+        className="container flex items-center justify-between gap-4 px-6 py-4 sm:py-5"
+      >
         <a
           href="#accueil"
           onClick={(e) => handleAnchorClick(e, "#accueil")}

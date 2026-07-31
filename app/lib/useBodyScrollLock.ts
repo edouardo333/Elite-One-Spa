@@ -48,7 +48,19 @@ export function useBodyScrollLock(active: boolean) {
         previousTop = null;
         previousWidth = null;
         previousOverflow = null;
+
+        // `html { scroll-behavior: smooth }` (globals.css) applies to this
+        // restore too, since window.scrollTo(x, y) is shorthand for
+        // behavior: "auto", which defers to the CSS property. Left alone,
+        // the page would visibly animate from 0 (where the fixed-position
+        // trick pins scrollTop while locked) up to savedScrollY — a
+        // down/up flash — instead of landing instantly. Toggling the CSS
+        // property to "auto" for just this call forces an instant jump.
+        const root = document.documentElement;
+        const previousScrollBehavior = root.style.scrollBehavior;
+        root.style.scrollBehavior = "auto";
         window.scrollTo(0, savedScrollY);
+        root.style.scrollBehavior = previousScrollBehavior;
       }
     };
   }, [active]);

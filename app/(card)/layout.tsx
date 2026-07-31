@@ -36,7 +36,7 @@ export default function CardRootLayout({
   return (
     <html
       lang="fr"
-      className={`${cormorantGaramond.variable} ${inter.variable} h-full antialiased`}
+      className={`${cormorantGaramond.variable} ${inter.variable} h-full antialiased bg-[var(--color-black)]`}
     >
       <body className="min-h-full flex flex-col">
         <LanguageProvider>
