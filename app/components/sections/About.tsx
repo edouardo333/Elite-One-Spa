@@ -3,6 +3,7 @@
 import { useState, type MouseEvent as ReactMouseEvent } from "react";
 import { motion, useMotionValue, useReducedMotion, useSpring } from "framer-motion";
 import { useLanguage } from "@/app/lib/language/LanguageContext";
+import { useIsMobile } from "@/app/lib/useIsMobile";
 
 const PARALLAX_MAX = 4;
 
@@ -12,12 +13,14 @@ function AccordionCard({
   isOpen,
   onToggle,
   prefersReducedMotion,
+  isMobile,
 }: {
   item: { title: string; content: string };
   index: number;
   isOpen: boolean;
   onToggle: () => void;
   prefersReducedMotion: boolean | null;
+  isMobile: boolean;
 }) {
   const triggerId = `about-accordion-trigger-${index}`;
   const panelId = `about-accordion-panel-${index}`;
@@ -48,10 +51,10 @@ function AccordionCard({
   return (
     <motion.div
       className="group relative"
-      style={{ x: springX, y: springY }}
-      onMouseEnter={handleMouseEnter}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
+      style={isMobile ? undefined : { x: springX, y: springY }}
+      onMouseEnter={isMobile ? undefined : handleMouseEnter}
+      onMouseMove={isMobile ? undefined : handleMouseMove}
+      onMouseLeave={isMobile ? undefined : handleMouseLeave}
     >
       <div className="about-card-halo pointer-events-none absolute -z-10 rounded-[var(--radius-md)]" aria-hidden="true" />
       <div
@@ -85,33 +88,48 @@ function AccordionCard({
             />
           </span>
         </button>
-        <motion.div
-          id={panelId}
-          role="region"
-          aria-labelledby={triggerId}
-          aria-hidden={!isOpen}
-          initial={false}
-          animate={{
-            height: isOpen ? "auto" : 0,
-            opacity: isOpen ? 1 : 0,
-          }}
-          transition={{
-            height: {
-              duration: prefersReducedMotion ? 0 : 0.7,
-              ease: [0.16, 1, 0.3, 1],
-            },
-            opacity: {
-              duration: prefersReducedMotion ? 0 : 0.55,
-              delay: isOpen ? 0.08 : 0,
-              ease: "easeInOut",
-            },
-          }}
-          style={{ overflow: "hidden" }}
-        >
-          <p className="max-w-[54ch] px-6 pb-9 text-sm leading-[2] sm:px-8 sm:pb-10">
-            {item.content}
-          </p>
-        </motion.div>
+        {isMobile ? (
+          isOpen && (
+            <div
+              id={panelId}
+              role="region"
+              aria-labelledby={triggerId}
+              className={prefersReducedMotion ? undefined : "about-card-panel-mobile"}
+            >
+              <p className="max-w-[54ch] px-6 pb-9 text-sm leading-[2] sm:px-8 sm:pb-10">
+                {item.content}
+              </p>
+            </div>
+          )
+        ) : (
+          <motion.div
+            id={panelId}
+            role="region"
+            aria-labelledby={triggerId}
+            aria-hidden={!isOpen}
+            initial={false}
+            animate={{
+              height: isOpen ? "auto" : 0,
+              opacity: isOpen ? 1 : 0,
+            }}
+            transition={{
+              height: {
+                duration: prefersReducedMotion ? 0 : 0.7,
+                ease: [0.16, 1, 0.3, 1],
+              },
+              opacity: {
+                duration: prefersReducedMotion ? 0 : 0.55,
+                delay: isOpen ? 0.08 : 0,
+                ease: "easeInOut",
+              },
+            }}
+            style={{ overflow: "hidden" }}
+          >
+            <p className="max-w-[54ch] px-6 pb-9 text-sm leading-[2] sm:px-8 sm:pb-10">
+              {item.content}
+            </p>
+          </motion.div>
+        )}
       </div>
     </motion.div>
   );
@@ -120,6 +138,7 @@ function AccordionCard({
 export default function About() {
   const { t } = useLanguage();
   const prefersReducedMotion = useReducedMotion();
+  const isMobile = useIsMobile();
   const [openIndex, setOpenIndex] = useState(0);
 
   return (
@@ -212,6 +231,7 @@ export default function About() {
                 isOpen={i === openIndex}
                 onToggle={() => setOpenIndex(i === openIndex ? -1 : i)}
                 prefersReducedMotion={prefersReducedMotion}
+                isMobile={isMobile}
               />
             ))}
           </motion.div>

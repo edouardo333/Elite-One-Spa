@@ -597,6 +597,26 @@ body:has(button[aria-controls="mobile-nav-panel"][aria-expanded="true"]) #main-c
   }
 }
 
+/* About accordion — mobile panel open. Height/max-height animation on the
+   panel forced a layout reflow of the whole card stack on every frame
+   (visible page jank + slow "push down" on tap), so on mobile the panel is
+   mounted/unmounted in normal document flow instead (a single, cheap
+   reflow) and only fades in via opacity — no height, no layout animation. */
+@media (max-width: 768px) {
+  .about-card-panel-mobile {
+    animation: about-panel-fade-in 150ms ease-out both;
+  }
+}
+
+@keyframes about-panel-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 /* Scroll-reveal kill switch — every section entrance driven by framer-motion's
    whileInView (About, Services, Hostesses, Hiring, Contact, ContactBand,
    Footer) marks its wrapper with [data-reveal]. Framer Motion's `initial`
