@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type MouseEvent as ReactMouseEvent } from "react";
+import { memo, useCallback, useState, type MouseEvent as ReactMouseEvent } from "react";
 import { motion, useMotionValue, useReducedMotion, useSpring } from "framer-motion";
 import { useLanguage } from "@/app/lib/language/LanguageContext";
 import { useIsMobile } from "@/app/lib/useIsMobile";
@@ -127,10 +127,13 @@ function AccordionCard({
  * and, on iOS Safari, could stall the ambient audio when the main thread hung.
  * This component has no motion values, no springs, no AnimatePresence and no
  * hover/hover-glow CSS — content mounts/unmounts in normal flow and the only
- * animation is a capped 150ms opacity fade (see `.about-card-panel-mobile`
- * in globals.css).
+ * animation is a capped 80ms opacity fade (see `.about-card-panel-mobile`
+ * in globals.css). Memoized with a stable `onToggle` (index-based, from the
+ * parent) so switching cards only re-renders the two affected cards, not
+ * every card in the stack — and never touches the unrelated AudioPlayer
+ * subtree, which reads its state from a module-level singleton anyway.
  */
-function MobileAccordionCard({
+const MobileAccordionCard = memo(function MobileAccordionCard({
   item,
   index,
   isOpen,
@@ -140,11 +143,12 @@ function MobileAccordionCard({
   item: { title: string; content: string };
   index: number;
   isOpen: boolean;
-  onToggle: () => void;
+  onToggle: (index: number) => void;
   prefersReducedMotion: boolean | null;
 }) {
   const triggerId = `about-accordion-trigger-${index}`;
   const panelId = `about-accordion-panel-${index}`;
+  const handleClick = useCallback(() => onToggle(index), [onToggle, index]);
 
   return (
     <div
@@ -154,7 +158,7 @@ function MobileAccordionCard({
       <button
         type="button"
         id={triggerId}
-        onClick={onToggle}
+        onClick={handleClick}
         aria-expanded={isOpen}
         aria-controls={panelId}
         className="flex w-full items-center justify-between gap-6 px-6 py-6 text-left"
@@ -186,13 +190,16 @@ function MobileAccordionCard({
       )}
     </div>
   );
-}
+});
 
 export default function About() {
   const { t } = useLanguage();
   const prefersReducedMotion = useReducedMotion();
   const isMobile = useIsMobile();
   const [openIndex, setOpenIndex] = useState(0);
+  const handleMobileToggle = useCallback((i: number) => {
+    setOpenIndex((prev) => (prev === i ? -1 : i));
+  }, []);
 
   return (
     <section id="apropos" className="relative pt-28 pb-14 sm:pt-36 sm:pb-18">
@@ -283,7 +290,7 @@ export default function About() {
                   item={item}
                   index={i}
                   isOpen={i === openIndex}
-                  onToggle={() => setOpenIndex(i === openIndex ? -1 : i)}
+                  onToggle={handleMobileToggle}
                   prefersReducedMotion={prefersReducedMotion}
                 />
               ) : (

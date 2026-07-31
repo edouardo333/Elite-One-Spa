@@ -691,7 +691,7 @@ body:has(button[aria-controls="mobile-nav-panel"][aria-expanded="true"]) #main-c
    reflow) and only fades in via opacity — no height, no layout animation. */
 @media (max-width: 768px) {
   .about-card-panel-mobile {
-    animation: about-panel-fade-in 150ms ease-out both;
+    animation: about-panel-fade-in 80ms linear both;
   }
 }
 
