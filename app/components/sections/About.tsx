@@ -13,14 +13,12 @@ function AccordionCard({
   isOpen,
   onToggle,
   prefersReducedMotion,
-  isMobile,
 }: {
   item: { title: string; content: string };
   index: number;
   isOpen: boolean;
   onToggle: () => void;
   prefersReducedMotion: boolean | null;
-  isMobile: boolean;
 }) {
   const triggerId = `about-accordion-trigger-${index}`;
   const panelId = `about-accordion-panel-${index}`;
@@ -51,10 +49,10 @@ function AccordionCard({
   return (
     <motion.div
       className="group relative"
-      style={isMobile ? undefined : { x: springX, y: springY }}
-      onMouseEnter={isMobile ? undefined : handleMouseEnter}
-      onMouseMove={isMobile ? undefined : handleMouseMove}
-      onMouseLeave={isMobile ? undefined : handleMouseLeave}
+      style={{ x: springX, y: springY }}
+      onMouseEnter={handleMouseEnter}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
     >
       <div className="about-card-halo pointer-events-none absolute -z-10 rounded-[var(--radius-md)]" aria-hidden="true" />
       <div
@@ -88,50 +86,105 @@ function AccordionCard({
             />
           </span>
         </button>
-        {isMobile ? (
-          isOpen && (
-            <div
-              id={panelId}
-              role="region"
-              aria-labelledby={triggerId}
-              className={prefersReducedMotion ? undefined : "about-card-panel-mobile"}
-            >
-              <p className="max-w-[54ch] px-6 pb-9 text-sm leading-[2] sm:px-8 sm:pb-10">
-                {item.content}
-              </p>
-            </div>
-          )
-        ) : (
-          <motion.div
-            id={panelId}
-            role="region"
-            aria-labelledby={triggerId}
-            aria-hidden={!isOpen}
-            initial={false}
-            animate={{
-              height: isOpen ? "auto" : 0,
-              opacity: isOpen ? 1 : 0,
-            }}
-            transition={{
-              height: {
-                duration: prefersReducedMotion ? 0 : 0.7,
-                ease: [0.16, 1, 0.3, 1],
-              },
-              opacity: {
-                duration: prefersReducedMotion ? 0 : 0.55,
-                delay: isOpen ? 0.08 : 0,
-                ease: "easeInOut",
-              },
-            }}
-            style={{ overflow: "hidden" }}
-          >
-            <p className="max-w-[54ch] px-6 pb-9 text-sm leading-[2] sm:px-8 sm:pb-10">
-              {item.content}
-            </p>
-          </motion.div>
-        )}
+        <motion.div
+          id={panelId}
+          role="region"
+          aria-labelledby={triggerId}
+          aria-hidden={!isOpen}
+          initial={false}
+          animate={{
+            height: isOpen ? "auto" : 0,
+            opacity: isOpen ? 1 : 0,
+          }}
+          transition={{
+            height: {
+              duration: prefersReducedMotion ? 0 : 0.7,
+              ease: [0.16, 1, 0.3, 1],
+            },
+            opacity: {
+              duration: prefersReducedMotion ? 0 : 0.55,
+              delay: isOpen ? 0.08 : 0,
+              ease: "easeInOut",
+            },
+          }}
+          style={{ overflow: "hidden" }}
+        >
+          <p className="max-w-[54ch] px-6 pb-9 text-sm leading-[2] sm:px-8 sm:pb-10">
+            {item.content}
+          </p>
+        </motion.div>
       </div>
     </motion.div>
+  );
+}
+
+/**
+ * Mobile treatment accordion — a deliberately separate, non-Framer-Motion code
+ * path. The desktop AccordionCard's mouse-parallax springs, hover/focus glow,
+ * and JS-driven height/opacity animation were still running (or partially
+ * triggering via `:focus-within` on tap) on mobile even after earlier passes
+ * only tamed the panel height animation, which is what caused the lag/freeze
+ * and, on iOS Safari, could stall the ambient audio when the main thread hung.
+ * This component has no motion values, no springs, no AnimatePresence and no
+ * hover/hover-glow CSS — content mounts/unmounts in normal flow and the only
+ * animation is a capped 150ms opacity fade (see `.about-card-panel-mobile`
+ * in globals.css).
+ */
+function MobileAccordionCard({
+  item,
+  index,
+  isOpen,
+  onToggle,
+  prefersReducedMotion,
+}: {
+  item: { title: string; content: string };
+  index: number;
+  isOpen: boolean;
+  onToggle: () => void;
+  prefersReducedMotion: boolean | null;
+}) {
+  const triggerId = `about-accordion-trigger-${index}`;
+  const panelId = `about-accordion-panel-${index}`;
+
+  return (
+    <div
+      data-open={isOpen}
+      className="about-card overflow-hidden rounded-[var(--radius-md)] border"
+    >
+      <button
+        type="button"
+        id={triggerId}
+        onClick={onToggle}
+        aria-expanded={isOpen}
+        aria-controls={panelId}
+        className="flex w-full items-center justify-between gap-6 px-6 py-6 text-left"
+      >
+        <span className="about-card-title text-base font-medium">{item.title}</span>
+        <span className="about-card-icon relative flex h-4 w-4 shrink-0 items-center justify-center">
+          <span
+            className="absolute h-px w-4"
+            style={{ backgroundColor: "var(--color-champagne)" }}
+          />
+          <span
+            className="absolute h-4 w-px"
+            style={{
+              backgroundColor: "var(--color-champagne)",
+              transform: isOpen ? "rotate(90deg)" : "rotate(0deg)",
+            }}
+          />
+        </span>
+      </button>
+      {isOpen && (
+        <div
+          id={panelId}
+          role="region"
+          aria-labelledby={triggerId}
+          className={prefersReducedMotion ? undefined : "about-card-panel-mobile"}
+        >
+          <p className="max-w-[54ch] px-6 pb-28 text-sm leading-[2]">{item.content}</p>
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -221,19 +274,29 @@ export default function About() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.9, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-            className="flex flex-col gap-3.5"
+            className="flex flex-col gap-3.5 pb-16 md:pb-0"
           >
-            {t.about.items.map((item, i) => (
-              <AccordionCard
-                key={item.title}
-                item={item}
-                index={i}
-                isOpen={i === openIndex}
-                onToggle={() => setOpenIndex(i === openIndex ? -1 : i)}
-                prefersReducedMotion={prefersReducedMotion}
-                isMobile={isMobile}
-              />
-            ))}
+            {t.about.items.map((item, i) =>
+              isMobile ? (
+                <MobileAccordionCard
+                  key={item.title}
+                  item={item}
+                  index={i}
+                  isOpen={i === openIndex}
+                  onToggle={() => setOpenIndex(i === openIndex ? -1 : i)}
+                  prefersReducedMotion={prefersReducedMotion}
+                />
+              ) : (
+                <AccordionCard
+                  key={item.title}
+                  item={item}
+                  index={i}
+                  isOpen={i === openIndex}
+                  onToggle={() => setOpenIndex(i === openIndex ? -1 : i)}
+                  prefersReducedMotion={prefersReducedMotion}
+                />
+              )
+            )}
           </motion.div>
         </div>
       </div>

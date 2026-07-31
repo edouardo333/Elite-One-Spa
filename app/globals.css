@@ -632,6 +632,58 @@ body:has(button[aria-controls="mobile-nav-panel"][aria-expanded="true"]) #main-c
   }
 }
 
+/* About accordion — mobile. The mobile card uses a completely separate React
+   code path (MobileAccordionCard in About.tsx) with no Framer Motion, no
+   mouse-parallax, and no halo element at all. But the `.about-card` /
+   `.about-card-title` / `.about-card-icon` classes are shared with the
+   desktop card, and their hover-only rules are written as `:hover`/
+   `:focus-within` — on touch devices, tapping a button focuses it, so
+   `:focus-within` matched on every tap and kept re-triggering the blurred
+   halo (`filter: blur`) and the animated `box-shadow`/`background-color`/
+   `border-color` glow on every open/close. That per-tap filter+shadow
+   repaint across a stack of cards is what caused the severe lag/freeze,
+   not just the old height animation. These rules force the glow off and
+   collapse the transition to instant so only the static open/closed
+   colors from `[data-open]` remain. */
+@media (max-width: 768px) {
+  .about-card-halo {
+    display: none;
+  }
+
+  .about-card,
+  .about-card-title,
+  .about-card-icon {
+    transition: none !important;
+  }
+
+  .about-card,
+  .group:hover .about-card,
+  .group:focus-within .about-card {
+    box-shadow: none !important;
+    border-color: var(--color-border);
+    background-color: rgba(244, 239, 232, 0.03);
+  }
+
+  .about-card[data-open="true"],
+  .group:hover .about-card[data-open="true"],
+  .group:focus-within .about-card[data-open="true"] {
+    box-shadow: none !important;
+    background-color: rgba(232, 120, 150, 0.08);
+    border-color: rgba(232, 120, 150, 0.32);
+  }
+
+  .group:hover .about-card-title,
+  .group:focus-within .about-card-title {
+    color: var(--color-offwhite);
+  }
+
+  .group:hover .about-card-icon,
+  .group:focus-within .about-card-icon {
+    transform: none;
+    filter: none;
+  }
+}
+
 /* About accordion — mobile panel open. Height/max-height animation on the
    panel forced a layout reflow of the whole card stack on every frame
    (visible page jank + slow "push down" on tap), so on mobile the panel is
