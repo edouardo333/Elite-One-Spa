@@ -19,6 +19,14 @@ let previousOverflow: string | null = null;
 // then restore the real scroll position on unlock. Without this, closing a
 // modal on iOS can leave the page scrolled to the top or the view visually
 // "stuck" even though overflow is no longer hidden.
+// Read-only escape hatch for code outside the lock/unlock pair (e.g. the
+// homepage's post-navigation scroll handler) that needs to know whether any
+// overlay — Age Gate, music consent, mobile nav — currently has the body
+// pinned, without itself taking part in the lock.
+export function isBodyScrollLocked(): boolean {
+  return lockCount > 0;
+}
+
 export function useBodyScrollLock(active: boolean) {
   useEffect(() => {
     if (!active) return;

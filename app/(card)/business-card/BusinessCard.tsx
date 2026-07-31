@@ -5,6 +5,11 @@ import { motion, useReducedMotion } from "framer-motion";
 import LanguageSwitcher from "@/app/components/LanguageSwitcher";
 import { useLanguage } from "@/app/lib/language/LanguageContext";
 import { useIsMobile } from "@/app/lib/useIsMobile";
+import { setScrollIntent } from "@/app/lib/scrollIntent";
+
+// Must match the id of the "Who's Available Now" section on the homepage
+// (app/components/sections/Hostesses.tsx).
+const AVAILABILITY_SECTION_ID = "hotesses";
 
 // Replace these with the real values when available.
 const CONTACT_LINKS = {
@@ -283,7 +288,8 @@ export default function BusinessCard() {
             is visually grouped and slightly de-emphasized below it. */}
         <div className="mt-10 flex w-full flex-col items-stretch">
           <motion.a
-            href="/#soins"
+            href="/"
+            onClick={() => setScrollIntent(AVAILABILITY_SECTION_ID)}
             aria-label={t.businessCard.ctaBookAria}
             className="btn btn-primary w-full !py-4 !text-[0.86rem] fade-in"
             style={{ animationDelay: "0.45s", letterSpacing: "0.05em" }}
