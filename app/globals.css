@@ -92,6 +92,8 @@ body {
     linear-gradient(180deg, var(--color-black-deep) 0%, var(--color-black) 100%);
   background-attachment: fixed;
   color: var(--color-text-primary);
+  /* Overridden to scroll (not fixed) below 768px — see the mobile
+     performance guard further down for why. */
   font-family: var(--font-body);
   font-weight: 300;
   font-size: 1rem;
@@ -568,18 +570,52 @@ body:has(button[aria-controls="mobile-nav-panel"][aria-expanded="true"]) #main-c
   padding-inline: clamp(1.25rem, 4vw, 4rem);
 }
 
-/* Mobile Safari performance guard — `backdrop-filter` is recomputed on every
-   compositor frame for whatever scrolls underneath it, and this site layers
-   many backdrop-blurred glass cards/panels (About accordion, Services cards,
-   Contact/Hiring panels, Hostesses cards, nav dropdown, buttons). That combo
-   is one of the most common causes of dropped frames and outright tab
+/* Mobile Safari/Chrome performance guard — `backdrop-filter` is recomputed on
+   every compositor frame for whatever scrolls underneath it, and this site
+   layers many backdrop-blurred glass cards/panels (About accordion, Services
+   cards, Contact/Hiring panels, Hostesses cards, nav dropdown, buttons). That
+   combo is one of the most common causes of dropped frames and outright tab
    crashes on iOS Safari while scrolling. Blur is kept (not removed, to
-   preserve the glass look) but its radius is cut down on small screens. */
+   preserve the glass look) but its radius is cut down on small screens.
+   `background-attachment: fixed` on <body> is disabled outright — mobile
+   browsers frequently can't promote a fixed background to its own compositor
+   layer, so it repaints on every scroll frame instead. */
 @media (max-width: 768px) {
   .backdrop-blur-xl,
-  .backdrop-blur-2xl {
-    backdrop-filter: blur(10px) !important;
-    -webkit-backdrop-filter: blur(10px) !important;
+  .backdrop-blur-2xl,
+  .backdrop-blur-md {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+
+  body {
+    background-attachment: scroll;
+  }
+
+  .about-card-halo {
+    filter: blur(14px);
+  }
+}
+
+/* Scroll-reveal kill switch — every section entrance driven by framer-motion's
+   whileInView (About, Services, Hostesses, Hiring, Contact, ContactBand,
+   Footer) marks its wrapper with [data-reveal]. Framer Motion's `initial`
+   prop is only evaluated once, at mount — it can't be made conditional on a
+   `useIsMobile()` hook, because that hook necessarily starts at `false` (to
+   match the server-rendered markup) and only flips after a post-mount
+   effect, by which point the mount snapshot is already locked in. That's
+   what caused the exact bug this rule fixes: sections stayed at opacity 0
+   until the real IntersectionObserver eventually fired on scroll, i.e.
+   "sections take too long to appear" / "stay invisible until you scroll".
+   A synchronous CSS override has no such timing gap — it applies at first
+   paint, before any JS runs, so mobile content is visible immediately and
+   the (now practically inert) whileInView call can never hide it again,
+   including on scrolling back up. Desktop is untouched. */
+@media (max-width: 768px), (prefers-reduced-motion: reduce) {
+  [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
   }
 }
 

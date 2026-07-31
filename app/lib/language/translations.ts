@@ -75,6 +75,8 @@ export interface Translations {
     bookAria: string;
     viewProfile: string;
     viewProfileAria: string;
+    showMore: string;
+    showMoreAria: string;
     placeholder: {
       title: string;
       subtitle: string;
@@ -392,6 +394,8 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
       bookAria: "Réserver une séance avec {name}",
       viewProfile: "Voir le profil",
       viewProfileAria: "Voir le profil de {name}",
+      showMore: "Voir plus d’hôtesses",
+      showMoreAria: "Afficher les hôtesses supplémentaires",
       placeholder: {
         title: "Portrait premium à venir",
         subtitle: "Portrait officiel disponible après approbation de la direction.",
@@ -852,6 +856,8 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
       bookAria: "Book a session with {name}",
       viewProfile: "View Profile",
       viewProfileAria: "View {name}'s profile",
+      showMore: "Show more hostesses",
+      showMoreAria: "Show additional hostesses",
       placeholder: {
         title: "Premium Portrait Coming Soon",
         subtitle: "Official portrait available after management approval.",

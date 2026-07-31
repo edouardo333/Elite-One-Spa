@@ -129,6 +129,7 @@ export default function About() {
         <div className="grid grid-cols-1 gap-16 lg:grid-cols-2 lg:gap-20">
           {/* Left — presentation */}
           <motion.div
+            data-reveal
             initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
@@ -136,6 +137,7 @@ export default function About() {
             className="flex flex-col"
           >
             <motion.p
+              data-reveal
               initial={{ opacity: 0, y: 12 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-80px" }}
@@ -145,6 +147,7 @@ export default function About() {
               {t.about.eyebrow}
             </motion.p>
             <motion.h2
+              data-reveal
               initial={{ opacity: 0, y: 18 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-80px" }}
@@ -194,6 +197,7 @@ export default function About() {
 
           {/* Right — accordion */}
           <motion.div
+            data-reveal
             initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}

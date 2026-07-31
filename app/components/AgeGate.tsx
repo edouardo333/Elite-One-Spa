@@ -6,6 +6,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import { useLanguage } from "@/app/lib/language/LanguageContext";
 import { useBodyScrollLock } from "@/app/lib/useBodyScrollLock";
 import { useModalFocusTrap } from "@/app/lib/useModalFocusTrap";
+import { useIsMobile } from "@/app/lib/useIsMobile";
 import LanguageSwitcher from "./LanguageSwitcher";
 
 const EXIT_URL = "https://www.google.com";
@@ -21,6 +22,7 @@ interface AgeGateProps {
 export default function AgeGate({ onValidated }: AgeGateProps) {
   const [status, setStatus] = useState<GateStatus>("open");
   const prefersReducedMotion = useReducedMotion();
+  const isMobile = useIsMobile();
   const closeTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
   const { t } = useLanguage();
@@ -67,13 +69,13 @@ export default function AgeGate({ onValidated }: AgeGateProps) {
       {/* Hero actuel, réutilisé en arrière-plan fortement flouté */}
       <div className="fixed inset-0 scale-110">
         <Image
-          src="/hero/Hero-01.webp"
+          src="/hero/desktop-01.webp"
           alt=""
           fill
           priority
           quality={75}
           sizes="100vw"
-          className="object-cover object-center blur-3xl"
+          className="object-cover object-center blur-lg sm:blur-3xl"
         />
       </div>
 
@@ -111,7 +113,7 @@ export default function AgeGate({ onValidated }: AgeGateProps) {
       >
         <motion.div
           className="relative mb-10 aspect-[3/2] w-[150px] sm:w-[180px] md:w-[200px]"
-          animate={prefersReducedMotion ? undefined : { scale: [1, 1.02, 1] }}
+          animate={prefersReducedMotion || isMobile ? undefined : { scale: [1, 1.02, 1] }}
           transition={{ duration: 9, repeat: Infinity, ease: "easeInOut" }}
         >
           <Image

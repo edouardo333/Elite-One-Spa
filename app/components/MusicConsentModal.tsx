@@ -8,6 +8,7 @@ import { markAudioSystemUnlocked, startAmbientAudio } from "./audio/useAudio";
 import { useLanguage } from "@/app/lib/language/LanguageContext";
 import { useBodyScrollLock } from "@/app/lib/useBodyScrollLock";
 import { useModalFocusTrap } from "@/app/lib/useModalFocusTrap";
+import { useIsMobile } from "@/app/lib/useIsMobile";
 
 const FADE_MS = 900;
 
@@ -20,6 +21,7 @@ interface MusicConsentModalProps {
 export default function MusicConsentModal({ onDismiss }: MusicConsentModalProps) {
   const [status, setStatus] = useState<ModalStatus>("open");
   const prefersReducedMotion = useReducedMotion();
+  const isMobile = useIsMobile();
   const closeTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
   const { t } = useLanguage();
@@ -82,13 +84,13 @@ export default function MusicConsentModal({ onDismiss }: MusicConsentModalProps)
       {/* Hero actuel, réutilisé en arrière-plan légèrement flouté */}
       <div className="fixed inset-0 scale-110">
         <Image
-          src="/hero/Hero-01.webp"
+          src="/hero/desktop-01.webp"
           alt=""
           fill
           loading="eager"
           quality={75}
           sizes="100vw"
-          className="object-cover object-center blur-2xl"
+          className="object-cover object-center blur-md sm:blur-2xl"
         />
       </div>
 
@@ -123,7 +125,7 @@ export default function MusicConsentModal({ onDismiss }: MusicConsentModalProps)
       >
         <motion.div
           className="relative mb-7 aspect-[3/2] w-[110px] sm:w-[130px]"
-          animate={prefersReducedMotion ? undefined : { scale: [1, 1.02, 1] }}
+          animate={prefersReducedMotion || isMobile ? undefined : { scale: [1, 1.02, 1] }}
           transition={{ duration: 9, repeat: Infinity, ease: "easeInOut" }}
         >
           <Image

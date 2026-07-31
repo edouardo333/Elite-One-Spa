@@ -160,7 +160,8 @@ isMobile ? "object-center" : "object-center"
               "radial-gradient(ellipse 78% 72% at 50% 46%, transparent 40%, rgba(5,4,5,0.52) 100%)",
           }}
         />
-        {/* Layer 4 — cinematic bloom */}
+        {/* Layer 4 — cinematic bloom. Static on mobile: one fewer perpetual
+            compositor animation running behind the whole hero at all times. */}
         <motion.div
           className="absolute inset-0"
           style={{
@@ -169,7 +170,7 @@ isMobile ? "object-center" : "object-center"
             mixBlendMode: "screen",
           }}
           animate={
-            prefersReducedMotion ? undefined : { opacity: [0.5, 0.85, 0.5] }
+            prefersReducedMotion || isMobile ? undefined : { opacity: [0.5, 0.85, 0.5] }
           }
           transition={{ duration: 11, repeat: Infinity, ease: "easeInOut" }}
         />
@@ -263,7 +264,9 @@ isMobile ? "object-center" : "object-center"
           transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
           className="group relative mb-12 flex items-center justify-center"
         >
-          {/* Ambient rose glow — slow breathing */}
+          {/* Ambient rose glow — slow breathing. Animating scale on a
+              blur()'d element forces the browser to re-rasterize the blur
+              every frame, so this stays static on mobile. */}
           <motion.div
             className="absolute rounded-full"
             style={{
@@ -274,7 +277,7 @@ isMobile ? "object-center" : "object-center"
               filter: "blur(30px)",
             }}
             animate={
-              prefersReducedMotion
+              prefersReducedMotion || isMobile
                 ? undefined
                 : { opacity: [0.6, 0.95, 0.6], scale: [0.95, 1.05, 0.95] }
             }
@@ -298,7 +301,7 @@ isMobile ? "object-center" : "object-center"
             <motion.div
               className="relative aspect-[3/2] w-[213px] sm:w-[251px] md:w-[283px]"
               animate={
-                prefersReducedMotion
+                prefersReducedMotion || isMobile
                   ? undefined
                   : { scale: [1, 1.025, 1] }
               }
@@ -420,7 +423,7 @@ isMobile ? "object-center" : "object-center"
               boxShadow: "0 0 6px rgba(232,201,171,0.8)",
             }}
             animate={
-              prefersReducedMotion
+              prefersReducedMotion || isMobile
                 ? undefined
                 : { y: [0, 34, 0], opacity: [0, 1, 1, 0] }
             }

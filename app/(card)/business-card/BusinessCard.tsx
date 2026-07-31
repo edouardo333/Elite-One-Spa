@@ -173,7 +173,7 @@ export default function BusinessCard() {
           <motion.div
             className="relative aspect-[3/2] w-[229px] sm:w-[257px]"
             animate={
-              prefersReducedMotion
+              prefersReducedMotion || isMobile
                 ? undefined
                 : { scale: [1, 1.025, 1], y: [0, -6, 0] }
             }

@@ -47,6 +47,7 @@ export default function Services() {
         {/* Header */}
         <div className="mx-auto max-w-2xl text-center">
           <motion.p
+            data-reveal
             initial={{ opacity: 0, y: 12 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-80px" }}
@@ -56,6 +57,7 @@ export default function Services() {
             {t.services.eyebrow}
           </motion.p>
           <motion.h2
+            data-reveal
             initial={{ opacity: 0, y: 18 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-80px" }}
@@ -65,6 +67,7 @@ export default function Services() {
             {t.services.title}
           </motion.h2>
           <motion.p
+            data-reveal
             initial={{ opacity: 0, y: 12 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-80px" }}
@@ -82,6 +85,7 @@ export default function Services() {
             return (
               <motion.div
                 key={card.duration}
+                data-reveal
                 initial={{ opacity: 0, y: 36 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-80px" }}

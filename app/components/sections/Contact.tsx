@@ -112,6 +112,13 @@ export default function Contact() {
   const sectionRef = useRef<HTMLElement>(null);
   const isInView = useInView(sectionRef, { margin: "200px 0px 200px 0px" });
   const animateHalos = !prefersReducedMotion && !isMobile && isInView;
+  // The Google Maps embed pulls its own third-party JS/CSS payload as soon as
+  // the iframe exists in the DOM — `loading="lazy"` alone didn't defer it in
+  // practice (it started fetching within ~30ms of page load, regardless of
+  // scroll position). Gating actual iframe creation behind a one-time
+  // "near viewport" check means it's never created at all until the user is
+  // close to scrolling it into view.
+  const mapNearViewport = useInView(sectionRef, { margin: "400px 0px 400px 0px", once: true });
 
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
@@ -164,6 +171,7 @@ export default function Contact() {
   }
 
   const fadeUp = {
+    "data-reveal": true,
     initial: { opacity: 0, y: 24 },
     whileInView: { opacity: 1, y: 0 },
     viewport: { once: true, margin: "-100px" },
@@ -407,17 +415,37 @@ export default function Contact() {
                 }}
               />
 
-              {/* Map */}
+              {/* Map — the iframe itself isn't created until the section is
+                  within 400px of the viewport (see mapNearViewport above),
+                  so the Google Maps third-party payload never loads for
+                  visitors who don't scroll this far. */}
               <div className="relative min-h-[280px] flex-1 sm:min-h-[320px]">
-                <iframe
-                  src={GOOGLE_MAPS_EMBED_SRC}
-                  title={t.contactSection.mapTitle}
-                  className="absolute inset-0 h-full w-full grayscale-[15%] transition-[filter] duration-500 ease-out group-hover:grayscale-0"
-                  style={{ border: 0 }}
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                  allowFullScreen
-                />
+                {mapNearViewport ? (
+                  <iframe
+                    src={GOOGLE_MAPS_EMBED_SRC}
+                    title={t.contactSection.mapTitle}
+                    className="absolute inset-0 h-full w-full grayscale-[15%] transition-[filter] duration-500 ease-out group-hover:grayscale-0"
+                    style={{ border: 0 }}
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    allowFullScreen
+                  />
+                ) : (
+                  <div
+                    aria-hidden="true"
+                    className="absolute inset-0 flex items-center justify-center"
+                    style={{
+                      backgroundImage: [
+                        "radial-gradient(ellipse 70% 60% at 50% 40%, rgba(232,120,150,0.1), transparent 70%)",
+                        "linear-gradient(180deg, rgba(20,11,16,0.65) 0%, rgba(10,9,11,0.8) 100%)",
+                      ].join(", "),
+                    }}
+                  >
+                    <span style={{ color: "var(--color-champagne)" }}>
+                      <PinIcon className="h-6 w-6 opacity-40" />
+                    </span>
+                  </div>
+                )}
                 {/* Subtle dark overlay to keep the map in tone with the site */}
                 <div
                   className="pointer-events-none absolute inset-0 transition-opacity duration-500 ease-out group-hover:opacity-60"

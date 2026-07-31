@@ -107,6 +107,7 @@ export default function ContactBand() {
 
       <div className="container relative z-10 flex flex-col items-center gap-8 text-center">
         <motion.div
+          data-reveal
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-60px" }}
@@ -118,6 +119,7 @@ export default function ContactBand() {
         </motion.div>
 
         <motion.div
+          data-reveal
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-60px" }}
@@ -146,6 +148,7 @@ export default function ContactBand() {
         </motion.div>
 
         <motion.p
+          data-reveal
           initial={{ opacity: 0, y: 12 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-60px" }}
@@ -155,23 +158,27 @@ export default function ContactBand() {
           {t.contact.subtitle}
         </motion.p>
 
-        <motion.a
-          href="tel:+15145438344"
-          aria-label={t.contact.bookAria}
+        <motion.div
+          data-reveal
           initial={{ opacity: 0, y: 14 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-60px" }}
           transition={{ duration: 0.8, delay: 0.28, ease: [0.19, 1, 0.22, 1] }}
-          whileHover={{
-            scale: 1.02,
-            y: -2,
-            transition: { type: "spring", stiffness: 400, damping: 20 },
-          }}
-          whileTap={{ scale: 0.98 }}
-          className="btn btn-primary mt-2 min-w-[230px]"
         >
-          {t.contact.bookNow}
-        </motion.a>
+          <motion.a
+            href="tel:+15145438344"
+            aria-label={t.contact.bookAria}
+            whileHover={{
+              scale: 1.02,
+              y: -2,
+              transition: { type: "spring", stiffness: 400, damping: 20 },
+            }}
+            whileTap={{ scale: 0.98 }}
+            className="btn btn-primary mt-2 min-w-[230px]"
+          >
+            {t.contact.bookNow}
+          </motion.a>
+        </motion.div>
       </div>
     </section>
   );

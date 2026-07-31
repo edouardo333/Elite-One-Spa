@@ -145,6 +145,7 @@ export default function Footer() {
   ];
 
   const fadeUp = {
+    "data-reveal": true,
     initial: { opacity: 0, y: 18 },
     whileInView: { opacity: 1, y: 0 },
     viewport: { once: true, margin: "-60px" },

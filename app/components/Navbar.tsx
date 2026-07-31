@@ -9,34 +9,37 @@ import {
   type CSSProperties,
   type MouseEvent,
 } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { useLanguage } from "@/app/lib/language/LanguageContext";
 import { useBodyScrollLock } from "@/app/lib/useBodyScrollLock";
+import { useIsMobile } from "@/app/lib/useIsMobile";
 import LanguageSwitcher from "./LanguageSwitcher";
 
 const SCROLL_OFFSET_GAP = 16;
+const MENU_TRANSITION_SECONDS = 0.28;
 
-function BurgerIcon({ open }: { open: boolean }) {
+function BurgerIcon({ open, prefersReducedMotion }: { open: boolean; prefersReducedMotion: boolean }) {
   const barStyle: CSSProperties = { backgroundColor: "var(--color-offwhite)" };
+  const duration = prefersReducedMotion ? 0 : 0.3;
   return (
     <span className="relative flex h-4 w-5 flex-col items-center justify-center" aria-hidden="true">
       <motion.span
         className="absolute h-px w-5 rounded-full"
         style={barStyle}
         animate={{ y: open ? 0 : -6, rotate: open ? 45 : 0 }}
-        transition={{ duration: 0.45, ease: [0.19, 1, 0.22, 1] }}
+        transition={{ duration, ease: [0.19, 1, 0.22, 1] }}
       />
       <motion.span
         className="absolute h-px w-5 rounded-full"
         style={barStyle}
         animate={{ opacity: open ? 0 : 1 }}
-        transition={{ duration: 0.25, ease: [0.19, 1, 0.22, 1] }}
+        transition={{ duration, ease: [0.19, 1, 0.22, 1] }}
       />
       <motion.span
         className="absolute h-px w-5 rounded-full"
         style={barStyle}
         animate={{ y: open ? 0 : 6, rotate: open ? -45 : 0 }}
-        transition={{ duration: 0.45, ease: [0.19, 1, 0.22, 1] }}
+        transition={{ duration, ease: [0.19, 1, 0.22, 1] }}
       />
     </span>
   );
@@ -47,6 +50,8 @@ export default function Navbar() {
   const [activeHref, setActiveHref] = useState("#accueil");
   const [mobileOpen, setMobileOpen] = useState(false);
   const { t } = useLanguage();
+  const prefersReducedMotion = !!useReducedMotion();
+  const isMobile = useIsMobile();
   const headerRef = useRef<HTMLElement>(null);
   const menuToggleRef = useRef<HTMLButtonElement>(null);
 
@@ -143,11 +148,29 @@ export default function Navbar() {
   const handleAnchorClick = useCallback(
     (event: MouseEvent<HTMLAnchorElement>, href: string) => {
       if (!href.startsWith("#")) return;
-      const didScroll = scrollToId(href.slice(1));
-      if (didScroll) event.preventDefault();
-      setMobileOpen(false);
+      event.preventDefault();
+      const id = href.slice(1);
+
+      // When the mobile panel is open, useBodyScrollLock has pinned <body>
+      // with `position: fixed`, so window.scrollTo() is a no-op right now —
+      // worse, the lock's own cleanup (fired by the setMobileOpen(false)
+      // below) restores the pre-open scroll position a moment later,
+      // silently cancelling any scroll issued before that happens. Closing
+      // the menu first and deferring the scroll two frames (mount effects
+      // run after paint) lets the unlock finish before we move the page.
+      if (mobileOpen) {
+        setMobileOpen(false);
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            scrollToId(id);
+          });
+        });
+        return;
+      }
+
+      scrollToId(id);
     },
-    [scrollToId]
+    [scrollToId, mobileOpen]
   );
 
   return (
@@ -158,9 +181,14 @@ export default function Navbar() {
       transition={{ duration: 0.9, delay: 0.2, ease: [0.19, 1, 0.22, 1] }}
       className="fixed inset-x-0 top-0 z-50 transition-[background-color,backdrop-filter,border-color,box-shadow] duration-700 ease-[cubic-bezier(0.19,1,0.22,1)]"
       style={{
-        backgroundColor: scrolled ? "rgba(10,9,11,0.6)" : "transparent",
-        backdropFilter: scrolled ? "blur(20px) saturate(140%)" : "none",
-        WebkitBackdropFilter: scrolled ? "blur(20px) saturate(140%)" : "none",
+        // The header repaints its backdrop-filter on every compositor frame
+        // for whatever scrolls underneath it — it's fixed and always on
+        // screen, so this runs for the entire length of every scroll. Radius
+        // is cut down on mobile for the same reason as the glass cards
+        // further down the page (see globals.css).
+        backgroundColor: scrolled ? (isMobile ? "rgba(10,9,11,0.78)" : "rgba(10,9,11,0.6)") : "transparent",
+        backdropFilter: scrolled ? (isMobile ? "blur(8px)" : "blur(20px) saturate(140%)") : "none",
+        WebkitBackdropFilter: scrolled ? (isMobile ? "blur(8px)" : "blur(20px) saturate(140%)") : "none",
         borderBottom: scrolled
           ? "1px solid rgba(244,239,232,0.08)"
           : "1px solid transparent",
@@ -232,37 +260,38 @@ export default function Navbar() {
               backgroundColor: "rgba(244,239,232,0.04)",
             }}
           >
-            <BurgerIcon open={mobileOpen} />
+            <BurgerIcon open={mobileOpen} prefersReducedMotion={prefersReducedMotion} />
           </button>
         </div>
       </nav>
 
+      {/* Mobile dropdown panel — one transform+opacity transition only (no
+          animated height/backdrop-filter, no per-link stagger): those were
+          multiple simultaneous animations plus a forced layout reflow on
+          every open/close, which is what made the menu feel heavy on
+          mobile. The panel's full height is present from first paint; only
+          its opacity/position animate, so there's nothing for the browser
+          to reflow frame-by-frame. Links render immediately and stay
+          clickable throughout — no entrance delay gating interactivity. */}
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
             id="mobile-nav-panel"
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-            className="overflow-hidden border-t lg:hidden"
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: prefersReducedMotion ? 0 : MENU_TRANSITION_SECONDS, ease: [0.16, 1, 0.3, 1] }}
+            className="origin-top border-t lg:hidden"
             style={{
               borderColor: "rgba(244,239,232,0.1)",
-              backgroundColor: "rgba(10,9,11,0.88)",
-              backdropFilter: "blur(22px) saturate(140%)",
-              WebkitBackdropFilter: "blur(22px) saturate(140%)",
+              backgroundColor: "rgba(10,9,11,0.97)",
             }}
           >
             <ul className="container flex flex-col gap-1 py-4">
-              {t.nav.links.map((link, index) => {
+              {t.nav.links.map((link) => {
                 const isActive = activeHref === link.href;
                 return (
-                  <motion.li
-                    key={link.href}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: index * 0.05, ease: [0.16, 1, 0.3, 1] }}
-                  >
+                  <li key={link.href}>
                     <a
                       href={link.href}
                       onClick={(e) => handleAnchorClick(e, link.href)}
@@ -276,7 +305,7 @@ export default function Navbar() {
                     >
                       {link.label}
                     </a>
-                  </motion.li>
+                  </li>
                 );
               })}
             </ul>

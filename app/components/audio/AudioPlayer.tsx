@@ -3,10 +3,12 @@
 import { motion, useReducedMotion } from "framer-motion";
 import { useAudio } from "./useAudio";
 import { useLanguage } from "@/app/lib/language/LanguageContext";
+import { useIsMobile } from "@/app/lib/useIsMobile";
 
 export default function AudioPlayer() {
   const { isMuted, isPlaying, isUnlocked, toggleMute } = useAudio();
   const prefersReducedMotion = useReducedMotion();
+  const isMobile = useIsMobile();
   const { t } = useLanguage();
 
   if (!isUnlocked) return null;
@@ -37,7 +39,7 @@ export default function AudioPlayer() {
         boxShadow: isSilent ? "none" : "0 0 24px rgba(232,201,171,0.22)",
       }}
     >
-      {!prefersReducedMotion && isPlaying && !isMuted && (
+      {!prefersReducedMotion && !isMobile && isPlaying && !isMuted && (
         <motion.span
           aria-hidden="true"
           className="absolute inset-0 rounded-full"

@@ -6,6 +6,13 @@ import { animate, motion, useReducedMotion } from "framer-motion";
 import { useLanguage } from "@/app/lib/language/LanguageContext";
 import { useBodyScrollLock } from "@/app/lib/useBodyScrollLock";
 import { useModalFocusTrap } from "@/app/lib/useModalFocusTrap";
+import { useIsMobile } from "@/app/lib/useIsMobile";
+
+// On mobile, only the featured hostess + this many grid cards mount up front —
+// each card carries several backdrop-blurred badge/chip elements, and all 10+
+// cards mounting unconditionally was the single largest concentration of
+// backdrop-filter compositing layers on the page. The rest mount on request.
+const MOBILE_INITIAL_GRID_COUNT = 3;
 import type { Translations } from "@/app/lib/language/translations";
 import {
   HOSTESS_DATA,
@@ -101,6 +108,7 @@ function AnimatedNumber({ value }: { value: number }) {
 
 function LiveDot({ size = 8, color = "#6fe3a0" }: { size?: number; color?: string }) {
   const prefersReducedMotion = useReducedMotion();
+  const isMobile = useIsMobile();
   return (
     <span
       className="relative inline-flex shrink-0 items-center justify-center"
@@ -110,7 +118,10 @@ function LiveDot({ size = 8, color = "#6fe3a0" }: { size?: number; color?: strin
         className="absolute inset-0 rounded-full"
         style={{ backgroundColor: color, boxShadow: `0 0 8px ${color}` }}
       />
-      {!prefersReducedMotion && (
+      {/* The ping ring is skipped on mobile: this dot renders once per hostess
+          card, so a full grid can mean a dozen-plus concurrent Infinity loops
+          — a real contributor to scroll jank on mobile GPUs. */}
+      {!prefersReducedMotion && !isMobile && (
         <motion.span
           className="absolute inset-0 rounded-full"
           style={{ backgroundColor: color }}
@@ -624,11 +635,23 @@ function HostessProfileModal({
 export default function Hostesses() {
   const { t } = useLanguage();
   const prefersReducedMotion = useReducedMotion();
+  const isMobile = useIsMobile();
   const [filter, setFilter] = useState<FilterKey>("all");
   const [hostesses, setHostesses] = useState<HostessRecord[]>(HOSTESS_DATA);
   const [lastUpdatedAt, setLastUpdatedAt] = useState<number | null>(null);
   const [now, setNow] = useState<number | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [mobileExpanded, setMobileExpanded] = useState(false);
+  // Re-collapse to the trimmed mobile view whenever the active filter
+  // changes, so "show more" always starts from the same predictable state
+  // for whatever list is currently in view. Adjusted during render (React's
+  // recommended pattern for state derived from a prop/dep change) rather
+  // than in an effect, which would cost an extra render pass.
+  const [prevFilter, setPrevFilter] = useState(filter);
+  if (filter !== prevFilter) {
+    setPrevFilter(filter);
+    setMobileExpanded(false);
+  }
 
   // Clock — establishes the "updated X min ago" reference only after mount,
   // so the very first server/client render stays identical (no hydration mismatch).
@@ -708,6 +731,9 @@ export default function Hostesses() {
 
   const featured = filter === "all" ? hostesses.find((h) => h.status === "available") : null;
   const gridList = featured ? filtered.filter((h) => h.id !== featured.id) : filtered;
+  const showMoreAvailable = isMobile && !mobileExpanded && gridList.length > MOBILE_INITIAL_GRID_COUNT;
+  const visibleGridList =
+    isMobile && !mobileExpanded ? gridList.slice(0, MOBILE_INITIAL_GRID_COUNT) : gridList;
   const selected = selectedId ? hostesses.find((h) => h.id === selectedId) ?? null : null;
   const selectedText = selected ? textById.get(selected.id) ?? null : null;
 
@@ -717,6 +743,7 @@ export default function Hostesses() {
         {/* Header */}
         <div className="mx-auto max-w-2xl text-center">
           <motion.p
+            data-reveal
             initial={{ opacity: 0, y: 12 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-80px" }}
@@ -726,6 +753,7 @@ export default function Hostesses() {
             {t.hostesses.eyebrow}
           </motion.p>
           <motion.h2
+            data-reveal
             initial={{ opacity: 0, y: 18 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-80px" }}
@@ -735,6 +763,7 @@ export default function Hostesses() {
             {t.hostesses.title}
           </motion.h2>
           <motion.p
+            data-reveal
             initial={{ opacity: 0, y: 12 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-80px" }}
@@ -748,6 +777,7 @@ export default function Hostesses() {
 
         {/* Live status bar */}
         <motion.div
+          data-reveal
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
@@ -812,6 +842,7 @@ export default function Hostesses() {
 
         {/* Filters */}
         <motion.div
+          data-reveal
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-60px" }}
@@ -955,7 +986,7 @@ export default function Hostesses() {
           layout
           className="mx-auto mt-12 grid max-w-6xl grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
         >
-          {gridList.map((h) => {
+          {visibleGridList.map((h) => {
               const text = textById.get(h.id);
               if (!text) return null;
               const chips = badgesFor(h, t).slice(0, 2);
@@ -1016,6 +1047,19 @@ export default function Hostesses() {
               );
             })}
         </motion.div>
+
+        {showMoreAvailable && (
+          <div className="mt-8 flex justify-center">
+            <button
+              type="button"
+              onClick={() => setMobileExpanded(true)}
+              aria-label={t.hostesses.showMoreAria}
+              className="btn btn-secondary !px-8 !py-3 text-[0.68rem]"
+            >
+              {t.hostesses.showMore}
+            </button>
+          </div>
+        )}
       </div>
 
       {selected && selectedText && (

@@ -2,10 +2,17 @@
 
 import { motion, useReducedMotion } from "framer-motion";
 import { useLanguage } from "@/app/lib/language/LanguageContext";
+import { useIsMobile } from "@/app/lib/useIsMobile";
 
 export default function FloatingBookButton() {
   const { t } = useLanguage();
   const prefersReducedMotion = useReducedMotion();
+  const isMobile = useIsMobile();
+  // This button is fixed on screen at all times (never scrolls out of view),
+  // so its bounce + glow loops run forever, indefinitely, on every mobile
+  // visit — a permanent background compositor cost for a purely decorative
+  // touch. Skipped on mobile; kept static (still fully visible).
+  const skipLoop = prefersReducedMotion || isMobile;
 
   return (
     <motion.div
@@ -17,9 +24,9 @@ export default function FloatingBookButton() {
     >
       <motion.div
         className="relative"
-        animate={prefersReducedMotion ? undefined : { y: [0, -8, 0] }}
+        animate={skipLoop ? undefined : { y: [0, -8, 0] }}
         transition={
-          prefersReducedMotion
+          skipLoop
             ? undefined
             : { duration: 3.4, repeat: Infinity, ease: "easeInOut" }
         }
@@ -33,10 +40,10 @@ export default function FloatingBookButton() {
               "radial-gradient(ellipse, rgba(232,120,150,0.45) 0%, rgba(150,45,80,0.28) 55%, transparent 78%)",
           }}
           animate={
-            prefersReducedMotion ? undefined : { opacity: [0.55, 0.85, 0.55], scale: [0.92, 1.08, 0.92] }
+            skipLoop ? undefined : { opacity: [0.55, 0.85, 0.55], scale: [0.92, 1.08, 0.92] }
           }
           transition={
-            prefersReducedMotion
+            skipLoop
               ? undefined
               : { duration: 3.4, repeat: Infinity, ease: "easeInOut" }
           }

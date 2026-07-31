@@ -270,6 +270,7 @@ export default function Hiring() {
         <div className="grid grid-cols-1 gap-16 lg:grid-cols-2 lg:gap-20">
           {/* Left — presentation */}
           <motion.div
+            data-reveal
             initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
@@ -277,6 +278,7 @@ export default function Hiring() {
             className="flex flex-col"
           >
             <motion.p
+              data-reveal
               initial={{ opacity: 0, y: 12 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-80px" }}
@@ -286,6 +288,7 @@ export default function Hiring() {
               {t.hiring.eyebrow}
             </motion.p>
             <motion.h2
+              data-reveal
               initial={{ opacity: 0, y: 18 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-80px" }}
@@ -317,6 +320,7 @@ export default function Hiring() {
                 return (
                   <motion.div
                     key={item.title}
+                    data-reveal
                     initial={{ opacity: 0, y: 16 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, margin: "-60px" }}
@@ -364,6 +368,7 @@ export default function Hiring() {
 
           {/* Right — application form */}
           <motion.div
+            data-reveal
             initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
