@@ -11,7 +11,7 @@ import {
 } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { useLanguage } from "@/app/lib/language/LanguageContext";
-import { useBodyScrollLock } from "@/app/lib/useBodyScrollLock";
+import { unlockBodyScroll, useBodyScrollLock } from "@/app/lib/useBodyScrollLock";
 import { useIsMobile } from "@/app/lib/useIsMobile";
 import LanguageSwitcher from "./LanguageSwitcher";
 
@@ -136,35 +136,41 @@ export default function Navbar() {
     };
   }, [mobileOpen]);
 
-  const scrollToId = useCallback((id: string) => {
-    const target = document.getElementById(id);
-    if (!target) return false;
-    const navHeight = headerRef.current?.offsetHeight ?? 0;
-    const top = target.getBoundingClientRect().top + window.scrollY - navHeight - SCROLL_OFFSET_GAP;
-    window.scrollTo({ top, behavior: "smooth" });
-    return true;
-  }, []);
+  // Mobile prioritizes stability over animation: a single instant jump
+  // can't be caught mid-animation by a layout shift or interrupted by the
+  // ambient audio element, unlike a multi-hundred-ms smooth scroll. Desktop
+  // keeps the existing smooth scroll.
+  const scrollToId = useCallback(
+    (id: string) => {
+      const target = document.getElementById(id);
+      if (!target) return false;
+      const navHeight = headerRef.current?.offsetHeight ?? 0;
+      const top = target.getBoundingClientRect().top + window.scrollY - navHeight - SCROLL_OFFSET_GAP;
+      window.scrollTo({ top, behavior: isMobile ? "auto" : "smooth" });
+      return true;
+    },
+    [isMobile]
+  );
 
   const handleAnchorClick = useCallback(
     (event: MouseEvent<HTMLAnchorElement>, href: string) => {
       if (!href.startsWith("#")) return;
       event.preventDefault();
+      // Keep nav taps from bubbling into the audio player, floating Book Now
+      // button, or any overlay mounted behind/above the panel.
+      event.stopPropagation();
       const id = href.slice(1);
 
-      // When the mobile panel is open, useBodyScrollLock has pinned <body>
-      // with `position: fixed`, so window.scrollTo() is a no-op right now —
-      // worse, the lock's own cleanup (fired by the setMobileOpen(false)
-      // below) restores the pre-open scroll position a moment later,
-      // silently cancelling any scroll issued before that happens. Closing
-      // the menu first and deferring the scroll two frames (mount effects
-      // run after paint) lets the unlock finish before we move the page.
+      // Close the menu, release the scroll lock immediately (skipping its
+      // own restore — we're about to navigate ourselves, so there's nothing
+      // to race), then issue exactly one scrollTo to the destination. Doing
+      // this synchronously instead of waiting on React's effect cleanup is
+      // what keeps the lock's "restore saved position" from firing after
+      // (and cancelling) this navigation.
       if (mobileOpen) {
         setMobileOpen(false);
-        requestAnimationFrame(() => {
-          requestAnimationFrame(() => {
-            scrollToId(id);
-          });
-        });
+        unlockBodyScroll({ skipRestore: true });
+        scrollToId(id);
         return;
       }
 
