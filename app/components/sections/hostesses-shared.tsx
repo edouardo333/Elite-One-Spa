@@ -277,6 +277,7 @@ export function BadgeChips({ chips }: { chips: { key: string; label: string; ico
 }
 
 export function StatusBadge({ status, label }: { status: HostessStatus; label: string }) {
+  const isMobile = useIsMobile();
   return (
     <span
       className="absolute right-3 top-3 z-10 inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1.5 text-[0.6rem] font-medium uppercase tracking-[0.12em] backdrop-blur-md"
@@ -291,9 +292,9 @@ export function StatusBadge({ status, label }: { status: HostessStatus; label: s
       <span aria-hidden="true">{STATUS_EMOJI[status]}</span>
       <motion.span
         key={status}
-        initial={{ opacity: 0, y: 3 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.35, ease: "easeOut" }}
+        initial={isMobile ? false : { opacity: 0, y: 3 }}
+        animate={isMobile ? undefined : { opacity: 1, y: 0 }}
+        transition={isMobile ? undefined : { duration: 0.35, ease: "easeOut" }}
       >
         {label}
       </motion.span>

@@ -308,13 +308,13 @@ export default function Hostesses() {
               >
                 {active && (
                   <motion.span
-                    layoutId="hostess-filter-pill"
+                    layoutId={isMobile ? undefined : "hostess-filter-pill"}
                     className="absolute inset-0 rounded-full"
                     style={{
                       backgroundColor: "var(--color-champagne)",
                       boxShadow: "0 0 22px rgba(232,201,171,0.4)",
                     }}
-                    transition={{ type: "spring", stiffness: 420, damping: 34 }}
+                    transition={isMobile ? { duration: 0 } : { type: "spring", stiffness: 420, damping: 34 }}
                   />
                 )}
                 <span className="relative z-10">{filterLabel(t, key)}</span>
@@ -331,10 +331,10 @@ export default function Hostesses() {
             return (
               <motion.div
                 key={featured.id}
-                layout
-                initial={{ opacity: 0, y: 24 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+                layout={!isMobile}
+                initial={isMobile ? false : { opacity: 0, y: 24 }}
+                animate={isMobile ? undefined : { opacity: 1, y: 0 }}
+                transition={isMobile ? undefined : { duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
                 className="relative mx-auto mt-16 max-w-5xl"
               >
                 <div
@@ -424,7 +424,7 @@ export default function Hostesses() {
 
         {/* Grid */}
         <motion.div
-          layout
+          layout={!isMobile}
           className="mx-auto mt-12 grid max-w-6xl grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
         >
           {visibleGridList.map((h) => {
