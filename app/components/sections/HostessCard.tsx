@@ -40,11 +40,11 @@ function HostessCard({
 
   return (
     <motion.div
-      layout={!isMobile}
-      initial={isMobile ? false : { opacity: 0, y: 20, scale: 0.97 }}
-      animate={isMobile ? undefined : { opacity: 1, y: 0, scale: 1 }}
-      exit={isMobile ? undefined : { opacity: 0, scale: 0.96 }}
-      transition={isMobile ? undefined : { duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+      layout
+      initial={{ opacity: 0, y: 20, scale: 0.97 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.96 }}
+      transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
       whileHover={prefersReducedMotion || isMobile ? undefined : { y: -6 }}
       onClick={() => onSelect(hostess.id)}
       className="group relative cursor-pointer overflow-hidden rounded-[var(--radius-md)] border backdrop-blur-xl transition-[border-color,box-shadow] duration-700 ease-[cubic-bezier(0.19,1,0.22,1)] hover:shadow-[0_0_40px_rgba(232,120,150,0.18)]"
