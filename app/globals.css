@@ -327,6 +327,13 @@ a:focus-visible {
   box-shadow: 0 0 24px rgba(232, 201, 171, 0.12);
 }
 
+/* Fixed floating audio toggle — see the mobile override in the performance
+   guard block below for why this is split from its background-color. */
+.audio-toggle-btn {
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+}
+
 /* Mobile nav click-through guard — the dropdown panel is a position:fixed
    sibling of <main>, stacked above it purely via z-index (header is z-50,
    the page content behind it is not). That comparison only holds once the
@@ -586,6 +593,34 @@ body:has(button[aria-controls="mobile-nav-panel"][aria-expanded="true"]) #main-c
   .backdrop-blur-md {
     -webkit-backdrop-filter: none !important;
     backdrop-filter: none !important;
+  }
+
+  /* `.btn` isn't a Tailwind backdrop-blur-* utility so it's untouched by the
+     rule above — every button on the site (including the always-mounted,
+     `position: fixed` FloatingBookButton and AudioPlayer) otherwise keeps a
+     backdrop-filter on mobile. Background opacity is bumped to compensate
+     for the lost frosted-glass legibility boost. */
+  .btn {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+    /* Framer Motion's blur-in entrance on the Hero CTAs (initial/animate
+       `filter`) writes a fresh inline `filter` every frame; `!important`
+       here wins over that per-frame inline write, same mechanism as the
+       backdrop-filter override above. */
+    filter: none !important;
+  }
+
+  .btn-primary {
+    background-color: rgba(232, 201, 171, 0.22);
+  }
+
+  .btn-secondary {
+    background-color: rgba(20, 11, 16, 0.55);
+  }
+
+  .audio-toggle-btn {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
   }
 
   body {

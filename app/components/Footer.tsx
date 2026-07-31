@@ -322,9 +322,9 @@ export default function Footer() {
               href="tel:+15145438344"
               aria-label={t.footer.bookAppointmentAria}
               whileHover={
-                prefersReducedMotion ? undefined : { scale: 1.02, y: -2 }
+                prefersReducedMotion || isMobile ? undefined : { scale: 1.02, y: -2 }
               }
-              whileTap={{ scale: 0.98 }}
+              whileTap={isMobile ? undefined : { scale: 0.98 }}
               transition={{ type: "spring", stiffness: 400, damping: 20 }}
               className="btn btn-primary mt-2 w-fit"
             >

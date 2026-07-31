@@ -600,8 +600,12 @@ export default function Hiring() {
                     type="submit"
                     disabled={status === "submitting"}
                     aria-busy={status === "submitting"}
-                    whileHover={prefersReducedMotion || status === "submitting" ? undefined : { scale: 1.015, y: -2 }}
-                    whileTap={status === "submitting" ? undefined : { scale: 0.98 }}
+                    whileHover={
+                      prefersReducedMotion || isMobile || status === "submitting"
+                        ? undefined
+                        : { scale: 1.015, y: -2 }
+                    }
+                    whileTap={isMobile || status === "submitting" ? undefined : { scale: 0.98 }}
                     className="btn btn-primary mt-2 w-full disabled:cursor-not-allowed disabled:opacity-60"
                   >
                     {status === "submitting" ? f.submitting : f.submit}

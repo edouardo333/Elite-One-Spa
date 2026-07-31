@@ -131,7 +131,7 @@ export default function Services() {
                 )}
 
                 <motion.div
-                  whileHover={prefersReducedMotion ? undefined : { y: -10 }}
+                  whileHover={prefersReducedMotion || isMobile ? undefined : { y: -10 }}
                   transition={{ type: "spring", stiffness: 260, damping: 22 }}
                   className="group relative flex h-full flex-col overflow-hidden rounded-[var(--radius-lg)] border p-7 backdrop-blur-2xl transition-[border-color,box-shadow,background-color] duration-700 ease-[cubic-bezier(0.19,1,0.22,1)] sm:p-8"
                   style={{

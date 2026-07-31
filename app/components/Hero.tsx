@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import Image, { getImageProps } from "next/image";
 import { useEffect, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { useLanguage } from "@/app/lib/language/LanguageContext";
@@ -60,19 +60,42 @@ export default function Hero() {
   const prefersReducedMotion = useReducedMotion();
   const { t } = useLanguage();
 
- const currentSources = isMobile
-  ? MOBILE_SLIDE_SOURCES
-  : SLIDE_SOURCES;
-const mobilePositions = [
-  "50% 50%",
-  "50% 45%",
-  "50% 50%",
-  "50% 45%",
-];
-const slides = currentSources.map((src, i) => ({
-  src,
-  alt: t.hero.slideAlts[i],
-}));
+ // Art-directed per Next.js's recommended <picture>/<source> pattern: the
+ // browser's preload scanner picks the matching source before any JS runs,
+ // so mobile never fetches the desktop asset (or vice versa) the way a
+ // JS-computed `isMobile` src swap would on first paint.
+ const slides = SLIDE_SOURCES.map((desktopSrc, i) => {
+  const isPriority = i === 0;
+  const common = {
+    alt: t.hero.slideAlts[i],
+    sizes: "100vw",
+    fill: true as const,
+    quality: 90 as const,
+    loading: (isPriority ? "eager" : "lazy") as "eager" | "lazy",
+    fetchPriority: (isPriority ? "high" : undefined) as
+      | "high"
+      | undefined,
+  };
+  const { props: desktopImgProps } = getImageProps({
+    ...common,
+    src: desktopSrc,
+  });
+  const { props: mobileImgProps } = getImageProps({
+    ...common,
+    src: MOBILE_SLIDE_SOURCES[i],
+  });
+  return {
+    key: desktopSrc,
+    alt: common.alt,
+    isPriority,
+    desktopImgProps,
+    mobileSrcSet: mobileImgProps.srcSet,
+    // Only slides 2 and 4 need a mobile-specific crop; desktop always
+    // keeps its centred default.
+    mobileObjectPositionClass:
+      i === 1 || i === 3 ? "max-md:object-[50%_45%]" : "",
+  };
+});
 useEffect(() => {
     if (prefersReducedMotion) return;
     const interval = setInterval(() => {
@@ -92,7 +115,7 @@ useEffect(() => {
           const isActive = i === activeIndex;
           return (
             <motion.div
-              key={slide.src}
+              key={slide.key}
               className="absolute inset-0"
               animate={{ opacity: isActive ? 1 : 0 }}
               transition={{
@@ -108,23 +131,17 @@ useEffect(() => {
                   ease: "linear",
                 }}
               >
-                <Image
-                  src={slide.src}
-                  alt={slide.alt}
-                  fill
-                  sizes="100vw"
-                  quality={90}
-                  priority={i === 0}
-                  loading={i === 0 ? undefined : "lazy"}
-                  style={{
-  objectPosition: isMobile
-    ? mobilePositions[i]
-    : "50% 50%",
-}}
-                  className={`object-cover ${
-isMobile ? "object-center" : "object-center"
-}`}
-                />
+                <picture>
+                  <source
+                    media="(max-width: 768px)"
+                    srcSet={slide.mobileSrcSet}
+                  />
+                  <img
+                    {...slide.desktopImgProps}
+                    alt={slide.alt}
+                    className={`object-cover object-center ${slide.mobileObjectPositionClass}`}
+                  />
+                </picture>
               </motion.div>
             </motion.div>
           );
@@ -312,7 +329,7 @@ isMobile ? "object-center" : "object-center"
                 alt="Elite One Spa"
                 fill
                 sizes="283px"
-                priority
+                preload
                 className="object-contain"
                 style={{
                   filter: "drop-shadow(0 10px 32px rgba(5,4,5,0.5))",
@@ -366,12 +383,16 @@ isMobile ? "object-center" : "object-center"
               filter: "blur(0px)",
               transition: { duration: 0.9, delay: 0.6, ease: [0.19, 1, 0.22, 1] },
             }}
-            whileHover={{
-              scale: 1.02,
-              y: -2,
-              transition: { type: "spring", stiffness: 400, damping: 20 },
-            }}
-            whileTap={{ scale: 0.98 }}
+            whileHover={
+              isMobile
+                ? undefined
+                : {
+                    scale: 1.02,
+                    y: -2,
+                    transition: { type: "spring", stiffness: 400, damping: 20 },
+                  }
+            }
+            whileTap={isMobile ? undefined : { scale: 0.98 }}
           >
             {t.hero.ctaPrimary}
           </motion.a>
@@ -385,12 +406,16 @@ isMobile ? "object-center" : "object-center"
               filter: "blur(0px)",
               transition: { duration: 0.9, delay: 0.74, ease: [0.19, 1, 0.22, 1] },
             }}
-            whileHover={{
-              scale: 1.02,
-              y: -2,
-              transition: { type: "spring", stiffness: 400, damping: 20 },
-            }}
-            whileTap={{ scale: 0.98 }}
+            whileHover={
+              isMobile
+                ? undefined
+                : {
+                    scale: 1.02,
+                    y: -2,
+                    transition: { type: "spring", stiffness: 400, damping: 20 },
+                  }
+            }
+            whileTap={isMobile ? undefined : { scale: 0.98 }}
           >
             {t.hero.ctaSecondary}
           </motion.a>

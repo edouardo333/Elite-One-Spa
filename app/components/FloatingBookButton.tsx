@@ -53,14 +53,14 @@ export default function FloatingBookButton() {
           href="tel:+15145438344"
           aria-label={t.footer.bookAppointmentAria}
           whileHover={
-            prefersReducedMotion
+            prefersReducedMotion || isMobile
               ? undefined
               : {
                   scale: 1.07,
                   transition: { type: "spring", stiffness: 340, damping: 18 },
                 }
           }
-          whileTap={{ scale: 0.95 }}
+          whileTap={isMobile ? undefined : { scale: 0.95 }}
           className="btn btn-primary relative flex items-center gap-2 !px-6 !py-3.5 text-[0.68rem] shadow-lg sm:!px-7 sm:!py-4 sm:text-[0.72rem]"
           style={{
             boxShadow: "0 10px 34px rgba(5,4,5,0.5), 0 0 26px rgba(232,120,150,0.3)",

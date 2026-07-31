@@ -189,7 +189,7 @@ export default function BusinessCard() {
               alt={t.nav.logoAria}
               fill
               sizes="238px"
-              priority
+              preload
               className="object-contain"
               style={{ filter: "drop-shadow(0 10px 28px rgba(5,4,5,0.5))" }}
             />
@@ -293,12 +293,16 @@ export default function BusinessCard() {
             aria-label={t.businessCard.ctaBookAria}
             className="btn btn-primary w-full !py-4 !text-[0.86rem] fade-in"
             style={{ animationDelay: "0.45s", letterSpacing: "0.05em" }}
-            whileHover={{
-              scale: 1.02,
-              y: -2,
-              transition: { type: "spring", stiffness: 400, damping: 20 },
-            }}
-            whileTap={{ scale: 0.98 }}
+            whileHover={
+              isMobile
+                ? undefined
+                : {
+                    scale: 1.02,
+                    y: -2,
+                    transition: { type: "spring", stiffness: 400, damping: 20 },
+                  }
+            }
+            whileTap={isMobile ? undefined : { scale: 0.98 }}
           >
             <CalendarIcon className="h-4 w-4" />
             {t.businessCard.ctaBook}
@@ -310,12 +314,16 @@ export default function BusinessCard() {
               aria-label={t.businessCard.ctaCallAria}
               className="btn btn-secondary w-full !py-3.5 !text-[0.8rem] fade-in"
               style={{ animationDelay: "0.55s" }}
-              whileHover={{
-                scale: 1.02,
-                y: -2,
-                transition: { type: "spring", stiffness: 400, damping: 20 },
-              }}
-              whileTap={{ scale: 0.98 }}
+              whileHover={
+                isMobile
+                  ? undefined
+                  : {
+                      scale: 1.02,
+                      y: -2,
+                      transition: { type: "spring", stiffness: 400, damping: 20 },
+                    }
+              }
+              whileTap={isMobile ? undefined : { scale: 0.98 }}
             >
               <PhoneIcon className="h-4 w-4" />
               {t.businessCard.ctaCall}
@@ -328,12 +336,16 @@ export default function BusinessCard() {
               aria-label={t.businessCard.ctaDirectionsAria}
               className="btn btn-secondary w-full !py-3.5 !text-[0.8rem] fade-in"
               style={{ animationDelay: "0.65s" }}
-              whileHover={{
-                scale: 1.02,
-                y: -2,
-                transition: { type: "spring", stiffness: 400, damping: 20 },
-              }}
-              whileTap={{ scale: 0.98 }}
+              whileHover={
+                isMobile
+                  ? undefined
+                  : {
+                      scale: 1.02,
+                      y: -2,
+                      transition: { type: "spring", stiffness: 400, damping: 20 },
+                    }
+              }
+              whileTap={isMobile ? undefined : { scale: 0.98 }}
             >
               <DirectionsIcon className="h-4 w-4" />
               {t.businessCard.ctaDirections}
@@ -344,12 +356,16 @@ export default function BusinessCard() {
               aria-label={t.businessCard.ctaEmailAria}
               className="btn btn-secondary w-full !py-3.5 !text-[0.8rem] fade-in"
               style={{ animationDelay: "0.75s" }}
-              whileHover={{
-                scale: 1.02,
-                y: -2,
-                transition: { type: "spring", stiffness: 400, damping: 20 },
-              }}
-              whileTap={{ scale: 0.98 }}
+              whileHover={
+                isMobile
+                  ? undefined
+                  : {
+                      scale: 1.02,
+                      y: -2,
+                      transition: { type: "spring", stiffness: 400, damping: 20 },
+                    }
+              }
+              whileTap={isMobile ? undefined : { scale: 0.98 }}
             >
               <EmailIcon className="h-4 w-4" />
               {t.businessCard.ctaEmail}

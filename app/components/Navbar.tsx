@@ -210,7 +210,7 @@ export default function Navbar() {
             alt="Elite One Spa"
             fill
             sizes="202px"
-            priority
+            preload
             className="origin-left object-contain object-left transition-[transform,filter] duration-[350ms] ease-out [filter:drop-shadow(0_0_0_rgba(232,120,150,0))_brightness(1)] group-hover:scale-[1.06] group-hover:[filter:drop-shadow(0_0_14px_rgba(232,120,150,0.5))_drop-shadow(0_0_26px_rgba(120,35,65,0.35))_brightness(1.08)]"
           />
         </a>

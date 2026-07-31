@@ -28,14 +28,17 @@ export default function AudioPlayer() {
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: prefersReducedMotion ? 0 : 0.6, ease: [0.19, 1, 0.22, 1] }}
-      whileHover={prefersReducedMotion ? undefined : { scale: 1.06 }}
-      whileTap={prefersReducedMotion ? undefined : { scale: 0.94 }}
-      className="fixed bottom-6 left-6 z-40 flex h-12 w-12 items-center justify-center rounded-full"
+      whileHover={prefersReducedMotion || isMobile ? undefined : { scale: 1.06 }}
+      whileTap={prefersReducedMotion || isMobile ? undefined : { scale: 0.94 }}
+      className="audio-toggle-btn fixed bottom-6 left-6 z-40 flex h-12 w-12 items-center justify-center rounded-full transition-transform duration-150 max-md:active:scale-[0.94]"
       style={{
         border: `1px solid ${isSilent ? "var(--color-border)" : "rgba(232,201,171,0.45)"}`,
-        backgroundColor: "rgba(10,9,11,0.55)",
-        backdropFilter: "blur(18px) saturate(140%)",
-        WebkitBackdropFilter: "blur(18px) saturate(140%)",
+        // Bumped on mobile to compensate for the backdrop-filter that gets
+        // dropped there (see .audio-toggle-btn in globals.css) — this button
+        // is `position: fixed` and always mounted, so its backdrop-filter
+        // would otherwise be recomputed on every scroll frame for the rest
+        // of the visit.
+        backgroundColor: isMobile ? "rgba(10,9,11,0.75)" : "rgba(10,9,11,0.55)",
         boxShadow: isSilent ? "none" : "0 0 24px rgba(232,201,171,0.22)",
       }}
     >

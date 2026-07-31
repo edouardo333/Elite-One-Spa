@@ -376,8 +376,8 @@ export default function Contact() {
 
                 <motion.button
                   type="submit"
-                  whileHover={prefersReducedMotion ? undefined : { scale: 1.015, y: -2 }}
-                  whileTap={{ scale: 0.98 }}
+                  whileHover={prefersReducedMotion || isMobile ? undefined : { scale: 1.015, y: -2 }}
+                  whileTap={isMobile ? undefined : { scale: 0.98 }}
                   className="btn btn-primary mt-2 w-full"
                 >
                   {f.submit}
@@ -399,7 +399,7 @@ export default function Contact() {
               }}
             />
             <motion.div
-              whileHover={prefersReducedMotion ? undefined : { y: -3 }}
+              whileHover={prefersReducedMotion || isMobile ? undefined : { y: -3 }}
               transition={{ type: "spring", stiffness: 300, damping: 24 }}
               className="group relative flex h-full flex-col overflow-hidden rounded-[var(--radius-lg)] border backdrop-blur-2xl"
               style={{
@@ -518,8 +518,8 @@ export default function Contact() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={t.contactSection.openInMapsAria}
-                  whileHover={prefersReducedMotion ? undefined : { scale: 1.015, y: -2 }}
-                  whileTap={{ scale: 0.98 }}
+                  whileHover={prefersReducedMotion || isMobile ? undefined : { scale: 1.015, y: -2 }}
+                  whileTap={isMobile ? undefined : { scale: 0.98 }}
                   className="group/btn btn btn-secondary mt-1 w-full"
                 >
                   {t.contactSection.openInMaps}

@@ -72,7 +72,7 @@ export default function AgeGate({ onValidated }: AgeGateProps) {
           src="/hero/desktop-01.webp"
           alt=""
           fill
-          priority
+          preload
           quality={75}
           sizes="100vw"
           className="object-cover object-center blur-lg sm:blur-3xl"
@@ -120,7 +120,7 @@ export default function AgeGate({ onValidated }: AgeGateProps) {
             src="/logo/Logo-Elite-One-Spa.webp"
             alt="Elite One Spa"
             fill
-            priority
+            preload
             sizes="200px"
             className="object-contain"
             style={{ filter: "drop-shadow(0 10px 32px rgba(5,4,5,0.5))" }}
