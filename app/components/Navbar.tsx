@@ -221,7 +221,7 @@ export default function Navbar() {
           />
         </a>
 
-        <ul className="hidden items-center gap-6 lg:flex xl:gap-8">
+        <ul className="hidden items-center gap-1.5 lg:flex xl:gap-4">
           {t.nav.links.map((link) => {
             const isActive = activeHref === link.href;
             return (
@@ -249,7 +249,7 @@ export default function Navbar() {
           <div className="hidden lg:block">
             <a
               href="tel:+15145438344"
-              className="btn btn-secondary !px-6 !py-2.5 text-[0.66rem] xl:text-[0.68rem]"
+              className="btn btn-secondary w-fit whitespace-nowrap"
             >
               {t.nav.reserve}
             </a>
@@ -322,7 +322,7 @@ export default function Navbar() {
               <a
                 href="tel:+15145438344"
                 onClick={() => setMobileOpen(false)}
-                className="btn btn-primary !px-6 !py-2.5 text-[0.68rem]"
+                className="btn btn-primary w-fit shrink-0 whitespace-nowrap"
               >
                 {t.nav.reserve}
               </a>

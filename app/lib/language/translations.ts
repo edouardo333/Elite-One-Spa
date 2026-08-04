@@ -168,6 +168,8 @@ export interface Translations {
     subtitle: string;
     callAria: string;
     bookNow: string;
+    walkInLine1: string;
+    walkInLine2: string;
     bookAria: string;
   };
   contactSection: {
@@ -294,7 +296,7 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
         { href: "#carrieres", label: "Recrutement" },
         { href: "#contact", label: "Contact" },
       ],
-      reserve: "Réserver",
+      reserve: "Sans rendez-vous",
       languageLabel: "Choisir la langue",
       switchToFr: "Passer en français",
       switchToEn: "Switch to English",
@@ -307,7 +309,7 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
       titleLine2: "pour le corps et l’esprit",
       paragraph:
         "Rituels sur-mesure, gestes d’exception et matières précieuses — Elite One Spa réinvente le luxe du soin dans un écrin d’intimité absolue.",
-      ctaPrimary: "Réserver une séance",
+      ctaPrimary: "Sans rendez-vous",
       ctaSecondary: "Découvrir nos soins",
       scrollLabel: "Défiler",
       scrollAria: "Défiler pour découvrir la suite",
@@ -416,7 +418,7 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
         servicesLabel: "Services proposés",
         availabilityLabel: "Disponibilité",
         locationLabel: "Quartier",
-        bookAppointment: "Réserver un rendez-vous",
+        bookAppointment: "Sans rendez-vous",
         bookAppointmentAria: "Réserver un rendez-vous avec {name}",
       },
       list: [
@@ -519,7 +521,7 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
       minutesLabel: "minutes",
       twoHandsLabel: "Deux mains",
       fourHandsLabel: "Quatre mains",
-      ctaBook: "Réserver cette expérience",
+      ctaBook: "Sans rendez-vous",
       bookAria: "Réserver l’expérience de {duration} minutes",
       popularBadge: "Le plus demandé",
       cards: [
@@ -623,7 +625,9 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
       numberHref: "+15145438344",
       subtitle: "Rendez-vous privés • Service discret • Centre-ville de Montréal",
       callAria: "Appeler Elite One Spa au 514 543 8344",
-      bookNow: "Réserver maintenant",
+      bookNow: "Sans rendez-vous",
+      walkInLine1: "Aucune réservation requise.",
+      walkInLine2: "Présentez-vous directement sur place.",
       bookAria: "Réserver une séance chez Elite One Spa",
     },
     contactSection: {
@@ -682,7 +686,7 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
         adultsOnly: "Réservé aux 18 ans et plus",
         openDaily: "Ouvert 7 jours sur 7",
       },
-      bookAppointment: "Réserver un rendez-vous",
+      bookAppointment: "Sans rendez-vous",
       bookAppointmentAria: "Réserver un rendez-vous chez Elite One Spa",
     },
     businessCard: {
@@ -694,7 +698,7 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
         discretion: "Discrétion absolue",
       },
       description: "Massage de luxe, discrétion absolue.",
-      ctaBook: "Réserver maintenant",
+      ctaBook: "Sans rendez-vous",
       ctaBookAria: "Réserver un rendez-vous chez Elite One Spa",
       ctaCall: "Appeler maintenant",
       ctaCallAria: "Appeler Elite One Spa",
@@ -756,7 +760,7 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
         { href: "#carrieres", label: "Hiring" },
         { href: "#contact", label: "Contact" },
       ],
-      reserve: "Book",
+      reserve: "Walk-In Only",
       languageLabel: "Select language",
       switchToFr: "Passer en français",
       switchToEn: "Switch to English",
@@ -769,7 +773,7 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
       titleLine2: "for body and mind",
       paragraph:
         "Bespoke rituals, exceptional gestures and precious materials — Elite One Spa reinvents the luxury of care within a haven of absolute intimacy.",
-      ctaPrimary: "Book a Session",
+      ctaPrimary: "Walk-In Only",
       ctaSecondary: "Discover Our Treatments",
       scrollLabel: "Scroll",
       scrollAria: "Scroll to discover more",
@@ -878,7 +882,7 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
         servicesLabel: "Services Offered",
         availabilityLabel: "Availability",
         locationLabel: "Neighborhood",
-        bookAppointment: "Book Appointment",
+        bookAppointment: "Walk-In Only",
         bookAppointmentAria: "Book an appointment with {name}",
       },
       list: [
@@ -981,7 +985,7 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
       minutesLabel: "minutes",
       twoHandsLabel: "Two Hands",
       fourHandsLabel: "Four Hands",
-      ctaBook: "Book This Experience",
+      ctaBook: "Walk-In Only",
       bookAria: "Book the {duration}-minute experience",
       popularBadge: "Most Popular",
       cards: [
@@ -1083,7 +1087,9 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
       numberHref: "+15145438344",
       subtitle: "Private appointments • Discreet service • Downtown Montréal",
       callAria: "Call Elite One Spa at 514 543 8344",
-      bookNow: "Book Now",
+      bookNow: "Walk-In Only",
+      walkInLine1: "No appointments required.",
+      walkInLine2: "Simply visit us in person.",
       bookAria: "Book a session at Elite One Spa",
     },
     contactSection: {
@@ -1142,7 +1148,7 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
         adultsOnly: "18+ Only",
         openDaily: "Open 7 Days",
       },
-      bookAppointment: "Book Appointment",
+      bookAppointment: "Walk-In Only",
       bookAppointmentAria: "Book an appointment at Elite One Spa",
     },
     businessCard: {
@@ -1154,7 +1160,7 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
         discretion: "Absolute Discretion",
       },
       description: "Luxury massage with absolute discretion.",
-      ctaBook: "Book Now",
+      ctaBook: "Walk-In Only",
       ctaBookAria: "Book an appointment at Elite One Spa",
       ctaCall: "Call Now",
       ctaCallAria: "Call Elite One Spa",

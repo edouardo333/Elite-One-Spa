@@ -174,9 +174,21 @@ export default function ContactBand() {
               transition: { type: "spring", stiffness: 400, damping: 20 },
             }}
             whileTap={{ scale: 0.98 }}
-            className="btn btn-primary mt-2 min-w-[230px]"
+            className="btn btn-primary mt-2 min-w-[230px] !flex-col !gap-1 !py-4 text-center"
           >
-            {t.contact.bookNow}
+            <span>{t.contact.bookNow}</span>
+            <span
+              className="block text-[0.62rem] font-normal normal-case tracking-normal"
+              style={{ color: "rgba(232,201,171,0.7)" }}
+            >
+              {t.contact.walkInLine1}
+            </span>
+            <span
+              className="block text-[0.62rem] font-normal normal-case tracking-normal"
+              style={{ color: "rgba(232,201,171,0.7)" }}
+            >
+              {t.contact.walkInLine2}
+            </span>
           </motion.a>
         </motion.div>
       </div>

@@ -53,14 +53,6 @@ function ClockIcon({ className }: { className?: string }) {
   );
 }
 
-function DirectionsIcon({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
-      <polygon points="3 11 22 2 13 21 11 13 3 11" />
-    </svg>
-  );
-}
-
 function EmailIcon({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
@@ -291,7 +283,7 @@ export default function BusinessCard() {
             href="/"
             onClick={() => setScrollIntent(AVAILABILITY_SECTION_ID)}
             aria-label={t.businessCard.ctaBookAria}
-            className="btn btn-primary w-full !py-4 !text-[0.86rem] fade-in"
+            className="btn btn-primary w-full !py-3.5 !text-[0.8rem] fade-in"
             style={{ animationDelay: "0.45s", letterSpacing: "0.05em" }}
             whileHover={
               isMobile
@@ -330,32 +322,10 @@ export default function BusinessCard() {
             </motion.a>
 
             <motion.a
-              href={CONTACT_LINKS.googleMapsUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={t.businessCard.ctaDirectionsAria}
-              className="btn btn-secondary w-full !py-3.5 !text-[0.8rem] fade-in"
-              style={{ animationDelay: "0.65s" }}
-              whileHover={
-                isMobile
-                  ? undefined
-                  : {
-                      scale: 1.02,
-                      y: -2,
-                      transition: { type: "spring", stiffness: 400, damping: 20 },
-                    }
-              }
-              whileTap={isMobile ? undefined : { scale: 0.98 }}
-            >
-              <DirectionsIcon className="h-4 w-4" />
-              {t.businessCard.ctaDirections}
-            </motion.a>
-
-            <motion.a
               href={`mailto:${CONTACT_LINKS.email}`}
               aria-label={t.businessCard.ctaEmailAria}
               className="btn btn-secondary w-full !py-3.5 !text-[0.8rem] fade-in"
-              style={{ animationDelay: "0.75s" }}
+              style={{ animationDelay: "0.65s" }}
               whileHover={
                 isMobile
                   ? undefined
@@ -370,6 +340,28 @@ export default function BusinessCard() {
               <EmailIcon className="h-4 w-4" />
               {t.businessCard.ctaEmail}
             </motion.a>
+
+            <motion.a
+              href={CONTACT_LINKS.googleMapsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={t.footer.addressAria}
+              className="btn btn-secondary w-full !py-3.5 !text-[0.95rem] font-medium fade-in"
+              style={{ animationDelay: "0.75s" }}
+              whileHover={
+                isMobile
+                  ? undefined
+                  : {
+                      scale: 1.02,
+                      y: -2,
+                      transition: { type: "spring", stiffness: 400, damping: 20 },
+                    }
+              }
+              whileTap={isMobile ? undefined : { scale: 0.98 }}
+            >
+              <PinIcon className="h-5 w-5 shrink-0" />
+              {t.footer.address}
+            </motion.a>
           </div>
         </div>
       </div>
@@ -379,19 +371,6 @@ export default function BusinessCard() {
         className="flex w-full max-w-sm flex-col items-center gap-4 border-t pt-6 fade-in"
         style={{ borderColor: "var(--color-border)", animationDelay: "0.85s" }}
       >
-        <a
-          href={CONTACT_LINKS.googleMapsUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label={t.footer.addressAria}
-          className="group flex items-center gap-2.5 text-[0.82rem] no-underline"
-          style={{ backgroundImage: "none" }}
-        >
-          <PinIcon className="h-4 w-4 shrink-0 text-[var(--color-champagne)] transition-transform duration-300 group-hover:scale-110" />
-          <span className="text-[rgba(244,239,232,0.72)] transition-colors duration-300 group-hover:text-[var(--color-champagne-soft)]">
-            {t.footer.address}
-          </span>
-        </a>
         <div className="flex items-center gap-2.5 text-[0.82rem]">
           <ClockIcon className="h-4 w-4 shrink-0 text-[var(--color-champagne)]" />
           <span className="text-[rgba(244,239,232,0.72)]">{t.businessCard.contactHoursDaily}</span>
