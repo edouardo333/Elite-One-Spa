@@ -352,7 +352,6 @@ export default function Footer() {
           <div className="mt-2 flex items-center gap-6">
             <LegalLink href="#" disabled>{t.footer.links.privacy}</LegalLink>
             <LegalLink href="#" disabled>{t.footer.links.terms}</LegalLink>
-            <LegalLink href="/business-card">{t.footer.links.saveContact}</LegalLink>
           </div>
         </div>
       </div>

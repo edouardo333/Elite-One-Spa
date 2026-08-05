@@ -216,7 +216,6 @@ export interface Translations {
       contact: string;
       privacy: string;
       terms: string;
-      saveContact: string;
     };
     trustTitle: string;
     trust: {
@@ -228,30 +227,6 @@ export interface Translations {
     };
     bookAppointment: string;
     bookAppointmentAria: string;
-  };
-  businessCard: {
-    eyebrow: string;
-    name: string;
-    infoBar: {
-      location: string;
-      hours: string;
-      discretion: string;
-    };
-    description: string;
-    ctaBook: string;
-    ctaBookAria: string;
-    ctaCall: string;
-    ctaCallAria: string;
-    ctaDirections: string;
-    ctaDirectionsAria: string;
-    ctaEmail: string;
-    ctaEmailAria: string;
-    contactHoursDaily: string;
-    footerNote: string;
-    qrTitle: string;
-    qrCaption: string;
-    downloadContact: string;
-    shareContact: string;
   };
   ageGate: {
     eyebrow: string;
@@ -676,7 +651,6 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
         contact: "Contact",
         privacy: "Politique de confidentialité",
         terms: "Conditions d’utilisation",
-        saveContact: "Enregistrer le contact",
       },
       trustTitle: "L’expérience Elite One",
       trust: {
@@ -688,30 +662,6 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
       },
       bookAppointment: "Sans rendez-vous",
       bookAppointmentAria: "Réserver un rendez-vous chez Elite One Spa",
-    },
-    businessCard: {
-      eyebrow: "Expérience de massage premium",
-      name: "Elite One Spa",
-      infoBar: {
-        location: "Centre-ville de Montréal",
-        hours: "Ouvert 7 jours",
-        discretion: "Discrétion absolue",
-      },
-      description: "Massage de luxe, discrétion absolue.",
-      ctaBook: "Sans rendez-vous",
-      ctaBookAria: "Réserver un rendez-vous chez Elite One Spa",
-      ctaCall: "Appeler maintenant",
-      ctaCallAria: "Appeler Elite One Spa",
-      ctaDirections: "Itinéraire",
-      ctaDirectionsAria: "Obtenir l'itinéraire vers Elite One Spa sur Google Maps",
-      ctaEmail: "Envoyer un courriel",
-      ctaEmailAria: "Envoyer un courriel à Elite One Spa",
-      contactHoursDaily: "Ouvert tous les jours",
-      footerNote: "Centre-ville de Montréal • 18 ans et plus",
-      qrTitle: "Enregistrer notre contact",
-      qrCaption: "Scannez pour enregistrer notre contact.",
-      downloadContact: "Télécharger le contact",
-      shareContact: "Partager le contact",
     },
     ageGate: {
       eyebrow: "Accès réservé",
@@ -1138,7 +1088,6 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
         contact: "Contact",
         privacy: "Privacy Policy",
         terms: "Terms",
-        saveContact: "Save Contact",
       },
       trustTitle: "The Elite One Experience",
       trust: {
@@ -1150,30 +1099,6 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
       },
       bookAppointment: "Walk-In Only",
       bookAppointmentAria: "Book an appointment at Elite One Spa",
-    },
-    businessCard: {
-      eyebrow: "Premium Massage Experience",
-      name: "Elite One Spa",
-      infoBar: {
-        location: "Downtown Montréal",
-        hours: "Open 7 Days",
-        discretion: "Absolute Discretion",
-      },
-      description: "Luxury massage with absolute discretion.",
-      ctaBook: "Walk-In Only",
-      ctaBookAria: "Book an appointment at Elite One Spa",
-      ctaCall: "Call Now",
-      ctaCallAria: "Call Elite One Spa",
-      ctaDirections: "Directions",
-      ctaDirectionsAria: "Get directions to Elite One Spa on Google Maps",
-      ctaEmail: "Send an Email",
-      ctaEmailAria: "Send an email to Elite One Spa",
-      contactHoursDaily: "Open Daily",
-      footerNote: "Downtown Montréal • 18+",
-      qrTitle: "Save Our Contact",
-      qrCaption: "Scan to save our contact.",
-      downloadContact: "Download Contact",
-      shareContact: "Share Contact",
     },
     ageGate: {
       eyebrow: "Restricted Access",
