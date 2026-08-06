@@ -6,13 +6,21 @@ import About from "./About";
 import Hostesses from "./Hostesses";
 import Services from "./Services";
 import { useIsMobile } from "@/app/lib/useIsMobile";
+import type { HostessRecord } from "@/app/data/hostesses";
+import type { HostessCardText } from "@/sanity/lib/getHostesses";
 
 /**
  * Shared cinematic backdrop for the About + Hostesses + Services sections. A
  * single continuous background paints behind all three — there is no
  * per-section background, so there is no seam for a boundary line to form on.
  */
-export default function AboutHostessesScene() {
+export default function AboutHostessesScene({
+  hostesses,
+  hostessText,
+}: {
+  hostesses: HostessRecord[];
+  hostessText: Record<string, HostessCardText>;
+}) {
   const prefersReducedMotion = useReducedMotion();
   const isMobile = useIsMobile();
   const sceneRef = useRef<HTMLDivElement>(null);
@@ -172,7 +180,7 @@ export default function AboutHostessesScene() {
       </div>
 
       <About />
-      <Hostesses />
+      <Hostesses hostesses={hostesses} hostessText={hostessText} />
       <Services />
     </div>
   );

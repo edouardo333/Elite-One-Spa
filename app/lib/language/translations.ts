@@ -99,16 +99,12 @@ export interface Translations {
       locationLabel: string;
       bookAppointment: string;
       bookAppointmentAria: string;
+      lightboxOpenAria: string;
+      lightboxPreviousAria: string;
+      lightboxNextAria: string;
     };
-    list: {
-      id: string;
-      name: string;
-      bio: string;
-      schedule: string;
-      location: string;
-      languages: string[];
-      services: string[];
-    }[];
+    /** Shown on every hostess card/modal — a single spa-wide value, not per-hostess data (that all lives in Sanity now). */
+    location: string;
   };
   services: {
     eyebrow: string;
@@ -395,99 +391,11 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
         locationLabel: "Quartier",
         bookAppointment: "Sans rendez-vous",
         bookAppointmentAria: "Réserver un rendez-vous avec {name}",
+        lightboxOpenAria: "Agrandir la photo {n}",
+        lightboxPreviousAria: "Photo précédente",
+        lightboxNextAria: "Photo suivante",
       },
-      list: [
-        {
-          id: "sofia",
-          name: "Sofia",
-          bio: "Un accueil tout en grâce, empreint de chaleur sincère et d’une élégance naturelle qui donne le ton à votre visite.",
-          schedule: "Disponible jusqu’à 23h00",
-          location: "Centre-ville de Montréal",
-          languages: ["Français", "Anglais"],
-          services: ["Massage suédois", "Massage aux pierres chaudes", "Massage en duo"],
-        },
-        {
-          id: "amara",
-          name: "Amara",
-          bio: "Une présence lumineuse et attentive, portée par une douceur qui met immédiatement à l’aise.",
-          schedule: "Disponible jusqu’à 22h00",
-          location: "Centre-ville de Montréal",
-          languages: ["Français", "Anglais", "Espagnol"],
-          services: ["Massage suédois", "Aromathérapie", "Soin du corps à l’huile chaude"],
-        },
-        {
-          id: "valentina",
-          name: "Valentina",
-          bio: "Reconnue pour son écoute et son raffinement, elle incarne l’excellence du service Elite One.",
-          schedule: "Disponible jusqu’à minuit",
-          location: "Centre-ville de Montréal",
-          languages: ["Français", "Anglais", "Espagnol"],
-          services: ["Massage tantrique", "Massage en duo", "Massage aux pierres chaudes"],
-        },
-        {
-          id: "camille",
-          name: "Camille",
-          bio: "Discrète et posée, elle offre une présence apaisante qui invite au lâcher-prise.",
-          schedule: "Disponible jusqu’à 21h30",
-          location: "Centre-ville de Montréal",
-          languages: ["Français", "Anglais"],
-          services: ["Massage suédois", "Aromathérapie", "Soin du corps à l’huile chaude"],
-        },
-        {
-          id: "ines",
-          name: "Inès",
-          bio: "Une élégance tranquille et une attention sincère, pensées pour un moment entièrement dédié à vous.",
-          schedule: "Disponible jusqu’à 23h30",
-          location: "Centre-ville de Montréal",
-          languages: ["Français", "Anglais"],
-          services: ["Massage aux pierres chaudes", "Massage tantrique", "Aromathérapie"],
-        },
-        {
-          id: "jade",
-          name: "Jade",
-          bio: "Fraîcheur et sensibilité se rencontrent dans une présence chaleureuse et résolument attentionnée.",
-          schedule: "Disponible jusqu’à 22h30",
-          location: "Centre-ville de Montréal",
-          languages: ["Français", "Anglais"],
-          services: ["Massage suédois", "Massage en duo", "Aromathérapie"],
-        },
-        {
-          id: "nora",
-          name: "Nora",
-          bio: "Grâce naturelle et sourire sincère — elle rejoint le service en fin de journée.",
-          schedule: "Disponible dès 18h00",
-          location: "Centre-ville de Montréal",
-          languages: ["Français", "Anglais"],
-          services: ["Massage suédois", "Soin du corps à l’huile chaude", "Massage aux pierres chaudes"],
-        },
-        {
-          id: "lea",
-          name: "Léa",
-          bio: "Une nouvelle venue à la présence délicate, impatiente de vous accueillir bientôt.",
-          schedule: "Disponible dès 19h00",
-          location: "Centre-ville de Montréal",
-          languages: ["Français", "Anglais"],
-          services: ["Massage suédois", "Aromathérapie", "Massage en duo"],
-        },
-        {
-          id: "maya",
-          name: "Maya",
-          bio: "Coup de cœur de l’équipe, elle sera de retour dès demain pour vous accueillir.",
-          schedule: "Absente aujourd’hui — retour demain",
-          location: "Centre-ville de Montréal",
-          languages: ["Français", "Anglais", "Espagnol"],
-          services: ["Massage tantrique", "Massage aux pierres chaudes", "Massage en duo"],
-        },
-        {
-          id: "chloe",
-          name: "Chloé",
-          bio: "Une présence tout en douceur, actuellement en repos pour la journée.",
-          schedule: "Absente aujourd’hui",
-          location: "Centre-ville de Montréal",
-          languages: ["Français", "Anglais"],
-          services: ["Massage suédois", "Aromathérapie", "Soin du corps à l’huile chaude"],
-        },
-      ],
+      location: "Centre-ville de Montréal",
     },
     services: {
       eyebrow: "Notre carte de soins",
@@ -834,99 +742,11 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
         locationLabel: "Neighborhood",
         bookAppointment: "Walk-In Only",
         bookAppointmentAria: "Book an appointment with {name}",
+        lightboxOpenAria: "Enlarge photo {n}",
+        lightboxPreviousAria: "Previous photo",
+        lightboxNextAria: "Next photo",
       },
-      list: [
-        {
-          id: "sofia",
-          name: "Sofia",
-          bio: "A graceful welcome, warm and genuine — her natural elegance sets the tone for your visit.",
-          schedule: "Available until 11:00 PM",
-          location: "Downtown Montréal",
-          languages: ["French", "English"],
-          services: ["Swedish Massage", "Hot Stone Massage", "Duo Massage"],
-        },
-        {
-          id: "amara",
-          name: "Amara",
-          bio: "A bright, attentive presence, carried by a gentle warmth that puts you at ease from the first moment.",
-          schedule: "Available until 10:00 PM",
-          location: "Downtown Montréal",
-          languages: ["French", "English", "Spanish"],
-          services: ["Swedish Massage", "Aromatherapy", "Hot Oil Body Treatment"],
-        },
-        {
-          id: "valentina",
-          name: "Valentina",
-          bio: "Known for her attentiveness and refinement, she embodies the Elite One standard of service.",
-          schedule: "Available until midnight",
-          location: "Downtown Montréal",
-          languages: ["French", "English", "Spanish"],
-          services: ["Tantric Massage", "Duo Massage", "Hot Stone Massage"],
-        },
-        {
-          id: "camille",
-          name: "Camille",
-          bio: "Composed and discreet, her calming presence invites you to simply let go.",
-          schedule: "Available until 9:30 PM",
-          location: "Downtown Montréal",
-          languages: ["French", "English"],
-          services: ["Swedish Massage", "Aromatherapy", "Hot Oil Body Treatment"],
-        },
-        {
-          id: "ines",
-          name: "Inès",
-          bio: "Quiet elegance and genuine care, devoted entirely to your moment of escape.",
-          schedule: "Available until 11:30 PM",
-          location: "Downtown Montréal",
-          languages: ["French", "English"],
-          services: ["Hot Stone Massage", "Tantric Massage", "Aromatherapy"],
-        },
-        {
-          id: "jade",
-          name: "Jade",
-          bio: "Freshness and sensitivity meet in a warm, deeply attentive presence.",
-          schedule: "Available until 10:30 PM",
-          location: "Downtown Montréal",
-          languages: ["French", "English"],
-          services: ["Swedish Massage", "Duo Massage", "Aromatherapy"],
-        },
-        {
-          id: "nora",
-          name: "Nora",
-          bio: "Natural grace and a genuine smile — she joins the floor later today.",
-          schedule: "Available from 6:00 PM",
-          location: "Downtown Montréal",
-          languages: ["French", "English"],
-          services: ["Swedish Massage", "Hot Oil Body Treatment", "Hot Stone Massage"],
-        },
-        {
-          id: "lea",
-          name: "Léa",
-          bio: "A delicate new presence, looking forward to welcoming you soon.",
-          schedule: "Available from 7:00 PM",
-          location: "Downtown Montréal",
-          languages: ["French", "English"],
-          services: ["Swedish Massage", "Aromatherapy", "Duo Massage"],
-        },
-        {
-          id: "maya",
-          name: "Maya",
-          bio: "A team favorite, she’ll be back tomorrow to welcome you.",
-          schedule: "Off today — back tomorrow",
-          location: "Downtown Montréal",
-          languages: ["French", "English", "Spanish"],
-          services: ["Tantric Massage", "Hot Stone Massage", "Duo Massage"],
-        },
-        {
-          id: "chloe",
-          name: "Chloé",
-          bio: "A gentle, soothing presence, currently resting for the day.",
-          schedule: "Off today",
-          location: "Downtown Montréal",
-          languages: ["French", "English"],
-          services: ["Swedish Massage", "Aromatherapy", "Hot Oil Body Treatment"],
-        },
-      ],
+      location: "Downtown Montréal",
     },
     services: {
       eyebrow: "Our Menu of Experiences",

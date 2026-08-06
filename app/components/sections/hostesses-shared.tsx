@@ -7,8 +7,12 @@ import { useLanguage } from "@/app/lib/language/LanguageContext";
 import { useIsMobile } from "@/app/lib/useIsMobile";
 import type { Translations } from "@/app/lib/language/translations";
 import type { HostessRecord, HostessStatus } from "@/app/data/hostesses";
+import type { HostessCardText } from "@/sanity/lib/getHostesses";
 
-export type HostessText = Translations["hostesses"]["list"][number];
+// Sanity-sourced hostess text (name/bio/schedule/languages/services), plus
+// the "location" that isn't part of the Sanity schema and instead comes
+// from the single spa-wide value in translations.ts (see Hostesses.tsx).
+export type HostessText = HostessCardText & { location: string };
 
 export const STATUS_COLOR: Record<HostessStatus, string> = {
   available: "#6fe3a0",

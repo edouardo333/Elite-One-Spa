@@ -22,6 +22,7 @@ import {
   statusLabel,
   type HostessText,
 } from "./hostesses-shared";
+import HostessGalleryLightbox from "./HostessGalleryLightbox";
 
 export default function HostessProfileModal({
   hostess,
@@ -35,9 +36,19 @@ export default function HostessProfileModal({
   const { t } = useLanguage();
   const prefersReducedMotion = useReducedMotion();
   const [status, setStatus] = useState<"open" | "closing">("open");
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const closeTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
   const titleId = `hostess-modal-title-${hostess.id}`;
+
+  // Read by the Escape handler below (which only runs once on mount, so it
+  // can't close over fresh state) to let the lightbox — mounted later, its
+  // own Escape listener attached after this one — consume the key first
+  // instead of also closing the whole profile.
+  const lightboxOpenRef = useRef(false);
+  useEffect(() => {
+    lightboxOpenRef.current = lightboxIndex !== null;
+  }, [lightboxIndex]);
 
   useBodyScrollLock(true);
   useModalFocusTrap(dialogRef, true);
@@ -59,7 +70,12 @@ export default function HostessProfileModal({
 
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape") requestClose();
+      if (event.key !== "Escape") return;
+      // The lightbox has its own Escape listener (attached after this one,
+      // since it mounts later) — let it close itself first rather than
+      // dismissing the whole profile in the same keypress.
+      if (lightboxOpenRef.current) return;
+      requestClose();
     }
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
@@ -123,16 +139,19 @@ export default function HostessProfileModal({
             {t.hostesses.modal.galleryLabel}
           </p>
           <div className="grid grid-cols-3 gap-2">
-            {galleryTiles.map((tile, index) => (
-              <div
-                key={typeof tile === "string" ? tile : index}
-                className="relative aspect-square overflow-hidden rounded-[var(--radius-sm)] border"
-                style={{
-                  borderColor: "var(--color-border)",
-                  backgroundImage: `linear-gradient(155deg, ${hostess.gradient[0]} 0%, ${hostess.gradient[1]} 100%)`,
-                }}
-              >
-                {typeof tile === "string" ? (
+            {galleryTiles.map((tile, index) =>
+              typeof tile === "string" ? (
+                <button
+                  key={tile}
+                  type="button"
+                  onClick={() => setLightboxIndex(index)}
+                  aria-label={t.hostesses.modal.lightboxOpenAria.replace("{n}", String(index + 1))}
+                  className="relative aspect-square overflow-hidden rounded-[var(--radius-sm)] border focus:outline-none focus-visible:ring-2 focus-visible:ring-[rgba(232,201,171,0.6)]"
+                  style={{
+                    borderColor: "var(--color-border)",
+                    backgroundImage: `linear-gradient(155deg, ${hostess.gradient[0]} 0%, ${hostess.gradient[1]} 100%)`,
+                  }}
+                >
                   <Image
                     src={tile}
                     alt={`${text.name} — ${t.hostesses.modal.galleryLabel} ${index + 1}`}
@@ -140,16 +159,25 @@ export default function HostessProfileModal({
                     sizes="120px"
                     className="object-cover"
                   />
-                ) : (
+                </button>
+              ) : (
+                <div
+                  key={index}
+                  className="relative aspect-square overflow-hidden rounded-[var(--radius-sm)] border"
+                  style={{
+                    borderColor: "var(--color-border)",
+                    backgroundImage: `linear-gradient(155deg, ${hostess.gradient[0]} 0%, ${hostess.gradient[1]} 100%)`,
+                  }}
+                >
                   <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
                     <SilhouetteIcon
                       className="h-5 w-5 opacity-50"
                       style={{ color: "rgba(244,239,232,0.7)" }}
                     />
                   </div>
-                )}
-              </div>
-            ))}
+                </div>
+              )
+            )}
           </div>
           {!hostess.gallery?.length && (
             <p className="text-center text-[0.58rem] uppercase tracking-[0.1em] text-[var(--color-text-muted)]">
@@ -232,6 +260,18 @@ export default function HostessProfileModal({
           </a>
         </div>
       </motion.div>
+
+      {/* Rendered as a sibling of the card above (not inside it) — the card's
+          framer-motion transform would otherwise turn this fixed overlay into
+          one positioned relative to the card instead of the viewport. */}
+      {lightboxIndex !== null && hostess.gallery && hostess.gallery.length > 0 && (
+        <HostessGalleryLightbox
+          images={hostess.gallery}
+          initialIndex={lightboxIndex}
+          name={text.name}
+          onClose={() => setLightboxIndex(null)}
+        />
+      )}
     </div>
   );
 }

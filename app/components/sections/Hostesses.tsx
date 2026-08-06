@@ -6,12 +6,8 @@ import { motion, useReducedMotion } from "framer-motion";
 import { useLanguage } from "@/app/lib/language/LanguageContext";
 import { useIsMobile } from "@/app/lib/useIsMobile";
 import type { Translations } from "@/app/lib/language/translations";
-import {
-  HOSTESS_DATA,
-  HOSTESS_STATUS_CYCLE,
-  type HostessRecord,
-  type HostessStatus,
-} from "@/app/data/hostesses";
+import type { HostessRecord, HostessStatus } from "@/app/data/hostesses";
+import type { HostessCardText } from "@/sanity/lib/getHostesses";
 import {
   AnimatedNumber,
   Avatar,
@@ -50,7 +46,6 @@ type FilterKey = "all" | "available" | "soon" | "off" | "premium" | "new";
 
 const FILTER_KEYS: FilterKey[] = ["all", "available", "soon", "off", "premium", "new"];
 
-const SIMULATION_INTERVAL_MS = 28_000;
 const CLOCK_TICK_MS = 30_000;
 
 function filterLabel(t: Translations, key: FilterKey) {
@@ -70,12 +65,24 @@ function filterLabel(t: Translations, key: FilterKey) {
   }
 }
 
-export default function Hostesses() {
+export default function Hostesses({
+  hostesses: initialHostesses,
+  hostessText,
+}: {
+  /** Fetched server-side from Sanity (via getHostesses()), with a static fallback. */
+  hostesses: HostessRecord[];
+  hostessText: Record<string, HostessCardText>;
+}) {
   const { t } = useLanguage();
   const prefersReducedMotion = useReducedMotion();
   const isMobile = useIsMobile();
   const [filter, setFilter] = useState<FilterKey>("all");
-  const [hostesses, setHostesses] = useState<HostessRecord[]>(HOSTESS_DATA);
+  // Sanity is the single source of truth for status, availableUntil, badges,
+  // and ordering (the ACTIVE_HOSTESSES_QUERY already sorts by popularToday
+  // desc, then displayOrder asc). This list is never mutated client-side —
+  // it only changes when an editor publishes a change in Sanity and the
+  // server re-fetches.
+  const hostesses = initialHostesses;
   const [lastUpdatedAt, setLastUpdatedAt] = useState<number | null>(null);
   const [now, setNow] = useState<number | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -107,32 +114,18 @@ export default function Hostesses() {
     return () => window.clearInterval(tick);
   }, []);
 
-  // Live simulation — periodically nudges one hostess to the next status so
-  // the dashboard feels genuinely alive rather than a static snapshot. Also
-  // skipped while the tab is backgrounded, for the same reason as the clock.
-  // Only the mutated hostess gets a new object reference below, so
-  // `HostessCard` (wrapped in `memo`) bails out for every other card instead
-  // of the whole grid reconciling on each tick.
-  useEffect(() => {
-    if (prefersReducedMotion) return;
-    const interval = window.setInterval(() => {
-      if (document.hidden) return;
-      setHostesses((prev) => {
-        const index = Math.floor(Math.random() * prev.length);
-        return prev.map((h, i) =>
-          i === index ? { ...h, status: HOSTESS_STATUS_CYCLE[h.status] } : h
-        );
-      });
-      setLastUpdatedAt(Date.now());
-      setNow(Date.now());
-    }, SIMULATION_INTERVAL_MS);
-    return () => window.clearInterval(interval);
-  }, [prefersReducedMotion]);
-
-  const textById = useMemo(
-    () => new Map(t.hostesses.list.map((entry) => [entry.id, entry])),
-    [t]
-  );
+  // Name/bio/languages/services/schedule come from Sanity (not localized —
+  // one value per hostess, not a fr/en pair). "location" isn't part of the
+  // Sanity schema — every hostess shares the same spa-wide value, so it
+  // comes from translations.ts and keeps switching with the language toggle.
+  const textById = useMemo(() => {
+    return new Map(
+      Object.values(hostessText).map((text) => [
+        text.id,
+        { ...text, location: t.hostesses.location },
+      ])
+    );
+  }, [t, hostessText]);
 
   const counts = useMemo(
     () =>

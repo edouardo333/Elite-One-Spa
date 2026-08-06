@@ -19,11 +19,10 @@ import {
   type HostessText,
 } from "./hostesses-shared";
 
-// Extracted from the grid `.map()` and memoized so the live-availability
-// simulation (Hostesses.tsx ticks one hostess's status every ~28s) only
-// re-renders the one card whose data actually changed, instead of
-// reconciling the whole grid — each card carries several backdrop-blur
-// layers, so that add up fast across 10+ cards.
+// Extracted from the grid `.map()` and memoized so that re-filtering or
+// re-ordering the grid only re-renders cards whose props actually changed,
+// instead of reconciling the whole grid — each card carries several
+// backdrop-blur layers, so that adds up fast across 10+ cards.
 function HostessCard({
   hostess,
   text,
@@ -36,7 +35,7 @@ function HostessCard({
   const { t } = useLanguage();
   const prefersReducedMotion = useReducedMotion();
   const isMobile = useIsMobile();
-  const chips = badgesFor(hostess, t).slice(0, 2);
+  const chips = badgesFor(hostess, t);
 
   return (
     <motion.div
