@@ -43,6 +43,7 @@ interface SanityHostessDoc {
   popularToday?: boolean;
   newArrival?: boolean;
   staffFavorite?: boolean;
+  featured?: boolean;
   displayOrder: number;
 }
 
@@ -69,6 +70,8 @@ function toHostessRecord(doc: SanityHostessDoc): HostessRecord {
     newArrival: doc.newArrival,
     staffFavorite: doc.staffFavorite,
     popular: doc.popularToday,
+    featured: doc.featured,
+    displayOrder: doc.displayOrder,
     gradient: [doc.gradientFrom, doc.gradientTo],
     age: doc.age,
     heightCm: doc.height,

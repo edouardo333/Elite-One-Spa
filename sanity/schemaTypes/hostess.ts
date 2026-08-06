@@ -34,6 +34,15 @@ export const hostessType = defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
+      name: "featured",
+      title: "⭐ Featured Hostess (Large Homepage Card)",
+      type: "boolean",
+      description:
+        "Shows her in the large featured card at the top of the homepage roster. Turning this on and publishing automatically turns it off for every other hostess — only one hostess can ever be featured at a time, so you never need to remember to switch the previous one off.",
+      initialValue: false,
+      group: "basic",
+    }),
+    defineField({
       name: "age",
       title: "Age",
       type: "number",
@@ -229,12 +238,13 @@ export const hostessType = defineType({
       media: "mainPhoto",
       order: "displayOrder",
       active: "active",
+      featured: "featured",
     },
-    prepare({ title, subtitle, media, order, active }) {
+    prepare({ title, subtitle, media, order, active, featured }) {
       const statusLabel =
         subtitle === "comingSoon" ? "Coming soon" : subtitle === "offToday" ? "Off today" : "Available now";
       return {
-        title: `${active === false ? "⚫ Hidden — " : ""}${title ?? "Untitled"}`,
+        title: `${featured ? "⭐ Featured — " : ""}${active === false ? "⚫ Hidden — " : ""}${title ?? "Untitled"}`,
         subtitle: `#${order ?? "?"} — ${statusLabel}`,
         media,
       };

@@ -7,6 +7,7 @@ import { useLanguage } from "@/app/lib/language/LanguageContext";
 import { useIsMobile } from "@/app/lib/useIsMobile";
 import type { Translations } from "@/app/lib/language/translations";
 import type { HostessRecord, HostessStatus } from "@/app/data/hostesses";
+import { FALLBACK_HOSTESS_DATA, FALLBACK_HOSTESS_TEXT } from "@/app/data/hostessesFallback";
 import type { HostessCardText } from "@/sanity/lib/getHostesses";
 import {
   AnimatedNumber,
@@ -73,7 +74,7 @@ export default function Hostesses({
   hostesses: HostessRecord[];
   hostessText: Record<string, HostessCardText>;
 }) {
-  const { t } = useLanguage();
+  const { t, locale } = useLanguage();
   const prefersReducedMotion = useReducedMotion();
   const isMobile = useIsMobile();
   const [filter, setFilter] = useState<FilterKey>("all");
@@ -81,8 +82,13 @@ export default function Hostesses({
   // and ordering (the ACTIVE_HOSTESSES_QUERY already sorts by popularToday
   // desc, then displayOrder asc). This list is never mutated client-side —
   // it only changes when an editor publishes a change in Sanity and the
-  // server re-fetches.
-  const hostesses = initialHostesses;
+  // server re-fetches. getHostesses() already swallows fetch errors into an
+  // empty array, so an empty list here covers both "Sanity is unreachable"
+  // and "the dataset is genuinely empty" — either way we fall back to the
+  // last known-good local roster rather than showing nothing.
+  const usingFallback = initialHostesses.length === 0;
+  const hostesses = usingFallback ? FALLBACK_HOSTESS_DATA : initialHostesses;
+  const textSource = usingFallback ? FALLBACK_HOSTESS_TEXT[locale] : hostessText;
   const [lastUpdatedAt, setLastUpdatedAt] = useState<number | null>(null);
   const [now, setNow] = useState<number | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -120,12 +126,12 @@ export default function Hostesses({
   // comes from translations.ts and keeps switching with the language toggle.
   const textById = useMemo(() => {
     return new Map(
-      Object.values(hostessText).map((text) => [
+      Object.values(textSource).map((text) => [
         text.id,
         { ...text, location: t.hostesses.location },
       ])
     );
-  }, [t, hostessText]);
+  }, [t, textSource]);
 
   const counts = useMemo(
     () =>
@@ -163,7 +169,16 @@ export default function Hostesses({
     }
   }, [hostesses, filter]);
 
-  const featured = filter === "all" ? hostesses.find((h) => h.status === "available") : null;
+  // The large featured card reads ONLY from the explicit `featured` flag
+  // (guaranteed unique — see sanity/lib/uniqueFeaturedPublish.ts). If no
+  // hostess is featured, fall back to the first active hostess ordered by
+  // displayOrder, so the card never sits empty and never crashes.
+  const featured =
+    filter === "all"
+      ? hostesses.find((h) => h.featured) ??
+        [...hostesses].sort((a, b) => a.displayOrder - b.displayOrder)[0] ??
+        null
+      : null;
   const gridList = featured ? filtered.filter((h) => h.id !== featured.id) : filtered;
   const showMoreAvailable = isMobile && !mobileExpanded && gridList.length > MOBILE_INITIAL_GRID_COUNT;
   const visibleGridList =
