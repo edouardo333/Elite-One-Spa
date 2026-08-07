@@ -12,7 +12,7 @@ import type { HostessCardText } from "@/sanity/lib/getHostesses";
 import {
   AnimatedNumber,
   Avatar,
-  BadgeChips,
+  BadgePill,
   LiveDot,
   LocationIcon,
   STATUS_COLOR,
@@ -20,6 +20,7 @@ import {
   StatsStrip,
   StatusBadge,
   badgesFor,
+  splitPriorityBadge,
   statusLabel,
 } from "./hostesses-shared";
 import HostessCard from "./HostessCard";
@@ -336,6 +337,12 @@ export default function Hostesses({
           (() => {
             const featuredText = textById.get(featured.id);
             if (!featuredText) return null;
+            // Same placement philosophy as the grid cards: at most one
+            // marketing badge ever sits over the photo (bottom-left,
+            // opposite the top-right status badge); the rest render as
+            // compact pills near the name, never stacked over the image.
+            const { priority: featuredPriorityChip, rest: featuredSecondaryChips } =
+              splitPriorityBadge(badgesFor(featured, t));
             return (
               <motion.div
                 key={featured.id}
@@ -374,22 +381,18 @@ export default function Hostesses({
                       />
                     </div>
                     <StatusBadge status={featured.status} label={statusLabel(t, featured.status)} />
-                    <BadgeChips
-                      chips={badgesFor(featured, t).filter((c) => c.key !== "popular")}
-                    />
+                    {featuredPriorityChip && (
+                      <BadgePill chip={featuredPriorityChip} className="absolute bottom-3 left-3 z-10" />
+                    )}
                   </div>
 
                   <div className="flex flex-col justify-center">
-                    {badgesFor(featured, t).some((c) => c.key === "popular") && (
-                      <span
-                        className="mb-4 inline-flex w-fit items-center gap-1.5 rounded-full border px-3 py-1 text-[0.62rem] font-medium uppercase tracking-[0.12em]"
-                        style={{
-                          borderColor: "rgba(232,201,171,0.32)",
-                          color: "var(--color-champagne-soft)",
-                        }}
-                      >
-                        🔥 {t.hostesses.badges.popular}
-                      </span>
+                    {featuredSecondaryChips.length > 0 && (
+                      <div className="mb-4 flex flex-wrap gap-1.5">
+                        {featuredSecondaryChips.map((chip) => (
+                          <BadgePill key={chip.key} chip={chip} variant="inline" />
+                        ))}
+                      </div>
                     )}
                     <h3 className="text-3xl sm:text-4xl">{featuredText.name}</h3>
                     <div className="mt-3">

@@ -48,6 +48,21 @@ export function badgesFor(h: HostessRecord, t: Translations) {
   return chips;
 }
 
+// Editorial priority for the single marketing badge allowed to sit over a
+// hostess photo — independent of badgesFor()'s array order. Only one badge
+// ever wins the photo slot; everything else renders near the name instead.
+const MARKETING_BADGE_PRIORITY = ["popular", "staffFavorite", "newArrival", "premium"] as const;
+
+export function splitPriorityBadge<T extends { key: string }>(
+  chips: T[]
+): { priority: T | null; rest: T[] } {
+  if (chips.length === 0) return { priority: null, rest: [] };
+  const priority =
+    MARKETING_BADGE_PRIORITY.map((key) => chips.find((c) => c.key === key)).find(Boolean) ??
+    chips[0];
+  return { priority, rest: chips.filter((c) => c !== priority) };
+}
+
 export function AnimatedNumber({ value }: { value: number }) {
   const [display, setDisplay] = useState(value);
   const displayRef = useRef(value);
@@ -258,28 +273,40 @@ export function Avatar({
   );
 }
 
-export function BadgeChips({ chips }: { chips: { key: string; label: string; icon: string }[] }) {
-  if (chips.length === 0) return null;
+// Single compact marketing-badge pill. `overlay` matches the dark
+// backdrop-blur treatment used when it sits on top of the photo;
+// `inline` is a lighter chip for when it sits in the card body (near the
+// name), where there's no photo underneath it to contrast against.
+export function BadgePill({
+  chip,
+  variant = "overlay",
+  className = "",
+}: {
+  chip: { key: string; label: string; icon: string };
+  variant?: "overlay" | "inline";
+  className?: string;
+}) {
+  const overlay = variant === "overlay";
   return (
-    <div className="absolute left-3 top-3 z-10 flex flex-col items-start gap-1.5">
-      {chips.map((chip) => (
-        <span
-          key={chip.key}
-          className="inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[0.6rem] font-medium uppercase tracking-[0.1em] backdrop-blur-md"
-          style={{
-            backgroundColor: "rgba(10,9,11,0.55)",
-            borderColor: "rgba(244,239,232,0.18)",
-            color: "var(--color-champagne-soft)",
-          }}
-        >
-          <span aria-hidden="true">{chip.icon}</span>
-          {chip.label}
-        </span>
-      ))}
-    </div>
+    <span
+      className={`inline-flex w-fit items-center gap-1.5 rounded-full border px-2.5 py-1 text-[0.6rem] font-medium uppercase tracking-[0.1em] ${
+        overlay ? "backdrop-blur-md" : ""
+      } ${className}`}
+      style={{
+        backgroundColor: overlay ? "rgba(10,9,11,0.55)" : "rgba(244,239,232,0.04)",
+        borderColor: overlay ? "rgba(244,239,232,0.18)" : "var(--color-border)",
+        color: "var(--color-champagne-soft)",
+      }}
+    >
+      <span aria-hidden="true">{chip.icon}</span>
+      {chip.label}
+    </span>
   );
 }
 
+// Always pinned top-right over the photo — paired with the single priority
+// marketing badge pinned bottom-left (see splitPriorityBadge), the two sit
+// in opposite corners and can never share a row/area at any width.
 export function StatusBadge({ status, label }: { status: HostessStatus; label: string }) {
   return (
     <span

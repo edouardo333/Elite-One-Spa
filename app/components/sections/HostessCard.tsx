@@ -7,7 +7,7 @@ import { useIsMobile } from "@/app/lib/useIsMobile";
 import type { HostessRecord } from "@/app/data/hostesses";
 import {
   Avatar,
-  BadgeChips,
+  BadgePill,
   LiveDot,
   LocationIcon,
   STATUS_COLOR,
@@ -15,6 +15,7 @@ import {
   StatsStrip,
   StatusBadge,
   badgesFor,
+  splitPriorityBadge,
   statusLabel,
   type HostessText,
 } from "./hostesses-shared";
@@ -35,7 +36,10 @@ function HostessCard({
   const { t } = useLanguage();
   const prefersReducedMotion = useReducedMotion();
   const isMobile = useIsMobile();
-  const chips = badgesFor(hostess, t);
+  // No-collision rule: at most one marketing badge may ever sit over the
+  // photo (bottom-left); any others move down near the name as compact
+  // pills instead of competing with the availability badge (top-right).
+  const { priority: priorityChip, rest: secondaryChips } = splitPriorityBadge(badgesFor(hostess, t));
 
   return (
     <motion.div
@@ -54,12 +58,24 @@ function HostessCard({
     >
       <div className="relative">
         <Avatar name={text.name} photo={hostess.photo} gradient={hostess.gradient} />
+        {/* Status top-right, single priority marketing badge bottom-left —
+            opposite corners, so they can never share a row/area at any
+            width, down to 320px. */}
         <StatusBadge status={hostess.status} label={statusLabel(t, hostess.status)} />
-        <BadgeChips chips={chips} />
+        {priorityChip && <BadgePill chip={priorityChip} className="absolute bottom-3 left-3 z-10" />}
       </div>
       <div className="flex flex-col gap-4 p-5">
         <div className="flex items-start justify-between gap-3">
-          <h4 className="text-lg font-medium text-[var(--color-offwhite)]">{text.name}</h4>
+          <div className="flex flex-col gap-2">
+            <h4 className="text-lg font-medium text-[var(--color-offwhite)]">{text.name}</h4>
+            {secondaryChips.length > 0 && (
+              <div className="flex flex-wrap gap-1.5">
+                {secondaryChips.map((chip) => (
+                  <BadgePill key={chip.key} chip={chip} variant="inline" />
+                ))}
+              </div>
+            )}
+          </div>
           <StarRating rating={hostess.rating} label={t.hostesses.ratingLabel} />
         </div>
 
