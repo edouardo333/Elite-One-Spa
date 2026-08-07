@@ -24,6 +24,8 @@ let audioEl: HTMLAudioElement | null = null;
 let fadeFrame: number | null = null;
 let isStarting = false;
 let hasReadStoredMute = false;
+let pausedForVisibility = false;
+let visibilityHandlersAttached = false;
 
 function setState(patch: Partial<AudioState>) {
   state = { ...state, ...patch };
@@ -62,6 +64,7 @@ function ensureAudioElement(): HTMLAudioElement {
     audioEl.preload = "auto";
     audioEl.volume = 0;
     audioEl.muted = state.isMuted;
+    attachVisibilityHandlers();
   }
   return audioEl;
 }
@@ -71,6 +74,69 @@ function cancelFade() {
     cancelAnimationFrame(fadeFrame);
     fadeFrame = null;
   }
+}
+
+/**
+ * Coupe immédiatement la lecture quand la page n'est plus visible (onglet changé,
+ * app mise en arrière-plan, etc.). N'affecte pas `state.isPlaying`/`isMuted` : ce
+ * sont des pauses techniques, pas un choix utilisateur — le bouton mute/unmute et
+ * la reprise automatique (resumeFromVisibility) doivent rester cohérents.
+ */
+function pauseForVisibility() {
+  if (!audioEl || audioEl.paused) return;
+  cancelFade();
+  audioEl.pause();
+  pausedForVisibility = true;
+}
+
+/**
+ * Reprend la lecture uniquement si elle avait été coupée par pauseForVisibility
+ * (jamais si l'utilisateur a mis en pause manuellement) et si l'ambiance était
+ * active. Le volume `muted` est préservé tel quel (on ne force pas l'unmute).
+ * Si le navigateur refuse la reprise (ex. iOS après une longue mise en arrière-plan),
+ * on repasse `isPlaying` à false pour que le bouton mute/unmute puisse relancer la
+ * lecture au prochain geste utilisateur.
+ */
+function resumeFromVisibility() {
+  if (!pausedForVisibility) return;
+  pausedForVisibility = false;
+  if (!audioEl || !state.isPlaying) return;
+  audioEl.play().catch(() => {
+    setState({ isPlaying: false });
+  });
+}
+
+function handleVisibilityChange() {
+  if (document.hidden) {
+    pauseForVisibility();
+  } else {
+    resumeFromVisibility();
+  }
+}
+
+/**
+ * `pagehide` est plus définitif que `visibilitychange` : fermeture d'onglet,
+ * navigation hors du site, ou (notamment sur Safari iOS) mise en arrière-plan de
+ * l'app. On coupe systématiquement le son ; une éventuelle restauration depuis le
+ * bfcache est gérée par `pageshow` ci-dessous.
+ */
+function handlePageHide() {
+  if (!audioEl || audioEl.paused) return;
+  cancelFade();
+  audioEl.pause();
+  pausedForVisibility = true;
+}
+
+function handlePageShow(event: PageTransitionEvent) {
+  if (event.persisted) resumeFromVisibility();
+}
+
+function attachVisibilityHandlers() {
+  if (visibilityHandlersAttached || typeof document === "undefined") return;
+  visibilityHandlersAttached = true;
+  document.addEventListener("visibilitychange", handleVisibilityChange);
+  window.addEventListener("pagehide", handlePageHide);
+  window.addEventListener("pageshow", handlePageShow);
 }
 
 function fadeInVolume(audio: HTMLAudioElement) {
