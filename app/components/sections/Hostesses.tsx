@@ -315,7 +315,23 @@ export default function Hostesses({
                 className="relative rounded-full px-4 py-3.5 text-[0.64rem] font-medium uppercase tracking-[0.14em] transition-colors duration-500 sm:px-5 xl:py-2.5"
                 style={{ color: active ? "var(--color-black)" : "var(--color-offwhite)" }}
               >
-                {active && (
+                {active && isMobile && (
+                  // Mobile: plain CSS pill, no `layoutId`. Shared-layout projection
+                  // (layoutId) is Framer Motion's most expensive feature — on every
+                  // tap it recalculates layout for every OTHER layout-animated node
+                  // in the tree (the grid + every card below), which is what turned
+                  // "switch filter" into a full-tree reflow on mobile. The visual
+                  // result (solid champagne pill on the active filter) is identical;
+                  // only the animated slide-between-buttons is gone.
+                  <span
+                    className="absolute inset-0 rounded-full"
+                    style={{
+                      backgroundColor: "var(--color-champagne)",
+                      boxShadow: "0 0 22px rgba(232,201,171,0.4)",
+                    }}
+                  />
+                )}
+                {active && !isMobile && (
                   <motion.span
                     layoutId="hostess-filter-pill"
                     className="absolute inset-0 rounded-full"
@@ -346,7 +362,7 @@ export default function Hostesses({
             return (
               <motion.div
                 key={featured.id}
-                layout
+                layout={!isMobile}
                 initial={{ opacity: 0, y: 24 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
@@ -433,9 +449,14 @@ export default function Hostesses({
             );
           })()}
 
-        {/* Grid */}
+        {/* Grid — `layout` (FLIP repositioning) is skipped on mobile: every
+            filter change forces a getBoundingClientRect measurement of this
+            wrapper plus every card inside it (see the same gate on
+            HostessCard). Cards still reorder/appear/disappear instantly via
+            normal reflow, just without the animated slide. Desktop keeps the
+            smooth transition — its frame budget handles it fine. */}
         <motion.div
-          layout
+          layout={!isMobile}
           className="mx-auto mt-12 grid max-w-6xl grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
         >
           {visibleGridList.map((h) => {

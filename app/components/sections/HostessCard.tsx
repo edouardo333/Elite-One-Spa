@@ -41,13 +41,23 @@ function HostessCard({
   // pills instead of competing with the availability badge (top-right).
   const { priority: priorityChip, rest: secondaryChips } = splitPriorityBadge(badgesFor(hostess, t));
 
+  // Mobile: no `layout` (FLIP repositioning) and a lighter, opacity-only
+  // mount transition instead of opacity+y+scale. On every filter switch this
+  // ran for every visible card simultaneously; combined with the shared
+  // filter-pill projection (see Hostesses.tsx) that's what turned filter
+  // taps into a full-tree reflow/animation burst on mobile. Desktop keeps
+  // the original motion — its frame budget already handles it fine.
+  const mountTransition = isMobile
+    ? { opacity: { duration: 0.18 } }
+    : { duration: 0.5, ease: [0.16, 1, 0.3, 1] as const };
+
   return (
     <motion.div
-      layout
-      initial={{ opacity: 0, y: 20, scale: 0.97 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.96 }}
-      transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+      layout={!isMobile}
+      initial={isMobile ? { opacity: 0 } : { opacity: 0, y: 20, scale: 0.97 }}
+      animate={isMobile ? { opacity: 1 } : { opacity: 1, y: 0, scale: 1 }}
+      exit={isMobile ? { opacity: 0 } : { opacity: 0, scale: 0.96 }}
+      transition={mountTransition}
       whileHover={prefersReducedMotion || isMobile ? undefined : { y: -6 }}
       onClick={() => onSelect(hostess.id)}
       className="group relative cursor-pointer overflow-hidden rounded-[var(--radius-md)] border backdrop-blur-xl transition-[border-color,box-shadow] duration-700 ease-[cubic-bezier(0.19,1,0.22,1)] hover:shadow-[0_0_40px_rgba(232,120,150,0.18)]"
