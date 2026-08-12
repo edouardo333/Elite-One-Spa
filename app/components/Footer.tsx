@@ -347,7 +347,15 @@ export default function Footer() {
             © 2026 Elite One Spa. All rights reserved.
           </p>
           <p className="text-[0.72rem] tracking-[0.02em] text-[var(--color-text-muted)]">
-            Created by Brochu Digital
+            Created by{" "}
+            <a
+              href="https://brochudigital.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="transition-colors duration-200 hover:text-[var(--color-champagne)]"
+            >
+              Brochu Digital
+            </a>
           </p>
           <div className="mt-2 flex items-center gap-6">
             <LegalLink href="#" disabled>{t.footer.links.privacy}</LegalLink>
