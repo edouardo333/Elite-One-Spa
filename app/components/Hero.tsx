@@ -107,7 +107,7 @@ useEffect(() => {
   return (
     <section
       id="accueil"
-      className="relative isolate flex min-h-[max(560px,100dvh)] w-full items-center justify-center overflow-hidden bg-[var(--color-black)] xl:h-[100dvh] xl:min-h-[560px]"
+      className="relative isolate flex min-h-[max(560px,100dvh)] w-full items-center justify-center overflow-hidden bg-[var(--color-black)] xl:h-[100dvh] xl:min-h-[560px] [@media(max-height:820px)]:items-start"
     >
       {/* Crossfading Ken Burns background */}
       <div className="absolute inset-0 z-0">
@@ -421,41 +421,6 @@ useEffect(() => {
           </motion.a>
         </div>
       </div>
-
-      {/* Scroll indicator — fine line, descending point of light */}
-      <motion.a
-        href="#soins"
-        aria-label={t.hero.scrollAria}
-        className="group absolute bottom-10 left-1/2 z-20 flex -translate-x-1/2 flex-col items-center gap-4"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 1.2, delay: 1.3 }}
-      >
-        <span className="text-[0.62rem] font-medium uppercase tracking-[0.34em] text-[var(--color-text-muted)] transition-colors duration-500 group-hover:text-[var(--color-champagne)]">
-          {t.hero.scrollLabel}
-        </span>
-        <span
-          className="relative h-11 w-px overflow-hidden"
-          style={{
-            backgroundImage:
-              "linear-gradient(to bottom, transparent, rgba(244,239,232,0.3) 20%, rgba(244,239,232,0.3) 80%, transparent)",
-          }}
-        >
-          <motion.span
-            className="absolute left-1/2 top-0 h-1.5 w-1.5 -translate-x-1/2 rounded-full"
-            style={{
-              background: "var(--color-champagne)",
-              boxShadow: "0 0 6px rgba(232,201,171,0.8)",
-            }}
-            animate={
-              prefersReducedMotion || isMobile
-                ? undefined
-                : { y: [0, 34, 0], opacity: [0, 1, 1, 0] }
-            }
-            transition={{ duration: 2.8, repeat: Infinity, ease: "easeInOut" }}
-          />
-        </span>
-      </motion.a>
     </section>
   );
 }
