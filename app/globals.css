@@ -577,6 +577,54 @@ body:has(button[aria-controls="mobile-nav-panel"][aria-expanded="true"]) #main-c
   padding-inline: clamp(1.25rem, 4vw, 4rem);
 }
 
+/* Hero — height-aware vertical compaction for short laptop viewports.
+   The hero's own vertical rhythm (container padding, logo size/margin,
+   heading size, CTA gap) is tuned for tall viewports and overflows the
+   first fold once available height drops below ~820px (e.g. a 1366×768 or
+   1440×900 laptop with browser chrome eating into the viewport) — the CTA
+   buttons get pushed past the fold. These rules only apply under that
+   height ceiling, gated to laptop-and-up widths so mobile/tablet portrait
+   layouts are untouched; tall desktop viewports keep the original spacing
+   exactly as-is. Selectors are plain classes (not Tailwind utilities) so
+   they reliably win regardless of Tailwind's cascade-layer ordering. */
+@media (max-height: 820px) and (min-width: 1024px) {
+  .hero-inner {
+    padding-top: 7rem;
+    padding-bottom: 2.5rem;
+  }
+
+  .hero-logo-wrap {
+    margin-bottom: 1rem;
+  }
+
+  /* Neutralises the desktop-only -translate-y-6 nudge: at full-height it
+     tightens the gap under a much taller logo, but against the shrunk
+     compact-mode logo margin it pulls the eyebrow up into the logo. */
+  .hero-text-block {
+    translate: 0;
+  }
+
+  .hero-logo-img {
+    width: 190px;
+  }
+
+  .hero-eyebrow {
+    margin-bottom: 0.5rem;
+  }
+
+  .hero-heading {
+    font-size: clamp(1.85rem, 1.3rem + 2vw, 2.75rem);
+  }
+
+  .hero-desc {
+    margin-top: 0.85rem;
+  }
+
+  .hero-cta-row {
+    margin-top: 1.5rem;
+  }
+}
+
 /* Mobile Safari/Chrome performance guard — `backdrop-filter` is recomputed on
    every compositor frame for whatever scrolls underneath it, and this site
    layers many backdrop-blurred glass cards/panels (About accordion, Services

@@ -264,7 +264,7 @@ useEffect(() => {
       )}
 
       {/* Content */}
-      <div className="container relative z-20 flex flex-col items-center px-6 pt-20 pb-32 text-center sm:pt-28 sm:pb-36 xl:py-40">
+      <div className="hero-inner container relative z-20 flex flex-col items-center px-6 pt-20 pb-32 text-center sm:pt-28 sm:pb-36 xl:py-40">
         {/* Central legibility overlay — deepens only behind the content block */}
         <div
           className="pointer-events-none absolute inset-0 -z-10"
@@ -279,7 +279,7 @@ useEffect(() => {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-          className="group relative mb-12 flex items-center justify-center"
+          className="hero-logo-wrap group relative mb-12 flex items-center justify-center"
         >
           {/* Ambient rose glow — slow breathing. Animating scale on a
               blur()'d element forces the browser to re-rasterize the blur
@@ -316,7 +316,7 @@ useEffect(() => {
           <div className="relative transition-transform duration-700 ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:scale-[1.08] group-hover:rotate-1">
             {/* Slow breathing wrapper */}
             <motion.div
-              className="relative aspect-[3/2] w-[213px] sm:w-[251px] md:w-[283px]"
+              className="hero-logo-img relative aspect-[3/2] w-[213px] sm:w-[251px] md:w-[283px]"
               animate={
                 prefersReducedMotion || isMobile
                   ? undefined
@@ -339,12 +339,12 @@ useEffect(() => {
           </div>
         </motion.div>
 
-        <div className="-translate-y-6">
+        <div className="hero-text-block -translate-y-6">
           <motion.p
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
-            className="eyebrow mb-8"
+            className="hero-eyebrow eyebrow mb-8"
           >
             {t.hero.eyebrow}
           </motion.p>
@@ -353,7 +353,7 @@ useEffect(() => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.28, ease: [0.16, 1, 0.3, 1] }}
-            className="max-w-4xl text-balance leading-[1.28]"
+            className="hero-heading max-w-4xl text-balance leading-[1.28]"
             style={{ letterSpacing: "0.015em" }}
           >
             {t.hero.titleLine1}
@@ -365,14 +365,14 @@ useEffect(() => {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, delay: 0.42, ease: [0.16, 1, 0.3, 1] }}
-            className="mx-auto mt-9 max-w-xl text-balance text-sm sm:text-base"
+            className="hero-desc mx-auto mt-9 max-w-xl text-balance text-sm sm:text-base"
             style={{ letterSpacing: "0.01em" }}
           >
             {t.hero.paragraph}
           </motion.p>
         </div>
 
-        <div className="mt-14 flex flex-col items-center gap-5 sm:flex-row sm:gap-6">
+        <div className="hero-cta-row mt-14 flex flex-col items-center gap-5 sm:flex-row sm:gap-6">
           <motion.a
             href="tel:+15145438344"
             className="btn btn-primary min-w-[230px]"
