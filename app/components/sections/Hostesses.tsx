@@ -24,12 +24,16 @@ import {
   statusLabel,
 } from "./hostesses-shared";
 import HostessCard from "./HostessCard";
+import MobileHostessCard from "./MobileHostessCard";
 
-// On mobile, only the featured hostess + this many grid cards mount up front —
-// each card carries several backdrop-blurred badge/chip elements, and all 10+
-// cards mounting unconditionally was the single largest concentration of
-// backdrop-filter compositing layers on the page. The rest mount on request.
-const MOBILE_INITIAL_GRID_COUNT = 3;
+// Mobile renders a flat, paginated list — no separate large "featured" hero
+// card (that markup is desktop-only, see `featured` below), just compact
+// cards mounted 2 at a time. Each "Show more" tap mounts exactly
+// MOBILE_LOAD_MORE_COUNT more; it never reveals the rest of the list in one
+// shot, which is what used to make a single tap mount/decode a dozen images
+// concurrently — a major contributor to the iOS Safari lag/crash.
+const MOBILE_INITIAL_GRID_COUNT = 2;
+const MOBILE_LOAD_MORE_COUNT = 2;
 
 // Modal-only code (focus trap, body scroll lock, gallery markup) never needs
 // to be in the initial bundle — it mounts on click, well after first paint.
@@ -93,16 +97,16 @@ export default function Hostesses({
   const [lastUpdatedAt, setLastUpdatedAt] = useState<number | null>(null);
   const [now, setNow] = useState<number | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [mobileExpanded, setMobileExpanded] = useState(false);
-  // Re-collapse to the trimmed mobile view whenever the active filter
-  // changes, so "show more" always starts from the same predictable state
-  // for whatever list is currently in view. Adjusted during render (React's
-  // recommended pattern for state derived from a prop/dep change) rather
-  // than in an effect, which would cost an extra render pass.
+  const [mobileVisibleCount, setMobileVisibleCount] = useState(MOBILE_INITIAL_GRID_COUNT);
+  // Reset to the first 2 cards whenever the active filter changes, so
+  // "show more" always starts from the same predictable state for whatever
+  // list is currently in view. Adjusted during render (React's recommended
+  // pattern for state derived from a prop/dep change) rather than in an
+  // effect, which would cost an extra render pass.
   const [prevFilter, setPrevFilter] = useState(filter);
   if (filter !== prevFilter) {
     setPrevFilter(filter);
-    setMobileExpanded(false);
+    setMobileVisibleCount(MOBILE_INITIAL_GRID_COUNT);
   }
 
   // Clock — establishes the "updated X min ago" reference only after mount,
@@ -174,16 +178,19 @@ export default function Hostesses({
   // (guaranteed unique — see sanity/lib/uniqueFeaturedPublish.ts). If no
   // hostess is featured, fall back to the first active hostess ordered by
   // displayOrder, so the card never sits empty and never crashes.
+  // Desktop-only: mobile skips this larger hero markup entirely (bigger
+  // image, full stats strip, always-mounted bio) and folds every hostess —
+  // including whichever one would've been featured — into the same flat,
+  // paginated compact-card list below.
   const featured =
-    filter === "all"
+    !isMobile && filter === "all"
       ? hostesses.find((h) => h.featured) ??
         [...hostesses].sort((a, b) => a.displayOrder - b.displayOrder)[0] ??
         null
       : null;
   const gridList = featured ? filtered.filter((h) => h.id !== featured.id) : filtered;
-  const showMoreAvailable = isMobile && !mobileExpanded && gridList.length > MOBILE_INITIAL_GRID_COUNT;
-  const visibleGridList =
-    isMobile && !mobileExpanded ? gridList.slice(0, MOBILE_INITIAL_GRID_COUNT) : gridList;
+  const visibleGridList = isMobile ? gridList.slice(0, mobileVisibleCount) : gridList;
+  const showMoreAvailable = isMobile && gridList.length > mobileVisibleCount;
   const selected = selectedId ? hostesses.find((h) => h.id === selectedId) ?? null : null;
   const selectedText = selected ? textById.get(selected.id) ?? null : null;
 
@@ -426,29 +433,9 @@ export default function Hostesses({
               </>
             );
 
-            // Mobile: plain divs, no Framer Motion, no entrance tween, no
-            // hover lift, and the big `blur-[60px]` decorative glow layer
-            // behind the card is dropped outright — a static 60px CSS blur
-            // over this much area is exactly the kind of GPU-heavy
-            // compositing layer that stalls iOS Safari. The card's own
-            // border + opaque background keep the premium look without it.
-            if (isMobile) {
-              return (
-                <div key={featured.id} className="relative mx-auto mt-16 max-w-5xl">
-                  <div
-                    onClick={() => setSelectedId(featured.id)}
-                    className="grid cursor-pointer gap-8 overflow-hidden rounded-[var(--radius-lg)] border p-5 backdrop-blur-xl sm:p-8 lg:grid-cols-[minmax(0,340px)_1fr] lg:gap-10"
-                    style={{
-                      borderColor: "rgba(232,120,150,0.3)",
-                      backgroundColor: "rgba(20,11,16,0.6)",
-                    }}
-                  >
-                    {cardBody}
-                  </div>
-                </div>
-              );
-            }
-
+            // `featured` is only ever set on desktop (see above) — mobile
+            // never reaches this IIFE at all, so this stays the single,
+            // unconditional desktop-only render path.
             return (
               <motion.div
                 key={featured.id}
@@ -483,40 +470,43 @@ export default function Hostesses({
             );
           })()}
 
-        {/* Grid — mobile renders a plain <div>, not `motion.div`: no Framer
-            Motion instance on the wrapper at all, so there's nothing to run
-            `layout` (FLIP) measurement on for any of the cards inside it on
-            every filter tap. Cards still reorder/appear/disappear instantly
-            via normal reflow. Desktop keeps the `layout` transition — its
-            frame budget handles it fine. */}
-        {(() => {
-          const gridCards = visibleGridList.map((h) => {
-            const text = textById.get(h.id);
-            if (!text) return null;
-            return <HostessCard key={h.id} hostess={h} text={text} onSelect={setSelectedId} />;
-          });
-          if (isMobile) {
-            return (
-              <div className="mx-auto mt-12 grid max-w-6xl grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                {gridCards}
-              </div>
-            );
-          }
-          return (
-            <motion.div
-              layout
-              className="mx-auto mt-12 grid max-w-6xl grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
-            >
-              {gridCards}
-            </motion.div>
-          );
-        })()}
+        {/* Grid — mobile takes a completely separate path: flat state
+            (activeFilter -> filtered array -> slice -> render), plain
+            `<div>`s with `MobileHostessCard`, no Framer Motion instance
+            anywhere in the tree, so there's nothing to run `layout` (FLIP)
+            measurement on for any card on every filter tap, and only the
+            currently-visible slice is ever mounted — filtered-out or
+            not-yet-revealed profiles (and their images) simply aren't in
+            the DOM. Desktop keeps the full grid + `layout` transition on
+            every matching card — its frame budget handles it fine. */}
+        {isMobile ? (
+          <div className="mx-auto mt-10 flex max-w-md flex-col gap-4">
+            {visibleGridList.map((h) => {
+              const text = textById.get(h.id);
+              if (!text) return null;
+              return <MobileHostessCard key={h.id} hostess={h} text={text} onSelect={setSelectedId} />;
+            })}
+          </div>
+        ) : (
+          <motion.div
+            layout
+            className="mx-auto mt-12 grid max-w-6xl grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
+          >
+            {visibleGridList.map((h) => {
+              const text = textById.get(h.id);
+              if (!text) return null;
+              return <HostessCard key={h.id} hostess={h} text={text} onSelect={setSelectedId} />;
+            })}
+          </motion.div>
+        )}
 
         {showMoreAvailable && (
           <div className="mt-8 flex justify-center">
             <button
               type="button"
-              onClick={() => setMobileExpanded(true)}
+              onClick={() =>
+                setMobileVisibleCount((count) => count + MOBILE_LOAD_MORE_COUNT)
+              }
               aria-label={t.hostesses.showMoreAria}
               className="btn btn-secondary !px-8 !py-3 text-[0.68rem]"
             >

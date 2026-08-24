@@ -20,7 +20,7 @@ export const STATUS_COLOR: Record<HostessStatus, string> = {
   off: "rgba(244,239,232,0.4)",
 };
 
-const STATUS_EMOJI: Record<HostessStatus, string> = {
+export const STATUS_EMOJI: Record<HostessStatus, string> = {
   available: "🟢",
   soon: "🟠",
   off: "⚫",
