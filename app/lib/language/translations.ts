@@ -36,6 +36,8 @@ export interface Translations {
     paragraph3: string;
     quote: string;
     cta: string;
+    readMore: string;
+    readLess: string;
     items: { title: string; content: string }[];
   };
   hostesses: {
@@ -302,6 +304,8 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
         "Chaque rituel est exécuté avec la précision d’un savoir-faire rare, où l’exigence du geste rencontre une chaleur sincère — une signature qui distingue véritablement Elite One Spa.",
       quote: "Un instant à part. Entièrement consacré à vous.",
       cta: "Découvrir nos soins",
+      readMore: "Lire la suite",
+      readLess: "Réduire",
       items: [
         {
           title: "Hôtesses élégantes et sensuelles",
@@ -653,6 +657,8 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
         "Every ritual is delivered with the precision of a rare craft, where exacting technique meets genuine warmth — a signature that truly sets Elite One Spa apart.",
       quote: "A moment apart. Entirely devoted to you.",
       cta: "Discover Our Treatments",
+      readMore: "Read more",
+      readLess: "Show less",
       items: [
         {
           title: "Elegant, Sensual Hostesses",

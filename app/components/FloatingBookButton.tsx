@@ -16,7 +16,7 @@ export default function FloatingBookButton() {
 
   return (
     <motion.div
-      className="fixed right-5 z-40 sm:right-7"
+      className="floating-book-btn fixed right-5 z-40 sm:right-7"
       style={{ bottom: "calc(1.25rem + env(safe-area-inset-bottom))" }}
       initial={{ opacity: 0, y: 20, scale: 0.9 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}

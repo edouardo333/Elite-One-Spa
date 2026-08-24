@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useCallback, useState, type MouseEvent as ReactMouseEvent } from "react";
+import { memo, useCallback, useEffect, useState, type MouseEvent as ReactMouseEvent } from "react";
 import { motion, useMotionValue, useReducedMotion, useSpring } from "framer-motion";
 import { useLanguage } from "@/app/lib/language/LanguageContext";
 import { useIsMobile } from "@/app/lib/useIsMobile";
@@ -139,16 +139,29 @@ const MobileAccordionCard = memo(function MobileAccordionCard({
   isOpen,
   onToggle,
   prefersReducedMotion,
+  readMoreLabel,
+  readLessLabel,
 }: {
   item: { title: string; content: string };
   index: number;
   isOpen: boolean;
   onToggle: (index: number) => void;
   prefersReducedMotion: boolean | null;
+  readMoreLabel: string;
+  readLessLabel: string;
 }) {
   const triggerId = `about-accordion-trigger-${index}`;
   const panelId = `about-accordion-panel-${index}`;
   const handleClick = useCallback(() => onToggle(index), [onToggle, index]);
+  // Full text is clamped to a handful of lines by default (plain CSS
+  // -webkit-line-clamp — no JS measuring of text length/height) so a long
+  // description like "Love Triangle" can't blow up the card's height and
+  // drag the rest of the stack down with it. "Read more" just lifts the
+  // clamp; collapses again whenever the card itself closes.
+  const [showFull, setShowFull] = useState(false);
+  useEffect(() => {
+    if (!isOpen) setShowFull(false);
+  }, [isOpen]);
 
   return (
     <div
@@ -161,7 +174,7 @@ const MobileAccordionCard = memo(function MobileAccordionCard({
         onClick={handleClick}
         aria-expanded={isOpen}
         aria-controls={panelId}
-        className="flex w-full items-center justify-between gap-6 px-6 py-6 text-left"
+        className="flex w-full items-center justify-between gap-6 px-5 py-4 text-left"
       >
         <span className="about-card-title text-base font-medium">{item.title}</span>
         <span className="about-card-icon relative flex h-4 w-4 shrink-0 items-center justify-center">
@@ -185,7 +198,21 @@ const MobileAccordionCard = memo(function MobileAccordionCard({
           aria-labelledby={triggerId}
           className={prefersReducedMotion ? undefined : "about-card-panel-mobile"}
         >
-          <p className="max-w-[54ch] px-6 pb-28 text-sm leading-[2]">{item.content}</p>
+          <p
+            className={`max-w-[54ch] px-5 text-sm leading-[1.85] ${
+              showFull ? "" : "about-card-content-mobile"
+            }`}
+          >
+            {item.content}
+          </p>
+          <button
+            type="button"
+            onClick={() => setShowFull((prev) => !prev)}
+            className="about-card-readmore mx-5 mb-5 mt-2.5 text-[0.7rem] font-medium uppercase tracking-[0.14em]"
+            style={{ color: "var(--color-champagne)" }}
+          >
+            {showFull ? readLessLabel : readMoreLabel}
+          </button>
         </div>
       )}
     </div>
@@ -292,6 +319,8 @@ export default function About() {
                   isOpen={i === openIndex}
                   onToggle={handleMobileToggle}
                   prefersReducedMotion={prefersReducedMotion}
+                  readMoreLabel={t.about.readMore}
+                  readLessLabel={t.about.readLess}
                 />
               ) : (
                 <AccordionCard

@@ -752,6 +752,46 @@ body:has(button[aria-controls="mobile-nav-panel"][aria-expanded="true"]) #main-c
   }
 }
 
+/* About accordion — mobile description length. Long copy (e.g. "Love
+   Triangle") otherwise turns one open card into a very tall block that drags
+   the rest of the stack far down the page. Plain CSS line-clamp caps it at 4
+   lines with no JS measuring text/height; the "Read more" button just
+   removes this class, no layout animation involved. */
+@media (max-width: 768px) {
+  .about-card-content-mobile {
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .about-card-readmore {
+    display: block;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+  }
+}
+
+/* WALK-IN ONLY floating button + audio toggle vs. an open About/treatments
+   card. Both buttons are `position: fixed`, so they stay pinned at the same
+   spot on screen while the page scrolls underneath them — a long open
+   description can scroll directly behind either one and get visually
+   covered. Hidden only while a card is actually expanded (not for the whole
+   section), so both stay available the rest of the time, including while
+   just browsing the closed cards. Pure CSS `:has()`, same pattern already
+   used for the mobile-nav click-through guard above — no scroll/resize
+   listeners, no IntersectionObserver. */
+@media (max-width: 768px) {
+  body:has(.about-card[data-open="true"]) .floating-book-btn,
+  body:has(.about-card[data-open="true"]) .audio-toggle-btn {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 150ms ease;
+  }
+}
+
 /* Scroll-reveal kill switch — every section entrance driven by framer-motion's
    whileInView (About, Services, Hostesses, Hiring, Contact, ContactBand,
    Footer) marks its wrapper with [data-reveal]. Framer Motion's `initial`
