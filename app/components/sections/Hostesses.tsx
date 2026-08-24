@@ -236,7 +236,13 @@ export default function Hostesses({
           style={{
             borderColor: "rgba(232,120,150,0.24)",
             backgroundColor: "rgba(20,11,16,0.55)",
-            boxShadow: "0 0 46px rgba(232,120,150,0.14), inset 0 0 30px rgba(150,45,80,0.06)",
+            // Large blurred box-shadows are a real paint cost on iOS Safari;
+            // this bar sits above the filters and repaints with the rest of
+            // the section on every tap, so it's dropped on mobile. The
+            // opaque background + border already carry the look.
+            boxShadow: isMobile
+              ? "none"
+              : "0 0 46px rgba(232,120,150,0.14), inset 0 0 30px rgba(150,45,80,0.06)",
           }}
         >
           <div
@@ -322,13 +328,11 @@ export default function Hostesses({
                   // in the tree (the grid + every card below), which is what turned
                   // "switch filter" into a full-tree reflow on mobile. The visual
                   // result (solid champagne pill on the active filter) is identical;
-                  // only the animated slide-between-buttons is gone.
+                  // only the animated slide-between-buttons and the glow are gone —
+                  // this pill repaints on every tap, so no blurred box-shadow on it.
                   <span
                     className="absolute inset-0 rounded-full"
-                    style={{
-                      backgroundColor: "var(--color-champagne)",
-                      boxShadow: "0 0 22px rgba(232,201,171,0.4)",
-                    }}
+                    style={{ backgroundColor: "var(--color-champagne)" }}
                   />
                 )}
                 {active && !isMobile && (
@@ -359,10 +363,96 @@ export default function Hostesses({
             // compact pills near the name, never stacked over the image.
             const { priority: featuredPriorityChip, rest: featuredSecondaryChips } =
               splitPriorityBadge(badgesFor(featured, t));
+
+            const cardBody = (
+              <>
+                <div className="relative mx-auto w-full max-w-[320px] lg:mx-0">
+                  <div className="group/avatar relative">
+                    <Avatar
+                      name={featuredText.name}
+                      photo={featured.photo}
+                      gradient={featured.gradient}
+                      size="lg"
+                    />
+                  </div>
+                  <StatusBadge status={featured.status} label={statusLabel(t, featured.status)} />
+                  {featuredPriorityChip && (
+                    <BadgePill chip={featuredPriorityChip} className="absolute bottom-3 left-3 z-10" />
+                  )}
+                </div>
+
+                <div className="flex flex-col justify-center">
+                  {featuredSecondaryChips.length > 0 && (
+                    <div className="mb-4 flex flex-wrap gap-1.5">
+                      {featuredSecondaryChips.map((chip) => (
+                        <BadgePill key={chip.key} chip={chip} variant="inline" />
+                      ))}
+                    </div>
+                  )}
+                  <h3 className="text-3xl sm:text-4xl">{featuredText.name}</h3>
+                  <div className="mt-3">
+                    <StarRating rating={featured.rating} label={t.hostesses.ratingLabel} />
+                  </div>
+                  <p className="mt-5 max-w-[48ch] text-sm leading-[1.9] sm:text-base">
+                    {featuredText.bio}
+                  </p>
+
+                  <div className="mt-6 max-w-md">
+                    <StatsStrip hostess={featured} stats={t.hostesses.stats} />
+                  </div>
+
+                  <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 text-[0.75rem] text-[var(--color-text-muted)]">
+                    <span className="inline-flex items-center gap-2">
+                      <LiveDot size={6} color={STATUS_COLOR[featured.status]} />
+                      {featuredText.schedule}
+                    </span>
+                    <span className="inline-flex items-center gap-2">
+                      <LocationIcon className="h-3.5 w-3.5" />
+                      {featuredText.location}
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      setSelectedId(featured.id);
+                    }}
+                    aria-label={t.hostesses.viewProfileAria.replace("{name}", featuredText.name)}
+                    className="btn btn-primary mt-8 w-fit"
+                  >
+                    {t.hostesses.viewProfile}
+                  </button>
+                </div>
+              </>
+            );
+
+            // Mobile: plain divs, no Framer Motion, no entrance tween, no
+            // hover lift, and the big `blur-[60px]` decorative glow layer
+            // behind the card is dropped outright — a static 60px CSS blur
+            // over this much area is exactly the kind of GPU-heavy
+            // compositing layer that stalls iOS Safari. The card's own
+            // border + opaque background keep the premium look without it.
+            if (isMobile) {
+              return (
+                <div key={featured.id} className="relative mx-auto mt-16 max-w-5xl">
+                  <div
+                    onClick={() => setSelectedId(featured.id)}
+                    className="grid cursor-pointer gap-8 overflow-hidden rounded-[var(--radius-lg)] border p-5 backdrop-blur-xl sm:p-8 lg:grid-cols-[minmax(0,340px)_1fr] lg:gap-10"
+                    style={{
+                      borderColor: "rgba(232,120,150,0.3)",
+                      backgroundColor: "rgba(20,11,16,0.6)",
+                    }}
+                  >
+                    {cardBody}
+                  </div>
+                </div>
+              );
+            }
+
             return (
               <motion.div
                 key={featured.id}
-                layout={!isMobile}
+                layout
                 initial={{ opacity: 0, y: 24 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
@@ -376,7 +466,7 @@ export default function Hostesses({
                   }}
                 />
                 <motion.div
-                  whileHover={prefersReducedMotion || isMobile ? undefined : { y: -4 }}
+                  whileHover={prefersReducedMotion ? undefined : { y: -4 }}
                   transition={{ type: "spring", stiffness: 260, damping: 24 }}
                   onClick={() => setSelectedId(featured.id)}
                   className="grid cursor-pointer gap-8 overflow-hidden rounded-[var(--radius-lg)] border p-5 backdrop-blur-xl sm:p-8 lg:grid-cols-[minmax(0,340px)_1fr] lg:gap-10"
@@ -387,84 +477,40 @@ export default function Hostesses({
                       "0 30px 80px rgba(5,4,5,0.5), 0 0 60px rgba(232,120,150,0.16), inset 0 0 30px rgba(150,45,80,0.06)",
                   }}
                 >
-                  <div className="relative mx-auto w-full max-w-[320px] lg:mx-0">
-                    <div className="group/avatar relative">
-                      <Avatar
-                        name={featuredText.name}
-                        photo={featured.photo}
-                        gradient={featured.gradient}
-                        size="lg"
-                      />
-                    </div>
-                    <StatusBadge status={featured.status} label={statusLabel(t, featured.status)} />
-                    {featuredPriorityChip && (
-                      <BadgePill chip={featuredPriorityChip} className="absolute bottom-3 left-3 z-10" />
-                    )}
-                  </div>
-
-                  <div className="flex flex-col justify-center">
-                    {featuredSecondaryChips.length > 0 && (
-                      <div className="mb-4 flex flex-wrap gap-1.5">
-                        {featuredSecondaryChips.map((chip) => (
-                          <BadgePill key={chip.key} chip={chip} variant="inline" />
-                        ))}
-                      </div>
-                    )}
-                    <h3 className="text-3xl sm:text-4xl">{featuredText.name}</h3>
-                    <div className="mt-3">
-                      <StarRating rating={featured.rating} label={t.hostesses.ratingLabel} />
-                    </div>
-                    <p className="mt-5 max-w-[48ch] text-sm leading-[1.9] sm:text-base">
-                      {featuredText.bio}
-                    </p>
-
-                    <div className="mt-6 max-w-md">
-                      <StatsStrip hostess={featured} stats={t.hostesses.stats} />
-                    </div>
-
-                    <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 text-[0.75rem] text-[var(--color-text-muted)]">
-                      <span className="inline-flex items-center gap-2">
-                        <LiveDot size={6} color={STATUS_COLOR[featured.status]} />
-                        {featuredText.schedule}
-                      </span>
-                      <span className="inline-flex items-center gap-2">
-                        <LocationIcon className="h-3.5 w-3.5" />
-                        {featuredText.location}
-                      </span>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        setSelectedId(featured.id);
-                      }}
-                      aria-label={t.hostesses.viewProfileAria.replace("{name}", featuredText.name)}
-                      className="btn btn-primary mt-8 w-fit"
-                    >
-                      {t.hostesses.viewProfile}
-                    </button>
-                  </div>
+                  {cardBody}
                 </motion.div>
               </motion.div>
             );
           })()}
 
-        {/* Grid — `layout` (FLIP repositioning) is skipped on mobile: every
-            filter change forces a getBoundingClientRect measurement of this
-            wrapper plus every card inside it (see the same gate on
-            HostessCard). Cards still reorder/appear/disappear instantly via
-            normal reflow, just without the animated slide. Desktop keeps the
-            smooth transition — its frame budget handles it fine. */}
-        <motion.div
-          layout={!isMobile}
-          className="mx-auto mt-12 grid max-w-6xl grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
-        >
-          {visibleGridList.map((h) => {
+        {/* Grid — mobile renders a plain <div>, not `motion.div`: no Framer
+            Motion instance on the wrapper at all, so there's nothing to run
+            `layout` (FLIP) measurement on for any of the cards inside it on
+            every filter tap. Cards still reorder/appear/disappear instantly
+            via normal reflow. Desktop keeps the `layout` transition — its
+            frame budget handles it fine. */}
+        {(() => {
+          const gridCards = visibleGridList.map((h) => {
             const text = textById.get(h.id);
             if (!text) return null;
             return <HostessCard key={h.id} hostess={h} text={text} onSelect={setSelectedId} />;
-          })}
-        </motion.div>
+          });
+          if (isMobile) {
+            return (
+              <div className="mx-auto mt-12 grid max-w-6xl grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                {gridCards}
+              </div>
+            );
+          }
+          return (
+            <motion.div
+              layout
+              className="mx-auto mt-12 grid max-w-6xl grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
+            >
+              {gridCards}
+            </motion.div>
+          );
+        })()}
 
         {showMoreAvailable && (
           <div className="mt-8 flex justify-center">

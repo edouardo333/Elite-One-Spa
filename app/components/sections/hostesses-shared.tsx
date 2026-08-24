@@ -221,6 +221,11 @@ export function Avatar({
   size?: "md" | "lg";
 }) {
   const { t } = useLanguage();
+  // Skips the hover shimmer sweep entirely on mobile — a hover-triggered
+  // pseudo-layer transition has no touch equivalent and, worse, iOS Safari
+  // can latch a `:hover`/`:active` state after a tap and leave the
+  // 1200ms transform/opacity transition running needlessly.
+  const isMobile = useIsMobile();
   return (
     <div
       className={`group/avatar relative overflow-hidden rounded-[var(--radius-md)] ${
@@ -261,14 +266,16 @@ export function Avatar({
           size={size}
         />
       )}
-      {/* Shimmer sweep on hover */}
-      <div
-        className="pointer-events-none absolute inset-0 -translate-x-full opacity-0 transition-[transform,opacity] duration-[1200ms] ease-[cubic-bezier(0.19,1,0.22,1)] group-hover/avatar:translate-x-full group-hover/avatar:opacity-100"
-        style={{
-          backgroundImage:
-            "linear-gradient(100deg, transparent, rgba(255,255,255,0.22) 45%, transparent 60%)",
-        }}
-      />
+      {/* Shimmer sweep on hover — desktop only, see isMobile note above. */}
+      {!isMobile && (
+        <div
+          className="pointer-events-none absolute inset-0 -translate-x-full opacity-0 transition-[transform,opacity] duration-[1200ms] ease-[cubic-bezier(0.19,1,0.22,1)] group-hover/avatar:translate-x-full group-hover/avatar:opacity-100"
+          style={{
+            backgroundImage:
+              "linear-gradient(100deg, transparent, rgba(255,255,255,0.22) 45%, transparent 60%)",
+          }}
+        />
+      )}
     </div>
   );
 }
@@ -308,6 +315,11 @@ export function BadgePill({
 // marketing badge pinned bottom-left (see splitPriorityBadge), the two sit
 // in opposite corners and can never share a row/area at any width.
 export function StatusBadge({ status, label }: { status: HostessStatus; label: string }) {
+  // Mobile: plain <span>, no framer-motion crossfade. This badge lives on
+  // every card, so on mobile it would otherwise mount/replay its entrance
+  // tween on every single card, on every filter tap — pure Framer Motion
+  // overhead for a label swap nobody perceives mid-tap. Desktop keeps it.
+  const isMobile = useIsMobile();
   return (
     <span
       className="absolute right-3 top-3 z-10 inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1.5 text-[0.6rem] font-medium uppercase tracking-[0.12em] backdrop-blur-md"
@@ -320,14 +332,18 @@ export function StatusBadge({ status, label }: { status: HostessStatus; label: s
     >
       <LiveDot size={6} color={STATUS_COLOR[status]} />
       <span aria-hidden="true">{STATUS_EMOJI[status]}</span>
-      <motion.span
-        key={status}
-        initial={{ opacity: 0, y: 3 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.35, ease: "easeOut" }}
-      >
-        {label}
-      </motion.span>
+      {isMobile ? (
+        <span>{label}</span>
+      ) : (
+        <motion.span
+          key={status}
+          initial={{ opacity: 0, y: 3 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.35, ease: "easeOut" }}
+        >
+          {label}
+        </motion.span>
+      )}
     </span>
   );
 }
