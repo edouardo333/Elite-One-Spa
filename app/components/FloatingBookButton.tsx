@@ -11,8 +11,15 @@ export default function FloatingBookButton() {
   // This button is fixed on screen at all times (never scrolls out of view),
   // so its bounce + glow loops run forever, indefinitely, on every mobile
   // visit — a permanent background compositor cost for a purely decorative
-  // touch. Skipped on mobile; kept static (still fully visible).
-  const skipLoop = prefersReducedMotion || isMobile;
+  // touch. An earlier pass kept it mounted-but-static on mobile; real
+  // iPhone/Safari testing showed the always-on fixed/composited layer (plus
+  // the framer-motion entrance mount) was still part of the section's lag,
+  // so on mobile it is not rendered at all rather than merely hidden while
+  // a card is open. `.floating-book-btn` also carries a matching
+  // `display: none` in globals.css as a synchronous CSS-only backstop for
+  // the brief pre-hydration window before `isMobile` resolves. Desktop is
+  // unaffected.
+  if (isMobile) return null;
 
   return (
     <motion.div
@@ -24,9 +31,9 @@ export default function FloatingBookButton() {
     >
       <motion.div
         className="relative"
-        animate={skipLoop ? undefined : { y: [0, -8, 0] }}
+        animate={prefersReducedMotion ? undefined : { y: [0, -8, 0] }}
         transition={
-          skipLoop
+          prefersReducedMotion
             ? undefined
             : { duration: 3.4, repeat: Infinity, ease: "easeInOut" }
         }
@@ -40,10 +47,12 @@ export default function FloatingBookButton() {
               "radial-gradient(ellipse, rgba(232,120,150,0.45) 0%, rgba(150,45,80,0.28) 55%, transparent 78%)",
           }}
           animate={
-            skipLoop ? undefined : { opacity: [0.55, 0.85, 0.55], scale: [0.92, 1.08, 0.92] }
+            prefersReducedMotion
+              ? undefined
+              : { opacity: [0.55, 0.85, 0.55], scale: [0.92, 1.08, 0.92] }
           }
           transition={
-            skipLoop
+            prefersReducedMotion
               ? undefined
               : { duration: 3.4, repeat: Infinity, ease: "easeInOut" }
           }
@@ -53,14 +62,14 @@ export default function FloatingBookButton() {
           href="tel:+15145438344"
           aria-label={t.footer.bookAppointmentAria}
           whileHover={
-            prefersReducedMotion || isMobile
+            prefersReducedMotion
               ? undefined
               : {
                   scale: 1.07,
                   transition: { type: "spring", stiffness: 340, damping: 18 },
                 }
           }
-          whileTap={isMobile ? undefined : { scale: 0.95 }}
+          whileTap={{ scale: 0.95 }}
           className="btn btn-primary relative flex items-center gap-2 !px-6 !py-3.5 text-[0.68rem] shadow-lg sm:!px-7 sm:!py-4 sm:text-[0.72rem]"
           style={{
             boxShadow: "0 10px 34px rgba(5,4,5,0.5), 0 0 26px rgba(232,120,150,0.3)",

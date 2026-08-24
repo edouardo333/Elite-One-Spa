@@ -38,7 +38,10 @@ export interface Translations {
     cta: string;
     readMore: string;
     readLess: string;
-    items: { title: string; content: string }[];
+    /** Short 2–4 line teaser shown on the mobile treatments cards — a
+     *  dedicated field (not a truncation of `content`) so the mobile DOM
+     *  never has to carry, clamp, or hide the long-form description. */
+    items: { title: string; content: string; summary: string }[];
   };
   hostesses: {
     eyebrow: string;
@@ -311,26 +314,36 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
           title: "Hôtesses élégantes et sensuelles",
           content:
             "Dès votre arrivée, vous êtes accueilli par des hôtesses élégantes et sensuelles, choisies pour leur grâce naturelle et leur attention sincère. Leur présence donne le ton à toute la visite — raffinée, posée et entièrement tournée vers vous. Chaque geste et chaque parole sont guidés par la discrétion et une élégance tranquille, façonnant une expérience personnalisée où vous vous sentez véritablement considéré, choyé et libre de vous abandonner à l’instant.",
+          summary:
+            "Un accueil raffiné par des hôtesses choisies pour leur grâce et leur discrétion. Le ton de toute votre visite, entièrement tourné vers vous.",
         },
         {
           title: "Corps à corps",
           content:
             "Une expérience de bien-être complet, profondément relaxante, entièrement construite autour de la proximité et de la chaleur. Des mouvements fluides et continus parcourent le corps de la tête aux pieds, dissolvant les tensions et invitant au lâcher-prise. Peau contre peau, le rituel se déploie lentement et intuitivement, mêlant confort et sensualité dans une atmosphère de confiance totale. Plus qu’une technique, c’est un rythme partagé, pensé pour vous laisser léger, présent et parfaitement apaisé.",
+          summary:
+            "Un massage complet, fluide et enveloppant, de la tête aux pieds. Peau contre peau, dans une confiance totale, pour un moment de pur lâcher-prise.",
         },
         {
           title: "Douceur au toucher",
           content:
             "Une expérience plus douce et contemplative, pensée pour celles et ceux qui recherchent avant tout le calme. Des gestes délicats et des mouvements lents et posés s’unissent pour apaiser l’esprit et détendre le corps. Ici, rien ne presse — seulement une atmosphère paisible, une chaleur enveloppante et l’espace nécessaire pour respirer profondément et laisser chaque muscle se relâcher. Une invitation à l’immobilité, un moment de pure sérénité, à l’écart du rythme du quotidien.",
+          summary:
+            "Une expérience douce et contemplative, aux gestes lents et posés. Une invitation au calme, loin du rythme du quotidien.",
         },
         {
           title: "Triangle amoureux",
           content:
             "Une expérience immersive partagée avec deux hôtesses, dont l’attention coordonnée crée une dynamique rarement égalée. Leur complicité naturelle et leur rythme parfaitement accordé transforment la rencontre en un moment riche et captivant, chaque geste répondant à l’autre avec subtilité et intention. Entouré d’une attention totale venue de deux directions à la fois, vous êtes porté dans un moment pleinement partagé — intense, élégant et sans équivalent.",
+          summary:
+            "Une expérience immersive avec deux hôtesses, à l’attention parfaitement accordée. Un moment intense, élégant et sans équivalent.",
         },
         {
           title: "Rain on Me",
           content:
             "Un rituel chaleureux inspiré de la pluie, où de fins filets d’eau ruissellent délicatement sur la peau, préparant le corps à une relaxation totale. Associée à un toucher tout en douceur, la sensation de l’eau éveille chaque terminaison nerveuse, dissipant les tensions tout en réveillant les sens. Dans une atmosphère privée et tamisée, ce rituel joue sur les contrastes — la chaleur de l’eau, la douceur du toucher et l’intimité discrète d’être entièrement pris en charge.",
+          summary:
+            "Un rituel inspiré de la pluie, où l’eau ruisselle délicatement sur la peau. Une relaxation totale dans une ambiance privée et tamisée.",
         },
       ],
     },
@@ -664,26 +677,36 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
           title: "Elegant, Sensual Hostesses",
           content:
             "From the moment you arrive, you are welcomed by elegant, sensual hostesses chosen for their natural grace and genuine attentiveness. Their presence sets a refined, unhurried tone, entirely focused on you. Every gesture and every word are guided by discretion and quiet elegance, shaping a personalized experience where you feel truly seen, cared for and free to relax into the moment.",
+          summary:
+            "A refined welcome from hostesses chosen for their grace and discretion. Their presence sets the tone for a visit entirely focused on you.",
         },
         {
           title: "Body to Body",
           content:
             "A deeply relaxing full-body experience built entirely around closeness and warmth. Fluid, continuous movements flow from head to toe, dissolving tension and inviting you to simply let go. Skin against skin, the ritual unfolds slowly and intuitively, blending comfort with sensuality in an atmosphere of complete trust. It is less a technique than a shared rhythm — one designed to leave you feeling weightless, present and entirely at ease.",
+          summary:
+            "A deeply relaxing full-body massage, fluid and enveloping. Skin against skin, in complete trust, for a moment of pure release.",
         },
         {
           title: "Soft Touch",
           content:
             "A softer, more contemplative experience for those seeking calm above all else. Delicate gestures and slow, deliberate movements work together to quiet the mind and soothe the body. There is no rush here — only a peaceful atmosphere, gentle warmth and the space to breathe deeply and let every muscle unwind. It is an invitation to stillness, a moment of pure serenity set apart from the pace of everyday life.",
+          summary:
+            "A gentle, contemplative experience of slow, deliberate movements. An invitation to stillness, set apart from the pace of everyday life.",
         },
         {
           title: "Love Triangle",
           content:
             "An immersive experience shared with two hostesses, whose coordinated attention creates a dynamic rarely found elsewhere. Their natural chemistry and effortless rhythm turn the encounter into something layered and captivating, each movement responding to the other with subtlety and intent. Surrounded by undivided focus from two directions at once, you are drawn into a fully shared moment — intense, elegant and unlike any solo experience.",
+          summary:
+            "An immersive experience with two hostesses, their attention perfectly in sync. An intense, elegant moment unlike any other.",
         },
         {
           title: "Rain on Me",
           content:
             "A warm, shower-inspired ritual where fine streams of water cascade gently over the skin, setting the stage for total relaxation. Combined with gentle touch, the sensation of water heightens every nerve ending, washing away tension while awakening the senses. Set within a private, softly lit atmosphere, this ritual is a study in contrast — the warmth of water, the softness of touch, and the quiet intimacy of being entirely looked after.",
+          summary:
+            "A shower-inspired ritual where water cascades gently over the skin. Total relaxation within a private, softly lit atmosphere.",
         },
       ],
     },

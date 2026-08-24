@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useCallback, useEffect, useState, type MouseEvent as ReactMouseEvent } from "react";
+import { memo, useState, type MouseEvent as ReactMouseEvent } from "react";
 import { motion, useMotionValue, useReducedMotion, useSpring } from "framer-motion";
 import { useLanguage } from "@/app/lib/language/LanguageContext";
 import { useIsMobile } from "@/app/lib/useIsMobile";
@@ -119,102 +119,28 @@ function AccordionCard({
 }
 
 /**
- * Mobile treatment accordion — a deliberately separate, non-Framer-Motion code
- * path. The desktop AccordionCard's mouse-parallax springs, hover/focus glow,
- * and JS-driven height/opacity animation were still running (or partially
- * triggering via `:focus-within` on tap) on mobile even after earlier passes
- * only tamed the panel height animation, which is what caused the lag/freeze
- * and, on iOS Safari, could stall the ambient audio when the main thread hung.
- * This component has no motion values, no springs, no AnimatePresence and no
- * hover/hover-glow CSS — content mounts/unmounts in normal flow and the only
- * animation is a capped 80ms opacity fade (see `.about-card-panel-mobile`
- * in globals.css). Memoized with a stable `onToggle` (index-based, from the
- * parent) so switching cards only re-renders the two affected cards, not
- * every card in the stack — and never touches the unrelated AudioPlayer
- * subtree, which reads its state from a module-level singleton anyway.
+ * Mobile treatments card — intentionally NOT an accordion. It replaces the
+ * old MobileAccordionCard (Framer Motion springs/parallax that kept partially
+ * triggering via `:focus-within` on tap, plus a JS-driven height animation
+ * and a "Read more" clamp/expand toggle) after real iPhone/Safari testing
+ * showed that approach still lagged and could crash the tab under scroll.
+ * This version has zero React state, zero click handlers, zero Framer
+ * Motion: title + a short static `summary` string (a dedicated translation
+ * field, not a truncation of the long-form `content`), rendered once and
+ * never mutated. The full `content` text is never passed to this component,
+ * so it never lands in the mobile DOM at all — nothing to clamp, expand, or
+ * hide. Plain function component (memoized only to skip re-renders when a
+ * sibling card's props are unchanged); no props ever change after mount.
  */
-const MobileAccordionCard = memo(function MobileAccordionCard({
+const MobileTreatmentCard = memo(function MobileTreatmentCard({
   item,
-  index,
-  isOpen,
-  onToggle,
-  prefersReducedMotion,
-  readMoreLabel,
-  readLessLabel,
 }: {
-  item: { title: string; content: string };
-  index: number;
-  isOpen: boolean;
-  onToggle: (index: number) => void;
-  prefersReducedMotion: boolean | null;
-  readMoreLabel: string;
-  readLessLabel: string;
+  item: { title: string; summary: string };
 }) {
-  const triggerId = `about-accordion-trigger-${index}`;
-  const panelId = `about-accordion-panel-${index}`;
-  const handleClick = useCallback(() => onToggle(index), [onToggle, index]);
-  // Full text is clamped to a handful of lines by default (plain CSS
-  // -webkit-line-clamp — no JS measuring of text length/height) so a long
-  // description like "Love Triangle" can't blow up the card's height and
-  // drag the rest of the stack down with it. "Read more" just lifts the
-  // clamp; collapses again whenever the card itself closes.
-  const [showFull, setShowFull] = useState(false);
-  useEffect(() => {
-    if (!isOpen) setShowFull(false);
-  }, [isOpen]);
-
   return (
-    <div
-      data-open={isOpen}
-      className="about-card overflow-hidden rounded-[var(--radius-md)] border"
-    >
-      <button
-        type="button"
-        id={triggerId}
-        onClick={handleClick}
-        aria-expanded={isOpen}
-        aria-controls={panelId}
-        className="flex w-full items-center justify-between gap-6 px-5 py-4 text-left"
-      >
-        <span className="about-card-title text-base font-medium">{item.title}</span>
-        <span className="about-card-icon relative flex h-4 w-4 shrink-0 items-center justify-center">
-          <span
-            className="absolute h-px w-4"
-            style={{ backgroundColor: "var(--color-champagne)" }}
-          />
-          <span
-            className="absolute h-4 w-px"
-            style={{
-              backgroundColor: "var(--color-champagne)",
-              transform: isOpen ? "rotate(90deg)" : "rotate(0deg)",
-            }}
-          />
-        </span>
-      </button>
-      {isOpen && (
-        <div
-          id={panelId}
-          role="region"
-          aria-labelledby={triggerId}
-          className={prefersReducedMotion ? undefined : "about-card-panel-mobile"}
-        >
-          <p
-            className={`max-w-[54ch] px-5 text-sm leading-[1.85] ${
-              showFull ? "" : "about-card-content-mobile"
-            }`}
-          >
-            {item.content}
-          </p>
-          <button
-            type="button"
-            onClick={() => setShowFull((prev) => !prev)}
-            className="about-card-readmore mx-5 mb-5 mt-2.5 text-[0.7rem] font-medium uppercase tracking-[0.14em]"
-            style={{ color: "var(--color-champagne)" }}
-          >
-            {showFull ? readLessLabel : readMoreLabel}
-          </button>
-        </div>
-      )}
+    <div className="treatment-card-mobile">
+      <h3 className="treatment-card-mobile-title">{item.title}</h3>
+      <p className="treatment-card-mobile-summary">{item.summary}</p>
     </div>
   );
 });
@@ -223,10 +149,10 @@ export default function About() {
   const { t } = useLanguage();
   const prefersReducedMotion = useReducedMotion();
   const isMobile = useIsMobile();
+  // Open/close accordion state — desktop only. The mobile treatments list has
+  // no open/closed state at all (every card is a static, always-fully-visible
+  // summary), so this never needs to be read or set on mobile.
   const [openIndex, setOpenIndex] = useState(0);
-  const handleMobileToggle = useCallback((i: number) => {
-    setOpenIndex((prev) => (prev === i ? -1 : i));
-  }, []);
 
   return (
     <section id="apropos" className="relative pt-28 pb-14 sm:pt-36 sm:pb-18">
@@ -312,16 +238,7 @@ export default function About() {
           >
             {t.about.items.map((item, i) =>
               isMobile ? (
-                <MobileAccordionCard
-                  key={item.title}
-                  item={item}
-                  index={i}
-                  isOpen={i === openIndex}
-                  onToggle={handleMobileToggle}
-                  prefersReducedMotion={prefersReducedMotion}
-                  readMoreLabel={t.about.readMore}
-                  readLessLabel={t.about.readLess}
-                />
+                <MobileTreatmentCard key={item.title} item={item} />
               ) : (
                 <AccordionCard
                   key={item.title}

@@ -6,6 +6,14 @@ const AUDIO_SRC = "/music/elite-one-ambient.mp3";
 const TARGET_VOLUME = 0.2;
 const FADE_DURATION_MS = 2000;
 const MUTE_STORAGE_KEY = "eliteOneSpaAudioMuted";
+const MOBILE_QUERY = "(max-width: 767px)";
+
+/** Mirrors useIsMobile's breakpoint, but this module has no React lifecycle
+ *  (it's a plain singleton, same pattern as the visibility handlers below) —
+ *  checked at call time instead of subscribed to. */
+function isMobileViewport() {
+  return typeof window !== "undefined" && window.matchMedia(MOBILE_QUERY).matches;
+}
 
 interface AudioState {
   isPlaying: boolean;
@@ -171,7 +179,16 @@ export async function startAmbientAudio() {
   try {
     await audio.play();
     setState({ isPlaying: true });
-    fadeInVolume(audio);
+    // The fade-in relies on requestAnimationFrame ticking for ~2s after every
+    // tap-to-start — on mobile Safari that's an extra rAF loop layered on top
+    // of a section already prone to jank, for a purely decorative touch.
+    // Mobile jumps straight to the target volume instead; desktop keeps the
+    // fade unchanged.
+    if (isMobileViewport()) {
+      audio.volume = TARGET_VOLUME;
+    } else {
+      fadeInVolume(audio);
+    }
   } catch {
     // Lecture bloquée par le navigateur : l'utilisateur pourra réessayer via le bouton mute/unmute.
   } finally {

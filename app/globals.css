@@ -674,121 +674,47 @@ body:has(button[aria-controls="mobile-nav-panel"][aria-expanded="true"]) #main-c
   body {
     background-attachment: scroll;
   }
-
-  .about-card-halo {
-    filter: blur(14px);
-  }
 }
 
-/* About accordion — mobile. The mobile card uses a completely separate React
-   code path (MobileAccordionCard in About.tsx) with no Framer Motion, no
-   mouse-parallax, and no halo element at all. But the `.about-card` /
-   `.about-card-title` / `.about-card-icon` classes are shared with the
-   desktop card, and their hover-only rules are written as `:hover`/
-   `:focus-within` — on touch devices, tapping a button focuses it, so
-   `:focus-within` matched on every tap and kept re-triggering the blurred
-   halo (`filter: blur`) and the animated `box-shadow`/`background-color`/
-   `border-color` glow on every open/close. That per-tap filter+shadow
-   repaint across a stack of cards is what caused the severe lag/freeze,
-   not just the old height animation. These rules force the glow off and
-   collapse the transition to instant so only the static open/closed
-   colors from `[data-open]` remain. */
+/* Mobile treatments cards — a completely separate, static markup/style path
+   (MobileTreatmentCard in About.tsx), not a variant of the desktop
+   `.about-card` accordion. No shared classes, no `:hover`/`:focus-within`
+   rules to misfire on tap, no halo, no backdrop-filter, no box-shadow, no
+   transitions of any kind — the card never changes state, so there is
+   nothing to animate. Simple background/border/radius/typography only,
+   keeping the burgundy/champagne identity used everywhere else on the site. */
 @media (max-width: 768px) {
-  .about-card-halo {
-    display: none;
+  .treatment-card-mobile {
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+    background-color: rgba(244, 239, 232, 0.035);
+    padding: 1.125rem 1.25rem;
   }
 
-  .about-card,
-  .about-card-title,
-  .about-card-icon {
-    transition: none !important;
-  }
-
-  .about-card,
-  .group:hover .about-card,
-  .group:focus-within .about-card {
-    box-shadow: none !important;
-    border-color: var(--color-border);
-    background-color: rgba(244, 239, 232, 0.03);
-  }
-
-  .about-card[data-open="true"],
-  .group:hover .about-card[data-open="true"],
-  .group:focus-within .about-card[data-open="true"] {
-    box-shadow: none !important;
-    background-color: rgba(232, 120, 150, 0.08);
-    border-color: rgba(232, 120, 150, 0.32);
-  }
-
-  .group:hover .about-card-title,
-  .group:focus-within .about-card-title {
+  .treatment-card-mobile-title {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 500;
     color: var(--color-offwhite);
   }
 
-  .group:hover .about-card-icon,
-  .group:focus-within .about-card-icon {
-    transform: none;
-    filter: none;
+  .treatment-card-mobile-summary {
+    margin: 0.5rem 0 0;
+    max-width: 54ch;
+    font-size: 0.875rem;
+    line-height: 1.7;
+    color: var(--color-text-muted);
   }
 }
 
-/* About accordion — mobile panel open. Height/max-height animation on the
-   panel forced a layout reflow of the whole card stack on every frame
-   (visible page jank + slow "push down" on tap), so on mobile the panel is
-   mounted/unmounted in normal document flow instead (a single, cheap
-   reflow) and only fades in via opacity — no height, no layout animation. */
+/* WALK-IN ONLY floating button — mobile. FloatingBookButton.tsx already
+   skips rendering the component on mobile (`isMobile` check, not just a
+   visual hide), so this is a synchronous CSS-only backstop for the brief
+   pre-hydration window before that check resolves — no flash of a fixed,
+   composited, animated button before React removes it. Desktop untouched. */
 @media (max-width: 768px) {
-  .about-card-panel-mobile {
-    animation: about-panel-fade-in 80ms linear both;
-  }
-}
-
-@keyframes about-panel-fade-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-/* About accordion — mobile description length. Long copy (e.g. "Love
-   Triangle") otherwise turns one open card into a very tall block that drags
-   the rest of the stack far down the page. Plain CSS line-clamp caps it at 4
-   lines with no JS measuring text/height; the "Read more" button just
-   removes this class, no layout animation involved. */
-@media (max-width: 768px) {
-  .about-card-content-mobile {
-    display: -webkit-box;
-    -webkit-line-clamp: 4;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-
-  .about-card-readmore {
-    display: block;
-    background: none;
-    border: none;
-    padding: 0;
-    cursor: pointer;
-  }
-}
-
-/* WALK-IN ONLY floating button + audio toggle vs. an open About/treatments
-   card. Both buttons are `position: fixed`, so they stay pinned at the same
-   spot on screen while the page scrolls underneath them — a long open
-   description can scroll directly behind either one and get visually
-   covered. Hidden only while a card is actually expanded (not for the whole
-   section), so both stay available the rest of the time, including while
-   just browsing the closed cards. Pure CSS `:has()`, same pattern already
-   used for the mobile-nav click-through guard above — no scroll/resize
-   listeners, no IntersectionObserver. */
-@media (max-width: 768px) {
-  body:has(.about-card[data-open="true"]) .floating-book-btn,
-  body:has(.about-card[data-open="true"]) .audio-toggle-btn {
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 150ms ease;
+  .floating-book-btn {
+    display: none !important;
   }
 }
 
