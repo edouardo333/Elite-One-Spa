@@ -239,10 +239,16 @@ export default function Hostesses({
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.9, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-          className="relative mx-auto mt-14 max-w-4xl overflow-hidden rounded-[var(--radius-lg)] border backdrop-blur-xl"
+          className={`relative mx-auto mt-14 max-w-4xl overflow-hidden rounded-[var(--radius-lg)] border ${
+            isMobile ? "" : "backdrop-blur-xl"
+          }`}
           style={{
             borderColor: "rgba(232,120,150,0.24)",
-            backgroundColor: "rgba(20,11,16,0.55)",
+            // `backdrop-blur-xl` needs a translucent background to have
+            // anything to blur; on mobile (blur dropped, see className
+            // above) the background goes fully opaque instead so the bar
+            // still reads solid rather than see-through.
+            backgroundColor: isMobile ? "rgba(18,10,15,0.96)" : "rgba(20,11,16,0.55)",
             // Large blurred box-shadows are a real paint cost on iOS Safari;
             // this bar sits above the filters and repaints with the rest of
             // the section on every tap, so it's dropped on mobile. The
@@ -480,12 +486,21 @@ export default function Hostesses({
             the DOM. Desktop keeps the full grid + `layout` transition on
             every matching card — its frame budget handles it fine. */}
         {isMobile ? (
-          <div className="mx-auto mt-10 flex max-w-md flex-col gap-4">
+          // `min-height` keeps a filter tap that matches zero/one hostess
+          // (e.g. "Off Today" with a single match) from collapsing this
+          // whole block to near-zero height — no section-wide layout jump,
+          // no scroll-position kick, on any filter.
+          <div className="mx-auto mt-10 flex min-h-[200px] max-w-md flex-col gap-4">
             {visibleGridList.map((h) => {
               const text = textById.get(h.id);
               if (!text) return null;
               return <MobileHostessCard key={h.id} hostess={h} text={text} onSelect={setSelectedId} />;
             })}
+            {gridList.length === 0 && (
+              <p className="py-10 text-center text-sm text-[var(--color-text-muted)]">
+                {t.hostesses.noResults}
+              </p>
+            )}
           </div>
         ) : (
           <motion.div

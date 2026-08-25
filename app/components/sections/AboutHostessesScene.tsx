@@ -67,7 +67,16 @@ export default function AboutHostessesScene({
             background:
               "radial-gradient(ellipse, rgba(100,40,72,0.54) 0%, rgba(100,40,72,0.29) 46%, transparent 74%)",
             borderRadius: "56% 44% 62% 38% / 46% 55% 45% 54%",
-            filter: "blur(70px)",
+            // Mobile keeps the radial-gradient (it already fades to
+            // transparent on its own) but drops the CSS `filter: blur()`
+            // pass — that's a real GPU rasterization/compositing cost, kept
+            // "static" here only because the animation is already off on
+            // mobile, not because it's free. Five of these layered behind
+            // the whole About→Hostesses→Services scene is a plausible
+            // contributor to iOS Safari's GPU-process crashes during
+            // Hostesses' filter re-renders, which repaint this shared
+            // backdrop underneath them. Desktop is untouched.
+            filter: isMobile ? undefined : "blur(70px)",
           }}
           animate={
             animateBackdrop
@@ -84,7 +93,7 @@ export default function AboutHostessesScene({
             background:
               "radial-gradient(ellipse, rgba(150,45,80,0.48) 0%, rgba(150,45,80,0.25) 46%, transparent 74%)",
             borderRadius: "44% 56% 38% 62% / 60% 40% 62% 38%",
-            filter: "blur(66px)",
+            filter: isMobile ? undefined : "blur(66px)",
           }}
           animate={
             animateBackdrop
@@ -100,7 +109,7 @@ export default function AboutHostessesScene({
           style={{
             background:
               "radial-gradient(ellipse 60% 55% at 50% 50%, rgba(110,32,54,0.3) 0%, transparent 72%)",
-            filter: "blur(60px)",
+            filter: isMobile ? undefined : "blur(60px)",
           }}
           animate={animateBackdrop ? { scale: [0.97, 1.05, 0.97] } : undefined}
           transition={{ duration: 22, repeat: Infinity, ease: "easeInOut" }}
@@ -113,7 +122,7 @@ export default function AboutHostessesScene({
             background:
               "radial-gradient(ellipse, rgba(100,40,72,0.46) 0%, rgba(100,40,72,0.22) 46%, transparent 74%)",
             borderRadius: "54% 46% 60% 40% / 48% 54% 46% 52%",
-            filter: "blur(74px)",
+            filter: isMobile ? undefined : "blur(74px)",
           }}
           animate={
             animateBackdrop
@@ -130,7 +139,7 @@ export default function AboutHostessesScene({
             background:
               "radial-gradient(ellipse, rgba(100,40,72,0.5) 0%, rgba(100,40,72,0.24) 46%, transparent 74%)",
             borderRadius: "56% 44% 62% 38% / 46% 55% 45% 54%",
-            filter: "blur(70px)",
+            filter: isMobile ? undefined : "blur(70px)",
           }}
           animate={
             animateBackdrop

@@ -82,6 +82,8 @@ export interface Translations {
     viewProfileAria: string;
     showMore: string;
     showMoreAria: string;
+    /** Shown on the mobile filtered list when a filter matches zero hostesses. */
+    noResults: string;
     placeholder: {
       title: string;
       subtitle: string;
@@ -386,6 +388,7 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
       viewProfileAria: "Voir le profil de {name}",
       showMore: "Voir plus d’hôtesses",
       showMoreAria: "Afficher les hôtesses supplémentaires",
+      noResults: "Aucune hôtesse ne correspond à ce filtre pour le moment.",
       placeholder: {
         title: "Portrait premium à venir",
         subtitle: "Portrait officiel disponible après approbation de la direction.",
@@ -749,6 +752,7 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
       viewProfileAria: "View {name}'s profile",
       showMore: "Show more hostesses",
       showMoreAria: "Show additional hostesses",
+      noResults: "No hostesses match this filter right now.",
       placeholder: {
         title: "Premium Portrait Coming Soon",
         subtitle: "Official portrait available after management approval.",

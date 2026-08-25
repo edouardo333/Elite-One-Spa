@@ -55,7 +55,14 @@ function MobileHostessCard({
             src={hostess.photo}
             alt={text.name}
             fill
-            sizes="(max-width: 480px) 100vw, 420px"
+            // The card sits in a `max-w-md` column inset by the site's
+            // `.container` padding (20px/side at narrow widths) — never
+            // actually 100vw. `100vw` was true to the container's *class*
+            // but not its real rendered width, so the browser picked the
+            // largest srcset candidate (up to 3840w) for a ~330px-wide box,
+            // decoding several times more pixels than ever get painted —
+            // real memory pressure per card on iOS Safari.
+            sizes="(max-width: 480px) 90vw, 420px"
             loading="lazy"
             className="object-cover"
           />
