@@ -79,7 +79,7 @@ export default function Services() {
         </div>
 
         {/* Cards */}
-        <div className="mx-auto mt-16 grid max-w-5xl grid-cols-1 gap-8 pt-4 md:grid-cols-3 md:gap-7">
+        <div className="mx-auto mt-16 grid max-w-5xl grid-cols-1 gap-8 pt-4 md:grid-cols-2 md:gap-6 lg:grid-cols-3 lg:gap-7">
           {t.services.cards.map((card, index) => {
             const popular = index === t.services.cards.length - 1;
             return (
@@ -90,7 +90,11 @@ export default function Services() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-80px" }}
                 transition={{ duration: 1, delay: index * 0.14, ease: [0.16, 1, 0.3, 1] }}
-                className="relative"
+                className={
+                  popular
+                    ? "relative md:col-span-2 md:mx-auto md:w-[calc(50%-0.75rem)] lg:col-span-1 lg:mx-0 lg:w-auto"
+                    : "relative"
+                }
               >
                 {/* Ambient halo */}
                 <motion.div
