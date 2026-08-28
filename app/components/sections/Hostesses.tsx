@@ -23,6 +23,7 @@ import {
   splitPriorityBadge,
   statusLabel,
 } from "./hostesses-shared";
+import FeaturedHostessCard from "./FeaturedHostessCard";
 import HostessCard from "./HostessCard";
 import MobileHostessCard from "./MobileHostessCard";
 
@@ -174,16 +175,18 @@ export default function Hostesses({
     }
   }, [hostesses, filter]);
 
-  // The large featured card reads ONLY from the explicit `featured` flag
+  // The featured card reads ONLY from the explicit `featured` flag
   // (guaranteed unique — see sanity/lib/uniqueFeaturedPublish.ts). If no
   // hostess is featured, fall back to the first active hostess ordered by
   // displayOrder, so the card never sits empty and never crashes.
-  // Desktop-only: mobile skips this larger hero markup entirely (bigger
-  // image, full stats strip, always-mounted bio) and folds every hostess —
-  // including whichever one would've been featured — into the same flat,
-  // paginated compact-card list below.
+  // Kept for every viewport (only hidden while a specific status/premium/new
+  // filter is active — "all" is the only view where a single hostess should
+  // be singled out): desktop renders it as the large hero block below, while
+  // mobile/tablet render the same underlying record through the compact
+  // `FeaturedHostessCard` ahead of the flat grid, so it's never dropped
+  // below 769px. Either way `gridList` below excludes it from the grid.
   const featured =
-    !isMobile && filter === "all"
+    filter === "all"
       ? hostesses.find((h) => h.featured) ??
         [...hostesses].sort((a, b) => a.displayOrder - b.displayOrder)[0] ??
         null
@@ -365,8 +368,10 @@ export default function Hostesses({
           })}
         </motion.div>
 
-        {/* Featured hostess */}
-        {featured &&
+        {/* Featured hostess — desktop hero card only. Tablet/mobile render
+            the same `featured` record via the compact `FeaturedHostessCard`
+            inside the isMobile branch below instead. */}
+        {!isMobile && featured &&
           (() => {
             const featuredText = textById.get(featured.id);
             if (!featuredText) return null;
@@ -439,9 +444,8 @@ export default function Hostesses({
               </>
             );
 
-            // `featured` is only ever set on desktop (see above) — mobile
-            // never reaches this IIFE at all, so this stays the single,
-            // unconditional desktop-only render path.
+            // This whole block is gated by `!isMobile` above, so it stays
+            // the desktop-only hero render path.
             return (
               <motion.div
                 key={featured.id}
@@ -486,21 +490,41 @@ export default function Hostesses({
             the DOM. Desktop keeps the full grid + `layout` transition on
             every matching card — its frame budget handles it fine. */}
         {isMobile ? (
-          // `min-height` keeps a filter tap that matches zero/one hostess
-          // (e.g. "Off Today" with a single match) from collapsing this
-          // whole block to near-zero height — no section-wide layout jump,
-          // no scroll-position kick, on any filter.
-          <div className="mx-auto mt-10 flex min-h-[200px] max-w-md flex-col gap-4">
-            {visibleGridList.map((h) => {
-              const text = textById.get(h.id);
-              if (!text) return null;
-              return <MobileHostessCard key={h.id} hostess={h} text={text} onSelect={setSelectedId} />;
-            })}
-            {gridList.length === 0 && (
-              <p className="py-10 text-center text-sm text-[var(--color-text-muted)]">
-                {t.hostesses.noResults}
-              </p>
-            )}
+          <div className="mx-auto mt-10 flex max-w-md flex-col gap-6 sm:max-w-2xl">
+            {/* Featured hostess — tablet + mobile. Same `featured` record as
+                the desktop hero above, rendered through the compact card so
+                it appears right after the filters instead of disappearing
+                below 769px. Excluded from `gridList` already, so it never
+                shows twice. */}
+            {featured &&
+              (() => {
+                const featuredText = textById.get(featured.id);
+                if (!featuredText) return null;
+                return (
+                  <FeaturedHostessCard
+                    key={featured.id}
+                    hostess={featured}
+                    text={featuredText}
+                    onSelect={setSelectedId}
+                  />
+                );
+              })()}
+            {/* `min-height` keeps a filter tap that matches zero/one hostess
+                (e.g. "Off Today" with a single match) from collapsing this
+                whole block to near-zero height — no section-wide layout
+                jump, no scroll-position kick, on any filter. */}
+            <div className="mx-auto flex w-full max-w-md min-h-[200px] flex-col gap-4">
+              {visibleGridList.map((h) => {
+                const text = textById.get(h.id);
+                if (!text) return null;
+                return <MobileHostessCard key={h.id} hostess={h} text={text} onSelect={setSelectedId} />;
+              })}
+              {gridList.length === 0 && (
+                <p className="py-10 text-center text-sm text-[var(--color-text-muted)]">
+                  {t.hostesses.noResults}
+                </p>
+              )}
+            </div>
           </div>
         ) : (
           <motion.div
