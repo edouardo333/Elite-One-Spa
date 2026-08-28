@@ -22,6 +22,9 @@ export interface Translations {
     titleLine1: string;
     titleLine2: string;
     paragraph: string;
+    addressLabel: string;
+    addressLine: string;
+    addressAria: string;
     ctaPrimary: string;
     ctaSecondary: string;
     scrollLabel: string;
@@ -287,6 +290,9 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
       titleLine2: "pour le corps et l’esprit",
       paragraph:
         "Rituels sur-mesure, gestes d’exception et matières précieuses — Elite One Spa réinvente le luxe du soin dans un écrin d’intimité absolue.",
+      addressLabel: "Présentez-vous directement",
+      addressLine: "1621 boul. Saint-Laurent, Montréal, QC",
+      addressAria: "Ouvrir l’adresse d’Elite One Spa dans Google Maps",
       ctaPrimary: "Sans rendez-vous",
       ctaSecondary: "Découvrir nos soins",
       scrollLabel: "Défiler",
@@ -446,8 +452,8 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
           duration: "60",
           description:
             "L’expérience signature Elite One, dans toute sa plénitude et sa générosité.",
-          priceTwo: "60 $",
-          priceFour: "120 $",
+          priceTwo: "80 $",
+          priceFour: "160 $",
         },
       ],
     },
@@ -651,6 +657,9 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
       titleLine2: "for body and mind",
       paragraph:
         "Bespoke rituals, exceptional gestures and precious materials — Elite One Spa reinvents the luxury of care within a haven of absolute intimacy.",
+      addressLabel: "Come directly to our location",
+      addressLine: "1621 Saint-Laurent Blvd, Montreal, QC",
+      addressAria: "Open Elite One Spa's address in Google Maps",
       ctaPrimary: "Walk-In Only",
       ctaSecondary: "Discover Our Treatments",
       scrollLabel: "Scroll",
@@ -810,8 +819,8 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
           duration: "60",
           description:
             "The signature Elite One experience, in its fullest and most generous form.",
-          priceTwo: "$60",
-          priceFour: "$120",
+          priceTwo: "$80",
+          priceFour: "$160",
         },
       ],
     },

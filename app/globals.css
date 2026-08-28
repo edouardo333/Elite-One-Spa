@@ -577,6 +577,14 @@ body:has(button[aria-controls="mobile-nav-panel"][aria-expanded="true"]) #main-c
   padding-inline: clamp(1.25rem, 4vw, 4rem);
 }
 
+/* Hero description paragraph — dedicated class + specificity because the
+   unlayered `p{}` margin reset above always wins over Tailwind's layered
+   `mx-auto` utility, which otherwise left the paragraph flush against the
+   left edge of its (wider, heading-sized) flex parent instead of centred. */
+.hero-desc {
+  margin-inline: auto;
+}
+
 /* Hero — height-aware vertical compaction for short laptop viewports.
    The hero's own vertical rhythm (container padding, logo size/margin,
    heading size, CTA gap) is tuned for tall viewports and overflows the
@@ -620,8 +628,12 @@ body:has(button[aria-controls="mobile-nav-panel"][aria-expanded="true"]) #main-c
     margin-top: 0.85rem;
   }
 
+  .hero-address {
+    margin-top: 1.25rem;
+  }
+
   .hero-cta-row {
-    margin-top: 1.5rem;
+    margin-top: 1.25rem;
   }
 }
 

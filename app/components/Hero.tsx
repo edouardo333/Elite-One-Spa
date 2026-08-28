@@ -6,6 +6,9 @@ import { motion, useReducedMotion } from "framer-motion";
 import { useLanguage } from "@/app/lib/language/LanguageContext";
 import { useIsMobile } from "@/app/lib/useIsMobile";
 
+const GOOGLE_MAPS_URL =
+  "https://www.google.com/maps/place/eliteone+spa+Massage+Parlour/@45.5112597,-73.5688669,17z/data=!3m1!4b1!4m6!3m5!1s0x4cc91b9e18711249:0xa948201bcf1b2c91!8m2!3d45.511256!4d-73.566292!16s%2Fg%2F11h4mrlf31";
+
 const SLIDE_SOURCES = [
   "/hero/desktop-01.webp",
   "/hero/desktop-02.webp",
@@ -372,7 +375,27 @@ useEffect(() => {
           </motion.p>
         </div>
 
-        <div className="hero-cta-row mt-14 flex flex-col items-center gap-5 sm:flex-row sm:gap-6">
+        <motion.div
+          initial={{ opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.9, delay: 0.54, ease: [0.16, 1, 0.3, 1] }}
+          className="hero-address mt-9 flex flex-col items-center gap-1.5 text-center"
+        >
+          <p className="text-[0.85rem] font-semibold uppercase tracking-[0.22em] text-[rgba(244,239,232,0.88)]">
+            {t.hero.addressLabel}
+          </p>
+          <a
+            href={GOOGLE_MAPS_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={t.hero.addressAria}
+            className="text-sm sm:text-[0.95rem]"
+          >
+            {t.hero.addressLine}
+          </a>
+        </motion.div>
+
+        <div className="hero-cta-row mt-8 flex flex-col items-center gap-5 sm:flex-row sm:gap-6">
           <motion.a
             href="tel:+15145438344"
             className="btn btn-primary min-w-[230px]"

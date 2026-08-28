@@ -67,7 +67,7 @@ const LOCAL_BUSINESS_JSON_LD = {
   url: SITE_URL,
   telephone: "+1-514-543-8344",
   email: "info@eliteonespa.ca",
-  priceRange: "$40–$120",
+  priceRange: "$40–$160",
   address: {
     "@type": "PostalAddress",
     streetAddress: "1621 boul. Saint-Laurent",
